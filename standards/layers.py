@@ -1,11 +1,11 @@
 import rhinoscriptsyntax as rs
-#import csv
+import csv
 import Rhino
 import imp
-csv = imp.load_source('csv', r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\dependencies\csv.py')
+#csv = imp.load_source('csv', r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\dependencies\csv.py')
 import scriptcontext as sc
 
-PCPA_Layers = r'X:\05_RHINO STANDARDS\01 GENERAL SETTINGS\PCPA LAYERS\PCPA LAYERS.csv'
+PCPA_Layers = r'C:\Users\Tim\Desktop\temp\template\PCPA LAYERS.csv'
 
 layNumColumn = 0
 nameColumn = 1
@@ -33,13 +33,20 @@ def GetChildNumbers(parentNum):
         return [parentNum]
 
 def GetLayerData(fileName):
-
+    
     with open(fileName, 'rb') as f:
         reader = csv.reader(f)
         layerData = list(reader)
     return layerData
 
 def AddLayers(layerData, layerNumbers):
+    #Delete non-number layers
+    for i, row in enumerate(layerData):
+        try:
+            int(row[layNumColumn])
+        except:
+            del layerData[i]
+    
     
     def translateColor(dashColor):
         if len(dashColor) < 1:
@@ -61,6 +68,10 @@ def AddLayers(layerData, layerNumbers):
                     linetype = eachRow[linetypeColumn]
                     printcolor = translateColor(eachRow[printcolorColumn])
                     printwidth = eachRow[printwidthColumn]
+                    try:
+                        float(eachRow[printwidthColumn])
+                    except:
+                        printwidth = 0
                     
                     print "Found layer num {} in CSV file".format(eachNum)
                     
@@ -74,10 +85,13 @@ def AddLayers(layerData, layerNumbers):
             print "Row failed"
             pass
 
+def test():
+    print "Test finished"
 
 def main():
     rs.EnableRedraw(False)
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", minimum = 1)
+    if layerNumRequested is None: return
     layerData = GetLayerData(PCPA_Layers)
     layerNums = GetChildNumbers(layerNumRequested)
     AddLayers(layerData, layerNums)
