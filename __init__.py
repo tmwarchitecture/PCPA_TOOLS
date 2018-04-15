@@ -1,1 +1,2 @@
-import OUTPUT
+import output
+import standards
