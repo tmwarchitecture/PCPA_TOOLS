@@ -1,45 +1,42 @@
 import rhinoscriptsyntax as rs
 import csv
 import Rhino
+import sys
+sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
+import PCPA
 import imp
-#csv = imp.load_source('csv', r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\dependencies\csv.py')
+#csv = imp.load_source('csv', PCPA.config.GetValue('CSV'))
 import scriptcontext as sc
 
-PCPA_Layers = r'C:\Users\Tim\Desktop\temp\template\PCPA LAYERS.csv'
+PCPA_Layers = PCPA.tools.config.GetValue('PCPA_Layers')
 
 layNumColumn = 0
 nameColumn = 1
-colorColumn = 2
-materialColumn = 3
-linetypeColumn = 4
-printcolorColumn = 5
-printwidthColumn = 6
+parentColumn = 2
+colorColumn = 3
+materialColumn = 4
+linetypeColumn = 5
+printcolorColumn = 6
+printwidthColumn = 7
 
 #sc.doc.Materials.FindIndex(
 #print "HERE: " + str(Rhino.DocObjects.Tables.MaterialTable.CurrentMaterialIndex)
-
-def GetChildNumbers(parentNum):
+def GetChildNumbers(parentNum, layerData):
+    numsInCSV = list(layerData.keys())
     if parentNum%1000 == 0:
-        print "Thousand series"
-        return range(parentNum+1, parentNum+1000)
+        nums = range(parentNum+1, parentNum+1000)
+        return list(set(numsInCSV) & set(nums))
     elif parentNum%100 == 0:
-        print "Hundred Series"
-        return range(parentNum+1, parentNum+100)
-    elif parentNum%10 == 0:
-        print "Ten Series"
-        #return range(parentNum, parentNum+10)
+        nums = range(parentNum+1, parentNum+100)
+        return list(set(numsInCSV) & set(nums))
     else:
-        print "One layer"
         return [parentNum]
 
 def GetLayerData(fileName):
-    
     with open(fileName, 'rb') as f:
         reader = csv.reader(f)
         layerData = list(reader)
-    return layerData
-
-def AddLayers(layerData, layerNumbers):
+    
     #Delete non-number layers
     for i, row in enumerate(layerData):
         try:
@@ -47,56 +44,57 @@ def AddLayers(layerData, layerNumbers):
         except:
             del layerData[i]
     
-    
-    def translateColor(dashColor):
-        if len(dashColor) < 1:
-            return
-        values = dashColor.split("-")
-        finalValues = []
-        for value in values:
-            finalValues.append(int(value))
-        return finalValues
-    
-    for eachRow in layerData:
+    data = {}
+    for row in layerData:
         try:
-            int(eachRow[layNumColumn])
-            for eachNum in layerNumbers:
-                if int(eachRow[layNumColumn]) == int(eachNum): #if this row is a requested number
-                    name = eachRow[nameColumn]
-                    color = translateColor(eachRow[colorColumn])
-                    material = eachRow[materialColumn]
-                    linetype = eachRow[linetypeColumn]
-                    printcolor = translateColor(eachRow[printcolorColumn])
-                    printwidth = eachRow[printwidthColumn]
-                    try:
-                        float(eachRow[printwidthColumn])
-                    except:
-                        printwidth = 0
-                    
-                    print "Found layer num {} in CSV file".format(eachNum)
-                    
-                    newLayer = rs.AddLayer(eachRow[nameColumn], color)
-                    rs.LayerLinetype(newLayer, linetype)
-                    rs.LayerPrintColor(newLayer, printcolor)
-                    rs.LayerPrintWidth(newLayer, float(printwidth))
-                    #rs.AddMaterialToLayer(newLayer)
-                    break
+            printwidth = float(row[printwidthColumn])
         except:
-            print "Row failed"
-            pass
+            printwidth = 0
+        try:
+            parentcol = int(row[parentColumn])
+        except:
+            parentcol = 0
+        data[int(row[layNumColumn])] = [int(row[layNumColumn]), row[nameColumn],
+        parentcol, translateColor(row[colorColumn]), row[materialColumn], 
+        row[linetypeColumn], translateColor(row[printcolorColumn]), printwidth]
+    return data
 
-def test():
-    print "Test finished"
+def translateColor(dashColor):
+    if len(dashColor) < 1: return [0,0,0]
+    return [int(x) for x in dashColor.split("-")]
+
+def AddLayers(layerData, layerNumbers):
+    def AddThisLayer(thisLayerData):
+        ##########################
+        try:
+            parentLayData = layerData[thisLayerData[parentColumn]]
+            parentLay = AddThisLayer(parentLayData)
+        except:
+            parentLay = None
+        ##########################
+        newLayer = rs.AddLayer(thisLayerData[nameColumn], thisLayerData[colorColumn], parent = parentLay)
+        rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
+        rs.LayerPrintColor(newLayer, thisLayerData[printcolorColumn])
+        rs.LayerPrintWidth(newLayer, thisLayerData[printwidthColumn])
+        return newLayer
+    
+    for layerNumber in layerNumbers:
+        try:
+            thisLayer = layerData[layerNumber]
+            AddThisLayer(thisLayer)
+        except:
+            pass
 
 def main():
     rs.EnableRedraw(False)
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", minimum = 1)
     if layerNumRequested is None: return
+    
     layerData = GetLayerData(PCPA_Layers)
-    layerNums = GetChildNumbers(layerNumRequested)
+    layerNums = GetChildNumbers(layerNumRequested, layerData)
+    
     AddLayers(layerData, layerNums)
     rs.EnableRedraw(True)
 
 if __name__ == "__main__":
     main()
-    

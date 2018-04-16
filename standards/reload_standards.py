@@ -2,22 +2,25 @@ import rhinoscriptsyntax as rs
 import shutil
 import os
 import sys
+sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
+import PCPA
+#print dir(PCPA.tools)
+fileLocations = PCPA.tools.config.GetDict()
 
-fileLocations = {
-'Template File' : r'X:\05_RHINO STANDARDS\PCPA.3dm',
-'Template Folder' : r'X:\05_RHINO STANDARDS',
-'ACAD Scheme Folder' : r'X:\05_RHINO STANDARDS\01 GENERAL SETTINGS\ACAD_Schemes',
-'Display Mode Folder' : r'X:\05_RHINO STANDARDS\02 DISPLAY SETTINGS\2018 Display Modes',
-'PCPA GH Components' : r'X:\05_RHINO STANDARDS\04 GRASSHOPPER\03_Install+Plugins\PCPA\V.01.02',
-'Analytics' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\Analytics.csv',
-'FunctionCounter.py' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON'
-}
+#sys.path.append(fileLocations['FunctionCounter.py'])
+#import FunctionCounter as fc
 
-sys.path.append(fileLocations['FunctionCounter.py'])
-import FunctionCounter as fc
-
+def CheckPaths():
+    print "Checking paths"
+    keys = list(fileLocations.keys())
+    print keys
+    for each in keys:
+        if (os.path.exists(fileLocations[each])):
+            print "Path exists"
+        else:print "Path not found"
 
 def ReloadPCPAStandards():
+    CheckPaths()
     print "Loading PCPA Standards"
     #SetTemplateFolder(fileLocations['Template Folder'])
     #SetTemplateFile(fileLocations['Template File'])
@@ -27,7 +30,7 @@ def ReloadPCPAStandards():
     #LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
     print "\tDisplay Modes Broken"
     #LoadDisplayModes(fileLocations['Display Mode Folder'])
-    LoadPCPAComponents(fileLocations['PCPA GH Components'])
+    #LoadPCPAComponents(fileLocations['PCPA GH Components'])
     print "File Updated"
 
 def SetTemplateFolder(filepath):
@@ -146,4 +149,4 @@ def LoadPCPAComponents(sourceFolder):
 
 if __name__ == "__main__":
     ReloadPCPAStandards()
-    fc.IterateCounter()
+    #fc.IterateCounter()
