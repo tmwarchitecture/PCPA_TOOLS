@@ -1,14 +1,17 @@
 import rhinoscriptsyntax as rs
-import csv
+#import csv
 import Rhino
 import sys
-sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
+#sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
+sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')
+
 import PCPA
+#print PCPA.tools
 import imp
-#csv = imp.load_source('csv', PCPA.config.GetValue('CSV'))
+csv = imp.load_source('CSV', PCPA.config.GetValue('CSV'))
 import scriptcontext as sc
 
-PCPA_Layers = PCPA.tools.config.GetValue('PCPA_Layers')
+PCPA_Layers = PCPA.config.GetValue('PCPA_Layers')
 
 layNumColumn = 0
 nameColumn = 1
@@ -38,14 +41,16 @@ def GetLayerData(fileName):
         layerData = list(reader)
     
     #Delete non-number layers
+    newList = []
     for i, row in enumerate(layerData):
         try:
             int(row[layNumColumn])
+            newList.append(row)
         except:
-            del layerData[i]
+            pass
     
     data = {}
-    for row in layerData:
+    for row in newList:
         try:
             printwidth = float(row[printwidthColumn])
         except:
@@ -87,9 +92,8 @@ def AddLayers(layerData, layerNumbers):
 
 def main():
     rs.EnableRedraw(False)
-    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", minimum = 1)
+    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 1000, minimum = 1)
     if layerNumRequested is None: return
-    
     layerData = GetLayerData(PCPA_Layers)
     layerNums = GetChildNumbers(layerNumRequested, layerData)
     

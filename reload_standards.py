@@ -1,11 +1,12 @@
 import rhinoscriptsyntax as rs
 import shutil
+import distutils.dir_util
 import os
 import sys
-sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
+#sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
+sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')
 import PCPA
-#print dir(PCPA.tools)
-fileLocations = PCPA.tools.config.GetDict()
+fileLocations = PCPA.config.GetDict()
 
 #sys.path.append(fileLocations['FunctionCounter.py'])
 #import FunctionCounter as fc
@@ -20,18 +21,24 @@ def CheckPaths():
         else:print "Path not found"
 
 def ReloadPCPAStandards():
-    CheckPaths()
+    #CheckPaths()
     print "Loading PCPA Standards"
-    #SetTemplateFolder(fileLocations['Template Folder'])
-    #SetTemplateFile(fileLocations['Template File'])
-    #print "\tImport Styles Broken"
+
+    SetTemplateFolder(fileLocations['Template Folder'])
+
+    SetTemplateFile(fileLocations['Template File'])
+
+    print "\tImport Annotation Styles Broken"
     #UpdateStyles(fileLocations['Template File'])
-    print "\tACAD Schemes Broken"
-    #LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
+    
+    #print "\tACAD Schemes Broken"
+    LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
+    
     print "\tDisplay Modes Broken"
     #LoadDisplayModes(fileLocations['Display Mode Folder'])
-    #LoadPCPAComponents(fileLocations['PCPA GH Components'])
-    print "File Updated"
+    
+    LoadPCPAComponents(fileLocations['PCPA GH Components'])
+    print "Reload complete"
 
 def SetTemplateFolder(filepath):
     if os.path.isdir(filepath) is False:
@@ -115,9 +122,33 @@ def LoadDisplayModes(filepath):
     else:
         print "\t{} Display modes updated".format(len(allFiles))
 
+def UpdateFolders(sourceMain, targetRoot):
+    #Get new folder names
+    PCPAroot = os.path.basename(os.path.normpath(sourceMain))
+    targetMain = os.path.join(targetRoot, PCPAroot)
+    
+    #Ensure targetMain exists
+    if os.path.isdir(targetMain):
+        shutil.rmtree(targetMain)
+        os.makedirs(targetMain)
+    else:
+        os.makedirs(targetMain)
+    
+    #Create subfolders
+    targetSubsShort = os.listdir(sourceMain)
+    for targetSubShort in targetSubsShort:
+        try:
+            targetSub = os.path.join(targetMain, targetSubShort)
+            sourceSub = os.path.join(sourceMain, targetSubShort)
+            os.makedirs(targetSub)
+            distutils.dir_util.copy_tree(sourceSub, targetSub)
+            print "\tLoaded PCPA {} GH Components".format(targetSubShort)
+        except:
+            print "\tFailed to load PCPA {} GH Components".format(targetSubShort)
+
 def LoadPCPAComponents(sourceFolder):
     """
-    copies all files from source folder to the grasshopper UserObject folder
+    copies PCPA GH Toolbar from source folder to the grasshopper UserObject folder
     """
     if os.path.isdir(sourceFolder) is False:
         print "FAIL-----PCPA Components folder does not exist"
@@ -133,19 +164,10 @@ def LoadPCPAComponents(sourceFolder):
         return None
     
     try:
-        for file in allFiles:
-            source = sourceFolder + "\\" + str(file)
-            shutil.copytree(source, targetFolder)
+        UpdateFolders(sourceFolder, targetFolder)
     except:
         print "FAIL-----Could not copy files"
         return None
-    
-    if len(allFiles)==0:
-        print "\tNo GH Components updated"
-    elif len(allFiles)==1:
-        print "\t{} PCPA Grasshopper component updated".format(len(allFiles))
-    else:
-        print "\t{} PCPA Grasshopper components updated".format(len(allFiles))
 
 if __name__ == "__main__":
     ReloadPCPAStandards()

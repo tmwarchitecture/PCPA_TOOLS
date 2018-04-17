@@ -1,2 +1,0 @@
-import UpdateFolders
-import config
