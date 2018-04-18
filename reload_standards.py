@@ -3,6 +3,7 @@ import shutil
 import distutils.dir_util
 import os
 import sys
+import stat
 #sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
 sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')
 import PCPA
@@ -24,20 +25,22 @@ def ReloadPCPAStandards():
     #CheckPaths()
     print "Loading PCPA Standards"
 
-    SetTemplateFolder(fileLocations['Template Folder'])
+    #SetTemplateFolder(fileLocations['Template Folder'])
 
-    SetTemplateFile(fileLocations['Template File'])
+    #SetTemplateFile(fileLocations['Template File'])
 
     print "\tImport Annotation Styles Broken"
     #UpdateStyles(fileLocations['Template File'])
     
     #print "\tACAD Schemes Broken"
-    LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
+    #LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
     
     print "\tDisplay Modes Broken"
     #LoadDisplayModes(fileLocations['Display Mode Folder'])
     
     LoadPCPAComponents(fileLocations['PCPA GH Components'])
+    
+    LoadGHDependencies(fileLocations['GH Dependencies'])
     print "Reload complete"
 
 def SetTemplateFolder(filepath):
@@ -122,29 +125,39 @@ def LoadDisplayModes(filepath):
     else:
         print "\t{} Display modes updated".format(len(allFiles))
 
+def on_rm_error( func, path, exc_info):
+    # path contains the path of the file that couldn't be removed
+    # let's just assume that it's read-only and unlink it.
+    os.chmod( path, stat.S_IWRITE )
+    os.unlink( path )
+
 def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
     targetMain = os.path.join(targetRoot, PCPAroot)
-    
     #Ensure targetMain exists
     if os.path.isdir(targetMain):
+        os.chmod(targetMain, stat.S_IWRITE)
+        print "Changed mode"
         shutil.rmtree(targetMain)
+        print "removed tree"
         os.makedirs(targetMain)
+        print "made new tree"
     else:
         os.makedirs(targetMain)
-    
     #Create subfolders
     targetSubsShort = os.listdir(sourceMain)
     for targetSubShort in targetSubsShort:
-        try:
-            targetSub = os.path.join(targetMain, targetSubShort)
-            sourceSub = os.path.join(sourceMain, targetSubShort)
-            os.makedirs(targetSub)
-            distutils.dir_util.copy_tree(sourceSub, targetSub)
-            print "\tLoaded PCPA {} GH Components".format(targetSubShort)
-        except:
-            print "\tFailed to load PCPA {} GH Components".format(targetSubShort)
+        sourceSub = os.path.join(sourceMain, targetSubShort)
+        if os.path.isdir(sourceSub):
+            #print "{} is a directory".format(sourceSub)
+            try:
+                targetSub = os.path.join(targetMain, targetSubShort)
+                os.makedirs(targetSub)
+                distutils.dir_util.copy_tree(sourceSub, targetSub)
+                print "\tLoaded PCPA {} GH Components".format(targetSubShort)
+            except:
+                print "\tFailed to load PCPA {} GH Components".format(targetSubShort)
 
 def LoadPCPAComponents(sourceFolder):
     """
@@ -167,6 +180,29 @@ def LoadPCPAComponents(sourceFolder):
         UpdateFolders(sourceFolder, targetFolder)
     except:
         print "FAIL-----Could not copy files"
+        return None
+
+def LoadGHDependencies(sourceFolder):
+    """
+    copies GH Dependencies from source folder to the grasshopper library folder
+    """
+    if os.path.isdir(sourceFolder) is False:
+        print "FAIL-----GH Dependecies folder does not exist"
+        return None
+    else:
+        allFiles = os.listdir(sourceFolder)
+    
+    try:
+        appData = os.getenv('APPDATA')
+        targetFolder = appData + r"\Grasshopper\Libraries"
+    except:
+        print "FAIL-----GH Library folder not found"
+        return None
+    
+    try:
+        UpdateFolders(sourceFolder, targetFolder)
+    except:
+        print "FAIL-----Could not copy dependencies"
         return None
 
 if __name__ == "__main__":
