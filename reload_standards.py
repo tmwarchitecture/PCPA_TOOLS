@@ -25,15 +25,15 @@ def ReloadPCPAStandards():
     #CheckPaths()
     print "Loading PCPA Standards"
 
-    #SetTemplateFolder(fileLocations['Template Folder'])
+    SetTemplateFolder(fileLocations['Template Folder'])
 
-    #SetTemplateFile(fileLocations['Template File'])
+    SetTemplateFile(fileLocations['Template File'])
 
     print "\tImport Annotation Styles Broken"
     #UpdateStyles(fileLocations['Template File'])
     
     #print "\tACAD Schemes Broken"
-    #LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
+    LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
     
     print "\tDisplay Modes Broken"
     #LoadDisplayModes(fileLocations['Display Mode Folder'])
@@ -125,12 +125,6 @@ def LoadDisplayModes(filepath):
     else:
         print "\t{} Display modes updated".format(len(allFiles))
 
-def on_rm_error( func, path, exc_info):
-    # path contains the path of the file that couldn't be removed
-    # let's just assume that it's read-only and unlink it.
-    os.chmod( path, stat.S_IWRITE )
-    os.unlink( path )
-
 def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
@@ -138,11 +132,11 @@ def UpdateFolders(sourceMain, targetRoot):
     #Ensure targetMain exists
     if os.path.isdir(targetMain):
         os.chmod(targetMain, stat.S_IWRITE)
-        print "Changed mode"
+        #print "Changed mode"
         shutil.rmtree(targetMain)
-        print "removed tree"
+        #print "removed tree"
         os.makedirs(targetMain)
-        print "made new tree"
+        #print "made new tree"
     else:
         os.makedirs(targetMain)
     #Create subfolders
