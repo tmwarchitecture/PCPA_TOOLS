@@ -163,9 +163,11 @@ def BatchPrintLayouts():
             print "No layouts in file"
             return
         
+        defaultPath = rs.DocumentPath()
+        
         defaultName = GetDatePrefix() + "_Rhino"
         
-        filename = rs.SaveFileName("Save", "PDF (*.pdf)|*.pdf||", filename = defaultName)
+        filename = rs.SaveFileName("Save", "PDF (*.pdf)|*.pdf||", folder = defaultPath, filename = defaultName)
         if filename is None: return
         
         names = []
