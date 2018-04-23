@@ -1,23 +1,17 @@
 Dimensions:
   Height: 120
-  Floors: 12
-  Levels:
-    1: 0.00
-    2: 10.00
-    3: 20.00
-    4: 30.00
 Project:
   Client:
-    Name: TestName
+    Name: Test Client
   Functions:
   - Residential
   - Commercial
   Location:
-    City: Jersey City
+    City: Test City
     Country: USA
-    State: New Jersey
+    State: Test State
     Street: 2112 Jersey Ave.
-  Name: The Embankment
-  Number: A1802
+  Name: Test Project
+  Number: Test Number
   Start Date: '2018-04-21'
 Version: '0.1'
