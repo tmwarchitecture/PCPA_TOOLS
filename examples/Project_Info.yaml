@@ -1,5 +1,10 @@
 Constraints:
   Height: 120
+Targets:
+  GFA: None
+  FAR: None
+  Num_Units: 0
+  Efficiency: 0
 Project:
   Client:
     Name: TestName

@@ -1,8 +1,10 @@
-import rhinoscriptsyntax as rs
+print "Running"
 import shutil
 import distutils.dir_util
 import os
 import sys
+print sys.version
+import rhinoscriptsyntax as rs
 import stat
 #sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
 sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')

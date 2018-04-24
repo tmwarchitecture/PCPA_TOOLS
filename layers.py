@@ -11,6 +11,7 @@ import imp
 csv = imp.load_source('CSV', PCPA.config.GetValue('CSV'))
 import scriptcontext as sc
 
+
 PCPA_Layers = PCPA.config.GetValue('PCPA_Layers')
 
 layNumColumn = 0
@@ -26,7 +27,10 @@ printwidthColumn = 7
 #print "HERE: " + str(Rhino.DocObjects.Tables.MaterialTable.CurrentMaterialIndex)
 def GetChildNumbers(parentNum, layerData):
     numsInCSV = list(layerData.keys())
-    if parentNum%1000 == 0:
+    if parentNum == 10000:
+        nums = range(0, parentNum)
+        return list(set(numsInCSV) & set(nums))
+    elif parentNum%1000 == 0:
         nums = range(parentNum+1, parentNum+1000)
         return list(set(numsInCSV) & set(nums))
     elif parentNum%100 == 0:
@@ -58,7 +62,7 @@ def GetLayerData(fileName):
         try:
             parentcol = int(row[parentColumn])
         except:
-            parentcol = 0
+            parentcol = row[parentColumn]
         data[int(row[layNumColumn])] = [int(row[layNumColumn]), row[nameColumn],
         parentcol, translateColor(row[colorColumn]), row[materialColumn], 
         row[linetypeColumn], translateColor(row[printcolorColumn]), printwidth]
@@ -69,11 +73,17 @@ def translateColor(dashColor):
     return [int(x) for x in dashColor.split("-")]
 
 def AddLayers(layerData, layerNumbers):
-    def AddThisLayer(thisLayerData):
+    counter = 0
+    def AddThisLayer(thisLayerData, counter):
         ##########################
         try:
+            counter += 1
+            if counter > 4:
+                print "Looop detected"
+                return
+            int(thisLayerData[parentColumn])
             parentLayData = layerData[thisLayerData[parentColumn]]
-            parentLay = AddThisLayer(parentLayData)
+            parentLay = AddThisLayer(parentLayData, counter)
         except:
             parentLay = None
         ##########################
@@ -86,15 +96,16 @@ def AddLayers(layerData, layerNumbers):
     for layerNumber in layerNumbers:
         try:
             thisLayer = layerData[layerNumber]
-            AddThisLayer(thisLayer)
+            AddThisLayer(thisLayer, counter)
         except:
             pass
 
 def main():
     rs.EnableRedraw(False)
-    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 1000, minimum = 1)
+    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     if layerNumRequested is None: return
     layerData = GetLayerData(PCPA_Layers)
+    
     layerNums = GetChildNumbers(layerNumRequested, layerData)
     
     AddLayers(layerData, layerNums)
