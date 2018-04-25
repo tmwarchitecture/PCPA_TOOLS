@@ -5,7 +5,7 @@ import scriptcontext as sc
 
 from libs import csv
 
-filename = "PCPA LAYERS.csv"
+filename = "PCPA LAYERS_V1.csv"
 dataDir = "data"
 root = os.path.dirname(os.path.realpath(__file__))
 csvPath = os.path.join(root,dataDir, filename)
