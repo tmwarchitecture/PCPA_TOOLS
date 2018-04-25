@@ -1,18 +1,16 @@
 import rhinoscriptsyntax as rs
-#import csv
 import Rhino
-import sys
-#sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
-sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')
-
-import PCPA
-#print PCPA.tools
-import imp
-csv = imp.load_source('CSV', PCPA.config.GetValue('CSV'))
+import os
 import scriptcontext as sc
 
+from libs import csv
 
-PCPA_Layers = PCPA.config.GetValue('PCPA_Layers')
+filename = "PCPA LAYERS.csv"
+dataDir = "data"
+root = os.path.dirname(os.path.realpath(__file__))
+csvPath = os.path.join(root,dataDir, filename)
+
+PCPA_Layers = csvPath
 
 layNumColumn = 0
 nameColumn = 1
