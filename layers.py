@@ -98,15 +98,22 @@ def AddLayers(layerData, layerNumbers):
         except:
             pass
 
+def CollapseRootLayers():
+    print "Collapse"
+    print Rhino.DocObjects.Tables.LayerTable.
+    #rs.coercerhinoobject(
+
 def main():
     rs.EnableRedraw(False)
-    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
-    if layerNumRequested is None: return
-    layerData = GetLayerData(PCPA_Layers)
+    #layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
+    #if layerNumRequested is None: return
+    #layerData = GetLayerData(PCPA_Layers)
     
-    layerNums = GetChildNumbers(layerNumRequested, layerData)
+    #layerNums = GetChildNumbers(layerNumRequested, layerData)
     
-    AddLayers(layerData, layerNums)
+    #AddLayers(layerData, layerNums)
+    
+    CollapseRootLayers()
     rs.EnableRedraw(True)
 
 if __name__ == "__main__":

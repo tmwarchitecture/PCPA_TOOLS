@@ -1,5 +1,5 @@
 Constraints:
-  Height: 120
+  MaxHeight: 120
 Targets:
   GFA: None
   FAR: None
@@ -8,11 +8,12 @@ Targets:
 Project:
   Client:
     Name: TestName
-  Location:
+  Address:
     City: Jersey City
-    Country: USA
+    CountryName: USA
     State: New Jersey
     Street: 2112 Jersey Ave.
+    PostalCode: 10001
   Name: The Embankment
   Number: A1802
   Phase:
@@ -30,7 +31,7 @@ Building:
         Name: L1
         Z: 0.00
       2:
-        Name: Mezz
+        Name: Mezzanine
         Z: 10.00
       3:
         Name: L2
@@ -58,4 +59,6 @@ Building:
         Z: 20.00
     Functions:
       - Residential
-Version: '0.1'
+Metadata:
+  Units: Inches
+  Version: '0.1'
