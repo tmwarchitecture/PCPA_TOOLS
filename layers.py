@@ -72,8 +72,10 @@ def translateColor(dashColor):
 
 def AddLayers(layerData, layerNumbers):
     counter = 0
+    rootLayers = []
     def AddThisLayer(thisLayerData, counter):
         ##########################
+        isRoot = False
         try:
             counter += 1
             if counter > 4:
@@ -83,12 +85,16 @@ def AddLayers(layerData, layerNumbers):
             parentLayData = layerData[thisLayerData[parentColumn]]
             parentLay = AddThisLayer(parentLayData, counter)
         except:
+            #rootLayers.append(thisLayerData[nameColumn])
+            isRoot = True
             parentLay = None
         ##########################
         newLayer = rs.AddLayer(thisLayerData[nameColumn], thisLayerData[colorColumn], parent = parentLay)
         rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
         rs.LayerPrintColor(newLayer, thisLayerData[printcolorColumn])
         rs.LayerPrintWidth(newLayer, thisLayerData[printwidthColumn])
+        if isRoot:
+            rootLayers.append(newLayer)
         return newLayer
     
     for layerNumber in layerNumbers:
@@ -97,23 +103,28 @@ def AddLayers(layerData, layerNumbers):
             AddThisLayer(thisLayer, counter)
         except:
             pass
+    return list(set(rootLayers))
 
-def CollapseRootLayers():
-    print "Collapse"
-    #print Rhino.DocObjects.Tables.LayerTable.
-    #rs.coercerhinoobject(
+def CollapseRootLayers(roots):
+    rs.EnableRedraw(False)
+    for root in roots:
+        try:
+            rootLay = sc.doc.Layers.FindId(rs.coerceguid(rs.LayerId(root)))
+            rootLay.IsExpanded = False
+        except:
+            pass
+    rs.EnableRedraw(True)
 
 def main():
     rs.EnableRedraw(False)
-    #layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
-    #if layerNumRequested is None: return
-    #layerData = GetLayerData(PCPA_Layers)
+    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
+    if layerNumRequested is None: return
+    layerData = GetLayerData(PCPA_Layers)
     
-    #layerNums = GetChildNumbers(layerNumRequested, layerData)
+    layerNums = GetChildNumbers(layerNumRequested, layerData)
     
-    #AddLayers(layerData, layerNums)
-    
-    CollapseRootLayers()
+    roots = AddLayers(layerData, layerNums)
+    CollapseRootLayers(roots)
     rs.EnableRedraw(True)
 
 if __name__ == "__main__":
