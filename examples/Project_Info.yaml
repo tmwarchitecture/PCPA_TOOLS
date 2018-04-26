@@ -39,6 +39,7 @@ Building:
       4:
         Name: Roof
         Z: 30.00
+    Geometry: None
     Functions:
       - Residential
       - Commercial

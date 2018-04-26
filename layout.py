@@ -114,11 +114,11 @@ def AddTitleBlock(size):
     #rs.Command("_Paste ")
     #rs.UnselectAllObjects()
     
-    projectTitle = rs.GetDocumentData(section = "PCPA", entry = "Project Title")
+    projectTitle = rs.GetDocumentData(section = "PCPA", entry = "Project_Name")
     if projectTitle is None:
         projectTitle = "Project Title"
     
-    clientName = rs.GetDocumentData(section = "PCPA", entry = "Client Name")
+    clientName = rs.GetDocumentData(section = "PCPA", entry = "Client_Name")
     if clientName is None:
         clientName = "Client Name"
     

@@ -11,11 +11,11 @@ class LevelsDialog(forms.Dialog):
         self.Size = drawing.Size(600,260)
         self.Padding = drawing.Padding(5, 5)
         
-        data = self.GenData()
+        #data = self.GenData()
         
         
         grid = forms.GridView()
-        grid.DataStore = data
+        #grid.DataStore = data
         grid.BackgroundColor = drawing.Colors.LightGrey
         
         nameColumn = forms.GridColumn()
@@ -52,8 +52,8 @@ class LevelsDialog(forms.Dialog):
     def OnCancelPressed(self, sender, e):
         self.Close()
     
-    def GenData(self):
-        
+    #def GenData(self):
+    #   
 
 dialog = LevelsDialog()
 dialog.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
