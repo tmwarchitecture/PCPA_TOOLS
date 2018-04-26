@@ -100,7 +100,7 @@ def AddLayers(layerData, layerNumbers):
 
 def CollapseRootLayers():
     print "Collapse"
-    print Rhino.DocObjects.Tables.LayerTable.
+    #print Rhino.DocObjects.Tables.LayerTable.
     #rs.coercerhinoobject(
 
 def main():
