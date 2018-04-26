@@ -68,7 +68,11 @@ def GetLayerData(fileName):
 
 def translateColor(dashColor):
     if len(dashColor) < 1: return [0,0,0]
-    return [int(x) for x in dashColor.split("-")]
+    try:
+        color = [int(x) for x in dashColor.split("-")]
+    except:
+        color = None
+    return color
 
 def AddLayers(layerData, layerNumbers):
     counter = 0
