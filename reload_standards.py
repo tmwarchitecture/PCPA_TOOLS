@@ -1,17 +1,11 @@
 import shutil
 import distutils.dir_util
 import os
-import sys
-print sys.version
 import rhinoscriptsyntax as rs
 import stat
-#sys.path.append(r'E:\Files\Work\LIBRARY\06_RHINO\41_PCPA')
-sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')
-import PCPA
-fileLocations = PCPA.config.GetDict()
 
-#sys.path.append(fileLocations['FunctionCounter.py'])
-#import FunctionCounter as fc
+import config
+fileLocations = config.GetDict()
 
 def CheckPaths():
     print "Checking paths"
@@ -23,6 +17,10 @@ def CheckPaths():
         else:print "Path not found"
 
 def ReloadPCPAStandards():
+    #Check Rhino Version
+    if rs.ExeVersion() < 6:
+        print "***Reload standards only works for Rhino 6***"
+        return None
     #CheckPaths()
     print "Loading PCPA Standards"
 
@@ -80,7 +78,7 @@ def UpdateStyles(filepath):
 
 def LoadAcadSchemes(filepath):
     if os.path.isdir(filepath) is False:
-        print "FAIL-----ACAD Scheme folder does not exist"
+        print "FAIL-----ACAD Scheme folder not found"
         return None
     else:
         allFilesRaw = os.listdir(filepath)
@@ -106,7 +104,7 @@ def LoadAcadSchemes(filepath):
 
 def LoadDisplayModes(filepath):
     if os.path.isdir(filepath) is False:
-        print "FAIL-----Display Mode folder does not exist"
+        print "FAIL-----Display Mode folder not found"
         return None
     else:
         allFilesRaw = os.listdir(filepath)
@@ -159,7 +157,7 @@ def LoadPCPAComponents(sourceFolder):
     copies PCPA GH Toolbar from source folder to the grasshopper UserObject folder
     """
     if os.path.isdir(sourceFolder) is False:
-        print "FAIL-----PCPA Components folder does not exist"
+        print "FAIL-----PCPA Components folder not found"
         return None
     else:
         allFiles = os.listdir(sourceFolder)
@@ -182,7 +180,7 @@ def LoadGHDependencies(sourceFolder):
     copies GH Dependencies from source folder to the grasshopper library folder
     """
     if os.path.isdir(sourceFolder) is False:
-        print "FAIL-----GH Dependecies folder does not exist"
+        print "FAIL-----GH Dependecies folder not found"
         return None
     else:
         allFiles = os.listdir(sourceFolder)

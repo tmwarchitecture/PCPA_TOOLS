@@ -3,9 +3,7 @@ import scriptcontext as sc
 import Rhino
 import os.path
 import datetime
-import sys
-sys.path.append(r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA')
-import PCPA
+
 
 def GetDatePrefix():
     year = int(datetime.datetime.today().strftime('%Y'))-2000
@@ -14,13 +12,7 @@ def GetDatePrefix():
 
 def AddTitleBlock(size):
     rs.EnableRedraw(False)
-    fileLocations = PCPA.config.GetDict()
     if size == 11:
-        ttlPathRaw = fileLocations['Titleblock 11x17L']
-        if os.path.isfile(ttlPathRaw) == False:
-            print "Titleblock file not found"
-            return
-        ttlPath = '"' + ttlPathRaw + '"'
         offset = .354
         row1 = offset
         row2 = row1*2
@@ -45,12 +37,6 @@ def AddTitleBlock(size):
         txtSizeM = .094
     
     elif size == 8:
-        ttlPathRaw = fileLocations['Titleblock 8.5x11L']
-        if os.path.isfile(ttlPathRaw) == False:
-            print "Titleblock file not found"
-            return
-        ttlPath = '"' + ttlPathRaw + '"'
-        
         offset = .229
         row1 = offset
         row2 = row1*2
@@ -75,11 +61,6 @@ def AddTitleBlock(size):
         txtSizeM = .063
         
     elif size == 18:
-        ttlPathRaw = fileLocations['Titleblock 18x24L']
-        if os.path.isfile(ttlPathRaw) == False:
-            print "Titleblock file not found"
-            return
-        ttlPath = '"' + ttlPathRaw + '"'
         offset = .5
         row1 = offset
         row2 = row1*2
@@ -106,13 +87,7 @@ def AddTitleBlock(size):
     layout = sc.doc.Views.GetPageViews()[-1]
     if layout is None:  return
     
-    #Insert block
-    #rs.Command("-_Insert f "+ttlPath+" Block Enter 0,0,0 1.0 0.0", False)
-    #rs.Command("-_SelLast Enter")
-    #rs.Command("_Cut ")
     sc.doc.Views.ActiveView = layout
-    #rs.Command("_Paste ")
-    #rs.UnselectAllObjects()
     
     projectTitle = rs.GetDocumentData(section = "PCPA", entry = "Project_Name")
     if projectTitle is None:
