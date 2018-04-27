@@ -195,7 +195,7 @@ def LoadGHDependencies(sourceFolder):
     try:
         UpdateFolders(sourceFolder, targetFolder)
     except:
-        print "FAIL-----Could not copy dependencies. Close and reopen Rhino, then run this again."
+        print "FAIL-----Could not copy dependencies. You must have grasshopper open. Close and reopen Rhino, then run this again."
         return None
 
 if __name__ == "__main__":
