@@ -13,3 +13,9 @@ print "Build date:" + str(rs.BuildDate())
 print "SDK Version:"+ str( rs.SdkVersion())
 print "Executable Version:", rs.ExeVersion()
 print "Executable Service Release:", rs.ExeServiceRelease()
+
+
+rs.EnableRedraw(False)
+#print "New layer:", rs.AddLayer("MyLayer3")
+print "New layer:", rs.AddLayer("MyLayer3::MyLayer4")
+rs.EnableRedraw(True)

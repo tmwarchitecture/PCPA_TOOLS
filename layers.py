@@ -18,9 +18,12 @@ materialColumn = 4
 linetypeColumn = 5
 printcolorColumn = 6
 printwidthColumn = 7
+global fullLayerNameColumn
+fullLayerNameColumn = 8
 
 #sc.doc.Materials.FindIndex(
-#print "HERE: " + str(Rhino.DocObjects.Tables.MaterialTable.CurrentMaterialIndex)
+#print "HERE: " + str(Rhino.DocObjects.Tables.MaterialTable.CurrentMaterialIndex).
+
 def GetChildNumbers(parentNum, layerData):
     numsInCSV = list(layerData.keys())
     if parentNum == 10000:
@@ -62,6 +65,39 @@ def GetLayerData(fileName):
         data[int(row[layNumColumn])] = [int(row[layNumColumn]), row[nameColumn],
         parentcol, translateColor(row[colorColumn]), row[materialColumn], 
         row[linetypeColumn], translateColor(row[printcolorColumn]), printwidth]
+    
+    data = AddLayerFullName(data)
+    return data
+
+def AddLayerFullName(data):
+    for eachRow in data:
+        fullName = []
+        counter = 0
+        def getShortName(number, fullName, counter):
+            counter += 1
+            if counter > 5:
+                print "Loop detected"
+                return
+            
+            shortName = data[number][nameColumn]
+            try:
+                #Has a parent layer
+                parentNum = int(data[number][parentColumn])
+                fullName.append(shortName)
+                fullName.append('::')
+                fullName = getShortName(parentNum, fullName, counter)
+            except:
+                #No parent layer
+                fullName.append(shortName)
+            return fullName
+        
+        fullName = getShortName(eachRow, fullName, counter)
+        fullName.reverse()
+        fullNameString = "".join(fullName)
+        data[eachRow].append(fullNameString)
+        global fullLayerNameColumn
+        fullLayerNameColumn = len(data[eachRow])-1
+        #print data[eachRow]
     return data
 
 def translateColor(dashColor):
@@ -91,7 +127,7 @@ def AddLayers(layerData, layerNumbers):
             isRoot = True
             parentLay = None
         ##########################
-        newLayer = rs.AddLayer(thisLayerData[nameColumn], thisLayerData[colorColumn], parent = parentLay)
+        newLayer = rs.AddLayer(thisLayerData[fullLayerNameColumn], thisLayerData[colorColumn])
         rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
         rs.LayerPrintColor(newLayer, thisLayerData[printcolorColumn])
         rs.LayerPrintWidth(newLayer, thisLayerData[printwidthColumn])
@@ -117,17 +153,19 @@ def CollapseRootLayers(roots):
             pass
     rs.EnableRedraw(True)
 
-def main():
+def AddSpecificLayer(layerNumRequested):
     rs.EnableRedraw(False)
-    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
     
     layerNums = GetChildNumbers(layerNumRequested, layerData)
+    layerNums.sort()
     
     roots = AddLayers(layerData, layerNums)
     CollapseRootLayers(roots)
     rs.EnableRedraw(True)
+    return None
 
 if __name__ == "__main__":
-    main()
+    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
+    AddSpecificLayer(layerNumRequested)

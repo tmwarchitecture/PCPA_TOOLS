@@ -3,7 +3,7 @@ import scriptcontext as sc
 import Rhino
 import os.path
 import datetime
-
+import layers
 
 def GetDatePrefix():
     year = int(datetime.datetime.today().strftime('%Y'))-2000
@@ -89,27 +89,42 @@ def AddTitleBlock(size):
     
     sc.doc.Views.ActiveView = layout
     
-    projectTitle = rs.GetDocumentData(section = "PCPA", entry = "Project_Name")
-    if projectTitle is None:
-        projectTitle = "Project Title"
+    if rs.GetDocumentData(section = "PCPA", entry = "Project_Name") is None:
+        rs.SetDocumentData(section = "PCPA", entry = "Project_Name", value = "Project Title")
+    projectTitle = '%<DocumentText("PCPA\Project_Name")>%'
     
-    clientName = rs.GetDocumentData(section = "PCPA", entry = "Client_Name")
-    if clientName is None:
-        clientName = "Client Name"
+    if rs.GetDocumentData(section = "PCPA", entry = "Client_Name") is None:
+        rs.SetDocumentData(section = "PCPA", entry = "Client_Name", value = "Client Name")
+    clientName = '%<DocumentText("PCPA\Client_Name")>%'
     
     #Add text
-    rs.AddText("Title", txtBase1, txtSizeL, justification = 2)
-    rs.AddText(projectTitle, txtBase2, txtSizeL, justification = 1)
-    rs.AddText('%<Date("MMMM d, yyyy")>%', txtBase3, txtSizeM, justification = 4)
+    textList = []
+    textList.append(rs.AddText("Title", txtBase1, txtSizeL, justification = 2))
+    textList.append(rs.AddText(projectTitle, txtBase2, txtSizeL, justification = 1))
+    textList.append(rs.AddText('%<Date("MMMM d, yyyy")>%', txtBase3, txtSizeM, justification = 4))
     
-    rs.AddText(clientName, txtBase4, txtSizeM, justification = 1)
-    rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4)
+    textList.append(rs.AddText(clientName, txtBase4, txtSizeM, justification = 1))
+    textList.append(rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4))
     
-    rs.AddLine(lineSt, lineEnd)
+    line = rs.AddLine(lineSt, lineEnd)
     
     #Add detail
-    rs.AddDetail(layout.ActiveViewportID, pt1, pt2, "PCPA " + str(layout.PageName), 7)
+    detail = rs.AddDetail(layout.ActiveViewportID, pt1, pt2, "PCPA " + str(layout.PageName), 7)
     
+    #Change layers
+    try:
+        rs.ObjectLayer(line, "8_DRAWING::PCP-02")
+    except:
+        pass
+    try:
+        rs.ObjectLayer(detail, "8_DRAWING::Viewport")
+    except:
+        pass
+    try:
+        for eachText in textList:
+            rs.ObjectLayer(eachText, "8_DRAWING::Layout")
+    except:
+        pass
     rs.EnableRedraw(True)
 
 def AddLayout(size):
@@ -128,6 +143,7 @@ def AddLayout(size):
     result = rs.Command('-_Layout ' + name + width + height + '0 ', False)
     
     if result:
+        layers.AddSpecificLayer(8000)
         AddTitleBlock(size)
 
 def BatchPrintLayouts():
@@ -177,7 +193,7 @@ def BatchPrintLayouts():
 
 def main(func):
     if func is None: return
-
+    
     if func < 50:
         AddLayout(func)
     elif func == 90:
