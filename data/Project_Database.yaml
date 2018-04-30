@@ -7,13 +7,16 @@ Targets:
   Efficiency: 0
 Project:
   Client:
-    Name: TestName
-  Address:
+    Name: Sample Client Name
+  Location:
     City: Jersey City
     CountryName: USA
     State: New Jersey
+    Country: United States of America
     Street: 2112 Jersey Ave.
     PostalCode: 10001
+    Latitude: 0
+    Longitude: 0
   Name: The Embankment
   Number: A1802
   Phase:
@@ -58,6 +61,7 @@ Building:
       3:
         Name: Roof
         Z: 20.00
+    Geometry: None
     Functions:
       - Residential
 Metadata:

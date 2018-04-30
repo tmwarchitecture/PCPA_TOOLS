@@ -10,8 +10,6 @@ dataDir = "data"
 root = os.path.dirname(os.path.realpath(__file__))
 csvPath = os.path.join(root,dataDir, filename)
 
-PCPA_Layers = csvPath
-
 layNumColumn = 0
 nameColumn = 1
 parentColumn = 2
@@ -123,7 +121,7 @@ def main():
     rs.EnableRedraw(False)
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     if layerNumRequested is None: return
-    layerData = GetLayerData(PCPA_Layers)
+    layerData = GetLayerData(csvPath)
     
     layerNums = GetChildNumbers(layerNumRequested, layerData)
     
