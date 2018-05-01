@@ -1,3 +1,4 @@
-**Use the links on the right to navigate.**
+**A suite of tools for Rhino**
 
-# Installation
+# LINKS
+[Grasshopper](Grasshopper)
