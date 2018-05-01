@@ -12,11 +12,7 @@
       <text>
         <locale_1033>PCPA</locale_1033>
       </text>
-      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator" />
       <menu_item guid="bde6c4ed-797b-4e80-8193-9cc471745ed7">
         <text>
           <locale_1033>Add Layers (version 1.0)</locale_1033>
@@ -31,11 +27,7 @@
         <macro_id>6615f5ec-dd18-4027-95b9-5f82f8191ee1</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator" />
       <menu_item guid="5cf010c9-b35b-4d8d-be64-20e802901b50">
         <text>
           <locale_1033>Project Info</locale_1033>
@@ -50,11 +42,7 @@
         <macro_id>4f60c793-b88e-417b-a294-fc97a166bb4d</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator" />
       <menu guid="3eed0838-f574-4a3b-88c4-b528ee9c6673">
         <text>
           <locale_1033>Layout</locale_1033>
@@ -80,11 +68,7 @@
           <macro_id>c8c8a617-3da8-4123-b614-5054bda70e75</macro_id>
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
-        <menu_item guid="8c4e08bf-6d56-47ea-90d6-a536bc1241ac" item_type="separator">
-          <text>
-            <locale_1033 />
-          </text>
-        </menu_item>
+        <menu_item guid="8c4e08bf-6d56-47ea-90d6-a536bc1241ac" item_type="separator" />
         <menu_item guid="522d12e9-1d8c-47db-a7b1-15cd7400a5c0">
           <text>
             <locale_1033>Batch Print</locale_1033>
@@ -100,11 +84,7 @@
         <macro_id>25760cd1-3775-435b-8fc0-3bf49a725c5c</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator" />
       <menu_item guid="375676d6-2c90-4256-853c-cce35dcd82c5">
         <text>
           <locale_1033>Run Test</locale_1033>
@@ -112,21 +92,21 @@
         <macro_id>1b73184c-0b30-4b6a-90be-4f51bcee8e4a</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="8eadbf53-f9e7-425b-aaba-fa0c279d74f4">
+      <menu_item guid="6e9eaf89-456a-4add-8705-72e9404b8e9f">
         <text>
-          <locale_1033>Version 0.2.1</locale_1033>
+          <locale_1033>Version 0.2.2</locale_1033>
         </text>
         <macro_id>275e643f-1239-4c8c-bb35-dc902a839bd6</macro_id>
-        <macro_lib_id>1231ac71-7f0b-4816-b6d9-335a14efbfc3</macro_lib_id>
+        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="aea5fd27-5725-4b42-b9d6-1876db3b9083" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="ca1087a1-2885-4328-a093-ed24bb22e13c" active_tool_bar_group="cbf63da2-7bd8-4ad7-b102-717c54122159" single_file="False" hide_single_tab="False" point_floating="796,505">
+    <tool_bar_group guid="aea5fd27-5725-4b42-b9d6-1876db3b9083" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="42caf32e-bf98-4918-b25a-89907e760206" active_tool_bar_group="cbf63da2-7bd8-4ad7-b102-717c54122159" single_file="False" hide_single_tab="False" point_floating="796,505">
       <text>
         <locale_1033>Toolbar group</locale_1033>
       </text>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="4096" bar_id="59466" mru_width="868" point_pos="-2,-2" float_point="796,505" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="41,62" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="4096" bar_id="59467" mru_width="868" point_pos="-2,-2" float_point="796,505" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="41,62" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars />
@@ -136,16 +116,16 @@
         <locale_1033>Version</locale_1033>
       </text>
       <tooltip>
-        <locale_1033>Version 0.2.1</locale_1033>
+        <locale_1033>Version 0.2.2</locale_1033>
       </tooltip>
       <help_text>
-        <locale_1033>Version 0.2.1</locale_1033>
+        <locale_1033>Version 0.2.2</locale_1033>
       </help_text>
       <button_text>
-        <locale_1033>Version 0.2.1</locale_1033>
+        <locale_1033>Version 0.2.2</locale_1033>
       </button_text>
       <menu_text>
-        <locale_1033>Version 0.2.1</locale_1033>
+        <locale_1033>Version 0.2.2</locale_1033>
       </menu_text>
     </macro_item>
     <macro_item guid="25760cd1-3775-435b-8fc0-3bf49a725c5c">
@@ -164,7 +144,7 @@
       <menu_text>
         <locale_1033>Reload Standards</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\reload_standards.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\reload_standards.py)</script>
     </macro_item>
     <macro_item guid="4f6124ea-720e-4326-8906-74936e80e023">
       <text>
@@ -182,7 +162,7 @@
       <menu_text>
         <locale_1033>Add Layers (version 1.0)</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layers_v1.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers_v1.py)</script>
     </macro_item>
     <macro_item guid="c0a1c8db-7283-4eab-af8e-866975ecd24b" bitmap_id="16f04bdc-f8d7-467a-b589-32f49261e97c">
       <text>
@@ -200,7 +180,7 @@
       <menu_text>
         <locale_1033>11x17 Landscape</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layout.py) 11 </script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 11 </script>
     </macro_item>
     <macro_item guid="0c048159-f75e-45e1-bc5b-a1668f2aa79b" bitmap_id="bddbcf8e-5ea7-43b8-8918-e24869d2f944">
       <text>
@@ -218,7 +198,7 @@
       <menu_text>
         <locale_1033>8.5x11 Landscape</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layout.py) 8 </script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 8 </script>
     </macro_item>
     <macro_item guid="c8c8a617-3da8-4123-b614-5054bda70e75" bitmap_id="9e3253ed-6ca0-491c-bd25-b1908ca2039d">
       <text>
@@ -236,7 +216,7 @@
       <menu_text>
         <locale_1033>18x24 Landscape</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layout.py) 18 </script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 18 </script>
     </macro_item>
     <macro_item guid="6107277e-2dc8-4281-b927-e6583118085c" bitmap_id="1b2e914b-1f3d-4095-94ea-3033d317643f">
       <text>
@@ -254,7 +234,7 @@
       <menu_text>
         <locale_1033>Batch Print</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layout.py) 90</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 90</script>
     </macro_item>
     <macro_item guid="1b73184c-0b30-4b6a-90be-4f51bcee8e4a">
       <text>
@@ -272,7 +252,7 @@
       <menu_text>
         <locale_1033>Run Test</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\test\test.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\test\test.py)</script>
     </macro_item>
     <macro_item guid="5ebbcfc3-bdb6-414b-a51a-37159f85d8f7">
       <text>
@@ -290,7 +270,7 @@
       <menu_text>
         <locale_1033>Facade_Generic</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layers.py) 103 </script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 103 </script>
     </macro_item>
     <macro_item guid="03b5dc94-1a81-423e-8c79-42a9ec1ae1c3">
       <text>
@@ -308,7 +288,7 @@
       <menu_text>
         <locale_1033>Glazing_Spandrel_Generic</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layers.py) 104 </script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 104 </script>
     </macro_item>
     <macro_item guid="527f2c21-f9f5-4cc4-8c7e-4408b2374869">
       <text>
@@ -326,7 +306,7 @@
       <menu_text>
         <locale_1033>ALL OBJECTS ARCHITECTURE</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layers.py) 10000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 10000 </script>
     </macro_item>
     <macro_item guid="06e196d8-4e52-4d51-b87c-789c81c37ac6">
       <text>
@@ -344,7 +324,7 @@
       <menu_text>
         <locale_1033>Project Info</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\project_info.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\project_info.py)</script>
     </macro_item>
     <macro_item guid="4f60c793-b88e-417b-a294-fc97a166bb4d">
       <text>
@@ -362,7 +342,7 @@
       <menu_text>
         <locale_1033>Project Levels</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\project_levels.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\project_levels.py)</script>
     </macro_item>
     <macro_item guid="6615f5ec-dd18-4027-95b9-5f82f8191ee1">
       <text>
@@ -380,7 +360,7 @@
       <menu_text>
         <locale_1033>Add Layers (version 2.0)</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\layers.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py)</script>
     </macro_item>
   </macros>
   <bitmaps>

@@ -1,0 +1,88 @@
+building:
+  0:
+    functions:
+    - residential
+    - commercial
+    geometry: none
+    level:
+      0:
+        ftf: 15.0
+        functions: -Lobby
+        name: L1
+        z: 0.0
+      1:
+        ftf: 15.0
+        functions: -Lobby
+        name: Mezzanine
+        z: 10.0
+      2:
+        ftf: 15.0
+        functions:
+          -Lobby
+          -Other
+        name: L2
+        z: 20.0
+      3:
+        ftf: 15.0
+        functions:
+        name: Roof
+        z: 30.0
+    name: Tower 1
+  1:
+    functions:
+    - residential
+    geometry: none
+    level:
+      -1:
+        ftf: 15.0
+        functions: -Lobby
+        name: b1
+        z: -10.0
+      0:
+        ftf: 15.0
+        functions: -Lobby
+        name: l1
+        z: 0.0
+      1:
+        ftf: 15.0
+        functions: -Lobby
+        name: mezz
+        z: 10.0
+      2:
+        ftf: 15.0
+        functions: -Lobby
+        name: roof
+        z: 20.0
+    name: Tower 2
+constraints:
+  maxheight: 120
+metadata:
+  date last edited: 2018-04-26
+  units: inches
+  version: '0.1'
+project:
+  client:
+    name: sample client name
+  location:
+    city: jersey city
+    country: united states of america
+    countryname: usa
+    latitude: 0
+    longitude: 0
+    postalcode: 10001
+    state: new jersey
+    street: 2112 jersey ave.
+  name: TEst
+  number: a1802
+  phase:
+    1:
+      name: concept
+      start date: 2018-04-21
+    2:
+      name: schematic design
+      start date: 2018-04-24
+targets:
+  efficiency: 0
+  far: none
+  gfa: none
+  num_units: 0
