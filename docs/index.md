@@ -1,1 +1,3 @@
-#This is the test docs
+**Use the links on the right to navigate.**
+
+# Installation
