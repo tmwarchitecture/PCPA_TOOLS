@@ -37,18 +37,16 @@ def SaveDatabase(data, databaseFile):
 def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     existingData = GetProjectDatabase(oldDatabaseFile)
     
+    
+    #print existingData
+    
+    newDict = {}
     for row in data:
-        #Name
-        try:
-            existingData['building'][int(bldgNum)]['level'][row[0]]['name'] = row[1]
-        except:
-            existingData['building'][int(bldgNum)]['level'][row[0]].update({'name': row[1]})
-        #Func
-        existingData['building'][int(bldgNum)]['level'][row[0]]['functions'] = row[2]
-        #FTF
-        existingData['building'][int(bldgNum)]['level'][row[0]]['ftf'] = row[3]
-        # Z
-        existingData['building'][int(bldgNum)]['level'][row[0]]['z'] = row[4]
+        newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4])}
+    
+    existingData['building'][int(bldgNum)]['level'] = newDict
+    
+    #print newDict
     
     SaveDatabase(existingData, newDatabaseFile)
     print "{} saved".format(newDatabaseFile)
@@ -81,10 +79,11 @@ def GetProjectLevelData(databaseFile, bldgNum):
     return levels
 
 if __name__ == "__main__":
+    pass
     #data = GetDatabaseTemplate()
     #data['project']['name'] = "TEst"
     #path = r'C:\Users\twilliams\Desktop\TEMP\Database'
     #print SaveDatabase(data, path, 'Project_Info.yaml')
     
-    path = r'C:\Users\twilliams\Desktop\TEMP\Database'
-    GetProjectLevels(path, 'Project_Info.yaml')
+    #path = r'C:\Users\twilliams\Desktop\TEMP\Database'
+    #GetProjectLevels(path, 'Project_Info.yaml')

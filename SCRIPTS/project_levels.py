@@ -17,6 +17,7 @@ class LevelsDialog(forms.Dialog):
         self.Title = "Project Levels"
         self.Size = drawing.Size(500,545)
         self.Padding = drawing.Padding(5, 5)
+        self.Spacing = drawing.Size(2,2)
         
         self.databasePath = r'C:\Users\twilliams\Desktop\TEMP\Database'
         self.versionName = r'Project_Info.yaml'
@@ -31,7 +32,13 @@ class LevelsDialog(forms.Dialog):
             ctxtMnu = forms.ContextMenu()
             ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert New Floor Above")
             ctxtInsertRow.Click += self.OnInsertRowAbove
+            
+            ctxtDeleteRow = forms.ButtonMenuItem(Text = "Remove Floor")
+            ctxtDeleteRow.Click += self.OnDeleteRow
+            
             ctxtMnu.Items.Add(ctxtInsertRow)
+            ctxtMnu.Items.Add(ctxtDeleteRow)
+            
             self.grid.ContextMenu = ctxtMnu
         def menuBar():
             mnuFile = forms.ButtonMenuItem(Text = "File")
@@ -52,6 +59,7 @@ class LevelsDialog(forms.Dialog):
             mnuFile.Items.Add(mnuSaveAs)
             mnuFile.Items.Add(mnuClose)
             mnuBar = forms.MenuBar(mnuFile)
+            #mnuBar.Spacing = drawing.Size(2,2)
             
             self.Menu = mnuBar
         def dropdown():
@@ -60,8 +68,8 @@ class LevelsDialog(forms.Dialog):
             bldgNames = []
             try:
                 bldgData = data['building']
-                for key in bldgData.keys():
-                    bldgNames.append(bldgData[key]['name'])
+                for i, key in enumerate(bldgData.keys()):
+                    bldgNames.append(str(i) + " - " + bldgData[key]['name'])
             except:
                 bldgNames = [''] 
             
@@ -82,6 +90,7 @@ class LevelsDialog(forms.Dialog):
             self.grid = forms.GridView()
             self.grid.BackgroundColor = drawing.Colors.LightGrey
             self.grid.Size = drawing.Size(300,425)
+            self.grid.GridLines = forms.GridLines.Both
             
             #COLUMNS
             numberColumn = forms.GridColumn()
@@ -140,6 +149,7 @@ class LevelsDialog(forms.Dialog):
     def OnCancelPressed(self, sender, e):
         self.Close()
     
+    #Open File
     def OnFileOpenClick(self, sender, e):
         self.databaseFile = rs.OpenFileName("Open file")
         if self.databaseFile is None: return
@@ -165,6 +175,7 @@ class LevelsDialog(forms.Dialog):
         
         print "Openig new file"
     
+    #Save
     def OnFileSaveAsClick(self, sender, e):
         newFile = rs.SaveFileName("Save", "YAML Files (*.yaml)|*.yaml||")
         dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, newFile, self.drpdwnBuildingNum.SelectedIndex)
@@ -174,42 +185,61 @@ class LevelsDialog(forms.Dialog):
     def OnFileSaveClick(self, sender, e):
         dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.drpdwnBuildingNum.SelectedIndex)
     
+    #Close
     def OnFileCloseClick(self, sender, e):
         self.grid.DataStore = []
         self.drpdwnBuildingNum.DataStore = []
         self.databaseFile = None
     
+    #Building Num
     def OnBldgNumChanged(self, sender, e):
         try:
             self.GenData()
         except:
             print "Error reading the database"
     
+    #Grid editing
     def OnInsertRowAbove(self, sender, e):
         print "Inserting above"
-        data = list(self.grid.DataStore)
-        blankRow = [None, ' ', ' ', ' ', ' ']
+        data = self.grid.DataStore
+        try:
+            newRowFunc = data[self.grid.SelectedRow][2]
+            newRowFTF = float(data[self.grid.SelectedRow][3])
+            newRowHeight = newRowFTF + float(data[self.grid.SelectedRow][4])
+        except:
+            newRowFTF = ''
+            newRowHeight = ''
+            newRowFunc = ''
+        blankRow = ['', '', newRowFunc, newRowFTF, newRowHeight]
         data.insert(self.grid.SelectedRow, blankRow)
         self.grid.DataStore = data
-        self.RenumberData(self.grid.SelectedItem[0])
+        self.RenumberRows()
+    
+    def OnDeleteRow(self, sender, e):
+        data = self.grid.DataStore
         
-        
-    def RenumberData(self, index):
-        data = list(self.grid.DataStore)
-        for row in data:
-            if row[0] is None:
-                row[0] = index+1
-            elif int(row[0]) > index:
-                row[0] = row[0] + 1
-
-                
+        del data[self.grid.SelectedRow]
         
         self.grid.DataStore = data
+        
+        self.RenumberRows()
+        
+        print self.grid.DataStore
+        #print "Deleteing row {}".format(self.grid.SelectedItem[0])
+    
+    #Util functions
+    def RenumberRows(self):
+        data = self.grid.DataStore
+        data.reverse()
+        for i, row in enumerate(data):
+            row[0] = i
+        data.reverse()
+        self.grid.DataStore = data
+        print "Renumbered"
     
     def GenData(self):
         bldgNum = self.drpdwnBuildingNum.SelectedIndex
         try:
-            
             self.grid.DataStore = dt.GetProjectLevelData(self.databaseFile, bldgNum)[::-1]
         except:
             self.grid.DataStore = []

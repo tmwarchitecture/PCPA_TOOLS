@@ -383,7 +383,7 @@ def main():
         print("WTF are your units?")
     
     #route = AddLine()
-    route = rs.GetObjects("Select Stair Guide Curve")
+    route = rs.GetObject("Select Stair Guide Curve")
     
     if route is None:
         return
