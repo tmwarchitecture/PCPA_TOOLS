@@ -33,7 +33,6 @@ class LevelsDialog(forms.Dialog):
             ctxtInsertRow.Click += self.OnInsertRowAbove
             ctxtMnu.Items.Add(ctxtInsertRow)
             self.grid.ContextMenu = ctxtMnu
-        
         def menuBar():
             mnuFile = forms.ButtonMenuItem(Text = "File")
             mnuNew = forms.ButtonMenuItem(Text = "New")
@@ -188,16 +187,9 @@ class LevelsDialog(forms.Dialog):
     
     def OnInsertRowAbove(self, sender, e):
         print "Inserting above"
-        
-        
-        
         data = list(self.grid.DataStore)
-        
-        blankRow = [None, '', '', '', '']
+        blankRow = [None, ' ', ' ', ' ', ' ']
         data.insert(self.grid.SelectedRow, blankRow)
-        
-        
-        
         self.grid.DataStore = data
         self.RenumberData(self.grid.SelectedItem[0])
         
