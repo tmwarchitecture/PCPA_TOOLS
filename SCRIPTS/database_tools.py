@@ -39,7 +39,10 @@ def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     
     for row in data:
         #Name
-        existingData['building'][int(bldgNum)]['level'][row[0]]['name'] = row[1]
+        try:
+            existingData['building'][int(bldgNum)]['level'][row[0]]['name'] = row[1]
+        except:
+            existingData['building'][int(bldgNum)]['level'][row[0]].update({'name': row[1]})
         #Func
         existingData['building'][int(bldgNum)]['level'][row[0]]['functions'] = row[2]
         #FTF
@@ -78,7 +81,6 @@ def GetProjectLevelData(databaseFile, bldgNum):
     return levels
 
 if __name__ == "__main__":
-    
     #data = GetDatabaseTemplate()
     #data['project']['name'] = "TEst"
     #path = r'C:\Users\twilliams\Desktop\TEMP\Database'
@@ -86,4 +88,3 @@ if __name__ == "__main__":
     
     path = r'C:\Users\twilliams\Desktop\TEMP\Database'
     GetProjectLevels(path, 'Project_Info.yaml')
-    
