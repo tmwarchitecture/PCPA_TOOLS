@@ -15,9 +15,9 @@ class LevelsDialog(forms.Dialog):
     def Initialize(self):
         #Setup the dialog
         self.Title = "Project Levels"
-        self.Size = drawing.Size(500,545)
+        self.Size = drawing.Size(500,560)
         self.Padding = drawing.Padding(5, 5)
-        self.Spacing = drawing.Size(2,2)
+        #self.Spacing = drawing.Size(8,8)
         
         self.databasePath = r'C:\Users\twilliams\Desktop\TEMP\Database'
         self.versionName = r'Project_Info.yaml'
@@ -28,6 +28,9 @@ class LevelsDialog(forms.Dialog):
             self.databaseFile = ''
     
     def CreateControls(self):
+        def labels():
+            self.tboxFileName = forms.TextBox()
+            self.tboxFileName.ReadOnly = True
         def contextMenu():
             ctxtMnu = forms.ContextMenu()
             ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert New Floor Above")
@@ -62,8 +65,8 @@ class LevelsDialog(forms.Dialog):
             #mnuBar.Spacing = drawing.Size(2,2)
             
             self.Menu = mnuBar
-        def dropdown():
-            #Dropdown
+        def combobox():
+            #Combobox
             data = dt.GetProjectDatabase(self.databaseFile)
             bldgNames = []
             try:
@@ -73,10 +76,10 @@ class LevelsDialog(forms.Dialog):
             except:
                 bldgNames = [''] 
             
-            self.drpdwnBuildingNum = forms.DropDown()
-            self.drpdwnBuildingNum.DataStore = bldgNames
-            self.drpdwnBuildingNum.SelectedIndex = 0
-            self.drpdwnBuildingNum.SelectedIndexChanged += self.OnBldgNumChanged
+            self.comboBuildingNum = forms.ComboBox()
+            self.comboBuildingNum.DataStore = bldgNames
+            self.comboBuildingNum.SelectedIndex = 0
+            self.comboBuildingNum.SelectedIndexChanged += self.OnBldgNumChanged
         def buttons():
             #BUTTONS
             self.btnApply = forms.Button()
@@ -126,16 +129,19 @@ class LevelsDialog(forms.Dialog):
             self.grid.Columns.Add(ftfColumn)
             self.grid.Columns.Add(levelColumn)
         
-        dropdown()
+        labels()
+        combobox()
         buttons()
         grid()
         menuBar()
         contextMenu()
         self.GenData()
+        self.UpdateFileLabel(self.databaseFile)
     
     def CreateLayouts(self):
         layoutButtons = forms.DynamicLayout()
-        layoutButtons.AddRow(self.drpdwnBuildingNum)
+        layoutButtons.AddRow(self.tboxFileName)
+        layoutButtons.AddRow(self.comboBuildingNum)
         layoutButtons.AddRow(self.grid)
         layoutButtons.AddSeparateRow(None, self.btnCancel, self.btnApply)
         
@@ -145,6 +151,7 @@ class LevelsDialog(forms.Dialog):
         
         #5 - add the layout to the dialog
         self.Content = layout
+        
     
     def OnCancelPressed(self, sender, e):
         self.Close()
@@ -155,6 +162,7 @@ class LevelsDialog(forms.Dialog):
         if self.databaseFile is None: return
         self.OpenFile()
         rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
+        self.UpdateFileLabel(self.databaseFile)
     
     def OpenFile(self):
         data = dt.GetProjectDatabase(self.databaseFile)
@@ -168,28 +176,32 @@ class LevelsDialog(forms.Dialog):
         except:
             bldgNames = [''] 
         
-        self.drpdwnBuildingNum.DataStore = bldgNames
-        self.drpdwnBuildingNum.SelectedIndex = 0
+        self.comboBuildingNum.DataStore = bldgNames
+        self.comboBuildingNum.SelectedIndex = 0
         
         self.GenData()
+        
         
         print "Openig new file"
     
     #Save
     def OnFileSaveAsClick(self, sender, e):
         newFile = rs.SaveFileName("Save", "YAML Files (*.yaml)|*.yaml||")
-        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, newFile, self.drpdwnBuildingNum.SelectedIndex)
+        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, newFile, self.comboBuildingNum.SelectedIndex)
         self.databaseFile = newFile
         rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
+        self.UpdateFileLabel(newFile)
     
     def OnFileSaveClick(self, sender, e):
-        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.drpdwnBuildingNum.SelectedIndex)
+        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.comboBuildingNum.SelectedIndex)
     
     #Close
     def OnFileCloseClick(self, sender, e):
         self.grid.DataStore = []
-        self.drpdwnBuildingNum.DataStore = []
+        self.comboBuildingNum.DataStore = []
         self.databaseFile = None
+        self.UpdateFileLabel()
+        rs.SetDocumentData('PCPA', 'Project_Database', "")
     
     #Building Num
     def OnBldgNumChanged(self, sender, e):
@@ -238,11 +250,14 @@ class LevelsDialog(forms.Dialog):
         print "Renumbered"
     
     def GenData(self):
-        bldgNum = self.drpdwnBuildingNum.SelectedIndex
+        bldgNum = self.comboBuildingNum.SelectedIndex
         try:
             self.grid.DataStore = dt.GetProjectLevelData(self.databaseFile, bldgNum)[::-1]
         except:
             self.grid.DataStore = []
+    
+    def UpdateFileLabel(self, name = "--No File Selected--"):
+        self.tboxFileName.Text = name
 
 def main():
     dialog = LevelsDialog()
