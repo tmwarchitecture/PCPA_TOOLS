@@ -1,5 +1,6 @@
 building:
   0:
+    guid: Test
     functions:
     - residential
     - commercial
@@ -7,28 +8,27 @@ building:
     level:
       0:
         ftf: 15.0
-        functions: -Lobby
+        functions: Lobby
         name: L1
         z: 0.0
       1:
         ftf: 15.0
-        functions: -Lobby
+        functions: Lobby
         name: Mezzanine
         z: 10.0
       2:
         ftf: 15.0
-        functions:
-          -Lobby
-          -Other
+        functions: Office
         name: L2
         z: 20.0
       3:
         ftf: 15.0
-        functions:
+        functions: MEP
         name: Roof
         z: 30.0
     name: Tower 1
   1:
+    guid: Test
     functions:
     - residential
     geometry: none

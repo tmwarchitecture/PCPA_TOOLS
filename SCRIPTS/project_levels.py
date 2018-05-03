@@ -15,9 +15,8 @@ class LevelsDialog(forms.Dialog):
     def Initialize(self):
         #Setup the dialog
         self.Title = "Project Levels"
-        self.Size = drawing.Size(500,560)
+        self.Size = drawing.Size(450,565)
         self.Padding = drawing.Padding(5, 5)
-        #self.Spacing = drawing.Size(8,8)
         
         self.databasePath = r'C:\Users\twilliams\Desktop\TEMP\Database'
         self.versionName = r'Project_Info.yaml'
@@ -56,13 +55,19 @@ class LevelsDialog(forms.Dialog):
             mnuClose = forms.ButtonMenuItem(Text = "Close")
             mnuClose.Click += self.OnFileCloseClick
             
+            mnuEdit = forms.ButtonMenuItem(Text = "Edit")
+            mnuCopy = forms.ButtonMenuItem(Text = "Copy")
+            mnuCopy.Click += self.copyToClipboard
+            mnuEdit.Items.Add(mnuCopy)
             
+            #mnuFile.Items.Add(mnuNew)
             mnuFile.Items.Add(mnuOpen)
             mnuFile.Items.Add(mnuSave)
             mnuFile.Items.Add(mnuSaveAs)
             mnuFile.Items.Add(mnuClose)
-            mnuBar = forms.MenuBar(mnuFile)
-            #mnuBar.Spacing = drawing.Size(2,2)
+            mnuBar = forms.MenuBar(mnuFile, mnuEdit)
+            #self.Menu.Spacing = drawing.Size(2,2)
+            #mnuBar.Padding = 5
             
             self.Menu = mnuBar
         def combobox():
@@ -94,6 +99,7 @@ class LevelsDialog(forms.Dialog):
             self.grid.BackgroundColor = drawing.Colors.LightGrey
             self.grid.Size = drawing.Size(300,425)
             self.grid.GridLines = forms.GridLines.Both
+            self.grid.CellEdited += self.OnCellEdited
             
             #COLUMNS
             numberColumn = forms.GridColumn()
@@ -144,14 +150,13 @@ class LevelsDialog(forms.Dialog):
         layoutButtons.AddRow(self.comboBuildingNum)
         layoutButtons.AddRow(self.grid)
         layoutButtons.AddSeparateRow(None, self.btnCancel, self.btnApply)
-        
+        layoutButtons.Spacing = drawing.Size(1,1)
         layout = forms.DynamicLayout()
         #layout.AddSeparateRow(layoutFolder)
         layout.AddSeparateRow(layoutButtons)
         
         #5 - add the layout to the dialog
         self.Content = layout
-        
     
     def OnCancelPressed(self, sender, e):
         self.Close()
@@ -214,6 +219,13 @@ class LevelsDialog(forms.Dialog):
     def OnInsertRowAbove(self, sender, e):
         print "Inserting above"
         data = self.grid.DataStore
+        
+        try:
+            newRowNameRaw = int(data[self.grid.SelectedRow][1][1:]) + 1
+            newRowName = "L" + str(newRowNameRaw)
+        except:
+            newRowName = data[self.grid.SelectedRow][1]
+        
         try:
             newRowFunc = data[self.grid.SelectedRow][2]
             newRowFTF = float(data[self.grid.SelectedRow][3])
@@ -222,22 +234,31 @@ class LevelsDialog(forms.Dialog):
             newRowFTF = ''
             newRowHeight = ''
             newRowFunc = ''
-        blankRow = ['', '', newRowFunc, newRowFTF, newRowHeight]
+        blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight]
         data.insert(self.grid.SelectedRow, blankRow)
         self.grid.DataStore = data
         self.RenumberRows()
+        self.UpdateHeightsFromFTF(self.grid.SelectedRow)
     
     def OnDeleteRow(self, sender, e):
         data = self.grid.DataStore
-        
+        rowDeleted = self.grid.SelectedRow
         del data[self.grid.SelectedRow]
         
         self.grid.DataStore = data
-        
         self.RenumberRows()
-        
-        print self.grid.DataStore
-        #print "Deleteing row {}".format(self.grid.SelectedItem[0])
+        self.UpdateHeightsFromFTF(rowDeleted)
+    
+    def OnCellEdited(self, sender, e):
+        if e.Column == 4:
+            # "Height Adjusted"
+            self.CheckIfNumber(e.Row, e.Column)
+            #self.FixHeights(e.Row, e.Column)
+            
+        if e.Column == 3:
+            # "FTF Adjusted"
+            self.CheckIfNumber(e.Row, e.Column)
+            self.UpdateHeightsFromFTF(self.grid.SelectedRow)
     
     #Util functions
     def RenumberRows(self):
@@ -247,7 +268,7 @@ class LevelsDialog(forms.Dialog):
             row[0] = i
         data.reverse()
         self.grid.DataStore = data
-        print "Renumbered"
+        #print "Renumbered"
     
     def GenData(self):
         bldgNum = self.comboBuildingNum.SelectedIndex
@@ -258,6 +279,209 @@ class LevelsDialog(forms.Dialog):
     
     def UpdateFileLabel(self, name = "--No File Selected--"):
         self.tboxFileName.Text = name
+    
+    def CheckIfNumber(self, row, col):
+        try:
+            float(self.grid.DataStore[row][col])
+        except:
+            print "Cell accepts numbers only"
+            self.grid.DataStore[row][col] = 0
+    
+    def FixHeights(self, row, col):
+        data = list(self.grid.DataStore)
+        data.reverse()
+        
+        #numFloorsBelow = len(self.grid.DataStore) - self.grid.SelectedRow
+        
+        
+        numRows = len(data)
+        selectedRow = numRows - self.grid.SelectedRow - 1
+        
+        print "Number of Rows: {}".format(numRows)
+        print "Selected Row: {}".format(selectedRow)
+        
+        for i in range(numRows-1):
+            if data[i][4] > data[i+1][4]:
+                data[i][4] = data[i+1][4]
+        
+        #   #print data[i][4]
+        data.reverse()
+        
+        self.grid.DataStore = data
+        
+        print "Heights"
+    
+    def UpdateHeightsFromFTF(self, rowNum):
+        print rowNum
+        data = list(self.grid.DataStore)
+        data.reverse()
+        #
+        numRows = len(data)
+        selectedRow = numRows - rowNum - 1
+        for i in range(1,numRows):
+            if i > selectedRow:
+                try:
+                    data[i][4] = float(data[i-1][3]) + float(data[i-1][4])
+                except:
+                    print "Failed"
+        #
+        data.reverse()
+        self.grid.DataStore = data
+    
+    #I/O Functions
+    def copyToClipboard(self, sender, e):
+        try:
+            string = self.DataStoreToHTML()
+            rs.ClipboardText(string)
+            print "Copied to clipboard"
+        except:
+            print "copyToClipboard() Failed"
+
+    def copySelectionToClipboard(self, sender, e):
+        try:
+            items = list(self.grid.SelectedItems)
+            string = self.DataStoreToHTML(items)
+            rs.ClipboardText(string)
+            print "Copied Selection to clipboard"
+        except:
+            print "copySelectionToClipboard() Failed"
+
+    def exportData(self, sender, e):
+        fileName = rs.SaveFileName("Save table", filter = "CSV Files (*.csv)|*.csv|HTML Files (*.html)|*.html|TXT Files (*.txt)|*.txt||")
+        if fileName is None:
+            return
+        extension = fileName.split(".")[-1]
+        try:
+            f = open(fileName,'w')
+        except IOError:
+            print "Cannot save file. File already open."
+            return
+        try:
+            if extension == "html":
+                string = self.DataStoreToHTML()
+            if extension == "csv":
+                global commaSep
+                
+                prevCommaSep = commaSep
+                prevColorFormat = self.colorFormat
+                
+                if self.colorFormat == 2:
+                    self.colorFormat = 1
+                
+                if commaSep:
+                    commaSep = False
+                
+                self.Regen()
+                
+                string = self.DataStoreToCSV()
+                
+                self.colorFormat = prevColorFormat
+                commaSep = prevCommaSep
+                
+                self.Regen()
+            if extension == "txt":
+                string = self.DataStoreToTXT()
+            f.write(string)
+            f.close()
+            print "Exported to {}".format(extension)
+        except:
+            print "exportData() Failed"
+
+    def DataStoreToTXT(self):
+        string = ""
+        seperator = "\t"
+        if self.showHeaders.Checked:
+            allHeadings = self.activeHeadingsList()
+            print "Headings received"
+            for heading in allHeadings:
+                itemLen = len(str(heading))
+                if itemLen >= 8:
+                    numTabs = 1
+                else:
+                    numTabs = 2
+                string += str(heading) + (seperator * numTabs)
+            string += "\n"
+
+        allData = self.activeDataList()
+
+        for row in allData:
+            for item in row:
+                if str(item) == "None":
+                    string += (seperator * numTabs)
+                else:
+                    itemLen = len(str(item))
+                    if itemLen >= 8:
+                        numTabs = 1
+                    else:
+                        numTabs = 2
+                    string += str(item) + (seperator * numTabs)
+            string += "\n"
+        return string
+
+    def DataStoreToCSV(self):
+        string = ""
+        if self.showHeaders.Checked:
+            allHeadings = self.activeHeadingsList()
+            print "Headings received"
+            for heading in allHeadings:
+                string += str(heading) + ","
+            string += "\n"
+
+        allData = self.activeDataList()
+
+        for row in allData:
+            for item in row:
+                if str(item) == "None":
+                    string += ","
+                else:
+                    string += str(item) + ","
+            string += "\n"
+        return string
+
+    def DataStoreToHTML(self, *args):
+        try:
+            string = "<html><head><style>"
+            string += "body {color: dimgray;}"
+            string += "table, th, td{border-collapse: collapse; border: 1px solid black;padding: 10px;}"
+            string += "</style></head><body><table>"
+            
+            allHeadings = []
+            for i in range(self.grid.Columns.Count):
+                allHeadings.append(self.grid.Columns.Item[i].HeaderText)
+            string += "<tr>"
+            for heading in allHeadings:
+                string += "<th>" + str(heading) + "</th>"
+            string += "</tr>"
+            
+            #If *args specified, format them
+            if len(args) > 0:
+                tempItems = []
+                for bracket in args:
+                    for item in bracket:
+                        if item is not None:
+                            tempItems.append(item)
+                finalItems = []
+                for item in tempItems:
+                    newItem = []
+                    for i, attr in enumerate(item):
+                        #if self.checkboxes[i].Checked:
+                        newItem.append(attr)
+                    finalItems.append(newItem)
+                allData = finalItems
+            else:
+                allData = self.grid.DataStore
+            
+            for row in allData:
+                string += "<tr>"
+                for item in row:
+                    if item is None:
+                        item = ""
+                    string += "<td>" + str(item) + "</td>"
+                string += "</tr>"
+            string += "</table>"
+            return string
+        except:
+            print "HTML Failed"
 
 def main():
     dialog = LevelsDialog()
