@@ -112,7 +112,7 @@ def rampIntersection(route1, route2, width):
     landing = rs.AddPolyline([pivotPt, perpPt1, elbowPt, perpPt2, pivotPt])
     return edges, landing
 
-def stairHeight(route, width, height):
+def stairHeight(route, width = 48, height = 120):
     """
     Makes a stair to specified height.
     
@@ -122,7 +122,7 @@ def stairHeight(route, width, height):
     rs.EnableRedraw(False)
     
     if route is None: 
-        print("ERROR: No route selected")
+        print("ERROR: No path selected")
         return
     
     if (rs.UnitSystem()==2): #if mm
@@ -225,7 +225,7 @@ def stairHeight(route, width, height):
             transVec = rs.VectorCreate(tarPts[0], tarPts[j])
             run.append(rs.CopyObject(landingEdges[i], -transVec))
         riserCrvs.append(run)
-        print("Flight {0} has {1} treads {2}in. deep, {3}in. tall.".format(int(i/2)+1, numRisersThisRun, rs.VectorLength(treadVecs[int(i/2)]), riserHeight))
+        print('Flight {0} has {1} risers: {3}" tall, Treads: {2}" deep'.format(int(i/2)+1, numRisersThisRun, rs.VectorLength(treadVecs[int(i/2)]), riserHeight))
     #Move riser edges vertically
     for i in range(0, len(riserCrvs)):
         triangles = []
