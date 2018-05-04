@@ -50,42 +50,41 @@ def SplitGeometry(objs, plane, dir = 1):
     negShape = Rhino.Geometry.Cylinder(circle, diffRadius*dir)
     negShapeBrep = negShape.ToBrep(True, True)
     negShapeGeo = sc.doc.Objects.AddBrep(negShapeBrep)
-    newSplitObjs = []
-    print "!"
+    
+    visibleGeometry = []
+    
     for obj in objs:
         if rs.IsBrep(obj):
-            #dupObj = rs.CopyObject(obj)
             if rs.IsPolysurfaceClosed(obj):
-                newObj = rs.BooleanDifference(obj, negShapeGeo, False)
-                if newObj is None:
-                    newSplitObjs.append(obj)
-                elif len(newObj) < 1:
-                    newSplitObjs.append(obj)
+                resultObjs = rs.BooleanDifference(obj, negShapeGeo, False)
+                if resultObjs is None:
+                    visibleGeometry.append(obj)
+                elif len(resultObjs) < 1:
+                    visibleGeometry.append(obj)
                 else:
-                    for each in newObj:
-                        newSplitObjs.append(each)
-                    rs.DeleteObject(obj)
+                    for each in resultObjs:
+                        visibleGeometry.append(each)
             else:
-                print "!"
-                newObjs = rs.SplitBrep(obj, negShapeGeo)
-                print "!"
-                if newObjs is None:
-                    newSplitObjs.append(obj)
-                    rs.DeleteObject(obj)
+                resultObjs = rs.SplitBrep(obj, negShapeGeo)
+                if resultObjs is None:
+                    visibleGeometry.append(obj)
+                elif len(resultObjs) < 1:
+                    visibleGeometry.append(obj)
                 else:
-                    #Find the geo below the plane
-                    partitionGeos = PartitionGeometryCenter(newObjs, plane.OriginZ)
-                    if dir == 1:
-                        newSplitObjs += partitionGeos[0]
-                        rs.DeleteObjects(partitionGeos[2])
-                    else:
-                        newSplitObjs += partitionGeos[2]
-                        rs.DeleteObjects(partitionGeos[0])
-                    #rs.DeleteObject(obj)
-    
+                    for each in resultObjs:
+                        if IsAbovePlane(each, plane.OriginZ):
+                            if dir == -1:
+                                visibleGeometry.append(each)
+                            else:
+                                rs.DeleteObject(each)
+                        else:
+                            if dir == 1:
+                                visibleGeometry.append(each)
+                            else:
+                                rs.DeleteObject(each)
     
     rs.DeleteObject(negShapeGeo)
-    return newSplitObjs
+    return visibleGeometry
 
 def PartitionGeometry(objs, elevation, viewDepth):
     objsBelow = []
@@ -104,23 +103,15 @@ def PartitionGeometry(objs, elevation, viewDepth):
         objsInter.append(obj)
     return [objsBelow, objsInter, objsAbove]
 
-def PartitionGeometryCenter(objs, elevation):
-    objsBelow = []
-    objsInter = []
-    objsAbove = []
-    for obj in objs:
-        pts = rs.BoundingBox(obj)
-        lowestCoord = pts[0][2]
-        highestCoord = pts[-1][2]
-        centerPtZ = (lowestCoord + highestCoord)/2
-        if centerPtZ > elevation:
-            objsAbove.append(obj)
-            continue
-        if centerPtZ < elevation:
-            objsBelow.append(obj)
-            continue
-        objsInter.append(obj)
-    return [objsBelow, objsInter, objsAbove]
+def IsAbovePlane(obj, elevation):
+    pts = rs.BoundingBox(obj)
+    lowestCoord = pts[0][2]
+    highestCoord = pts[-1][2]
+    centerPtZ = (lowestCoord + highestCoord)/2
+    if centerPtZ > elevation:
+        return True
+    else:
+        return False
 
 def ProjectPlan(objs, plane):
     print "Projecting Plan"
@@ -145,6 +136,8 @@ def ProjectPlan(objs, plane):
 
 def MakePlan(elevation, viewDepthZ, geos):
     objs = rs.CopyObjects(geos)
+    rs.HideObjects(geos)
+    
     ############################################################################
     print "Cutting Plan"
     allCrvs = []
@@ -161,39 +154,29 @@ def MakePlan(elevation, viewDepthZ, geos):
     ############################################################################
     #Intersection Curves
     
-    interCrvs = IntersectGeos(partitionedObjs[1], plane)
+    #interCrvs = IntersectGeos(partitionedObjs[1], plane)
     
     ############################################################################
     #Split Geometry
-    
     #Get the bottom half of intersecting objs
     belowObjs = SplitGeometry(partitionedObjs[1], plane)
-    rs.SelectObjects(belowObjs)
+    print "A"
     
     #Get the top half of that previous geometry
-    belowObjs2 = SplitGeometry(partitionedObjs[0] + belowObjs, planeNeg, -1)
+    visibleObjs = SplitGeometry(partitionedObjs[0] + belowObjs, planeNeg, -1)
     
-    rs.DeleteObjects(belowObjs)
-    rs.SelectObjects(belowObjs2)
-    
+    rs.SelectObjects(visibleObjs)
+    objs2del = rs.InvertSelectedObjects()
+    rs.DeleteObjects(objs2del)
+    print "A"
     ############################################################################
     #Make 2D
+    allCrvs += ProjectPlan(visibleObjs, plane)
     
-    #Hide objects outside of the viewing box
-    rs.HideObjects(partitionedObjs[1])
-    rs.HideObjects(partitionedObjs[2])
-    
-    #make 2d
-    allCrvs += ProjectPlan(belowObjs2, plane)
-    
-    #Show those hidden objects again
-    rs.ShowObjects(partitionedObjs[1])
-    rs.ShowObjects(partitionedObjs[2])
-    
-    #Delete the temporary objects
-    rs.DeleteObjects(belowObjs2)
+    rs.DeleteObjects(visibleObjs)
     
     print "Plan Cut"
+    rs.ShowObjects(geos)
     rs.HideObjects(allCrvs)
     return allCrvs
 
@@ -216,8 +199,9 @@ def main():
             viewDepthZ = 0
         else:
             viewDepthZ = lvls[i-1] + viewOffset
-        make2Dlines += MakePlan(lvl + viewOffset, viewDepthZ, geos)
-    rs.ShowObjects(make2Dlines)
+        make2Dlines.append(MakePlan(lvl + viewOffset, viewDepthZ, geos))
+    #make2Dlines = MakePlan(12, 0+0, geos)
+    #rs.ShowObjects(make2Dlines)
     rs.EnableRedraw(True)
 
 if __name__ == "__main__":

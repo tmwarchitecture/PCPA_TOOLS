@@ -106,7 +106,7 @@
       <text>
         <locale_1033>Toolbar group</locale_1033>
       </text>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="4096" bar_id="59467" mru_width="868" point_pos="-2,-2" float_point="796,505" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="41,62" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="4096" bar_id="59500" mru_width="868" point_pos="-2,-2" float_point="796,505" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="41,62" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars />
