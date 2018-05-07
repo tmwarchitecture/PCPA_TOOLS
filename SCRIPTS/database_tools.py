@@ -1,5 +1,7 @@
 #Read from YAML database
 import os
+import rhinoscriptsyntax as rs
+import ast
 from libs import yaml
 
 root = os.path.dirname(os.path.realpath(__file__))
@@ -78,12 +80,26 @@ def GetProjectLevelData(databaseFile, bldgNum):
         levels.append([key, levelData[key]['name'], levelData[key]['functions'], levelData[key]['ftf'], levelData[key]['z']])
     return levels
 
+def LoadLevelsToRhinoDoc(databaseFile):
+    bldgNum = 0
+    data = GetProjectLevelData(databaseFile, bldgNum)
+    rs.SetDocumentData('PCPA', 'Levels', str(data))
+    return 1
+
+def GetLevelsFromRhinoDoc():
+    strLevels = rs.GetDocumentData('PCPA', 'Levels')
+    levels = ast.literal_eval(strLevels)
+    return levels
+
 if __name__ == "__main__":
     pass
+    
     #data = GetDatabaseTemplate()
     #data['project']['name'] = "TEst"
     #path = r'C:\Users\twilliams\Desktop\TEMP\Database'
     #print SaveDatabase(data, path, 'Project_Info.yaml')
     
-    #path = r'C:\Users\twilliams\Desktop\TEMP\Database'
+    #path = r'C:\Users\twilliams\Desktop\TEMP\Database\MyProject.yaml'
     #GetProjectLevels(path, 'Project_Info.yaml')
+    #LoadLevelsToRhinoDoc(path, 0)
+    #a = GetLevelsFromRhinoDoc()

@@ -88,11 +88,11 @@ class LevelsDialog(forms.Dialog):
         def buttons():
             #BUTTONS
             self.btnApply = forms.Button()
-            self.btnApply.Text = "Save"
+            self.btnApply.Text = "OK"
             self.btnApply.Click += self.OnFileSaveClick
             
             self.btnCancel = forms.Button()
-            self.btnCancel.Text = "Close"
+            self.btnCancel.Text = "Cancel"
             self.btnCancel.Click += self.OnCancelPressed
         def grid():
             self.grid = forms.GridView()
@@ -167,6 +167,7 @@ class LevelsDialog(forms.Dialog):
         if self.databaseFile is None: return
         self.OpenFile()
         rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
+        dt.LoadLevelsToRhinoDoc(self.databaseFile)
         self.UpdateFileLabel(self.databaseFile)
     
     def OpenFile(self):
@@ -199,6 +200,10 @@ class LevelsDialog(forms.Dialog):
     
     def OnFileSaveClick(self, sender, e):
         dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.comboBuildingNum.SelectedIndex)
+        data = self.grid.DataStore
+        data.reverse()
+        rs.SetDocumentData('PCPA', 'Levels', str(data))
+        self.Close()
     
     #Close
     def OnFileCloseClick(self, sender, e):
@@ -250,15 +255,10 @@ class LevelsDialog(forms.Dialog):
         self.UpdateHeightsFromFTF(rowDeleted)
     
     def OnCellEdited(self, sender, e):
-        if e.Column == 4:
+        if e.Column == 4 or e.Column == 3:
             # "Height Adjusted"
             self.CheckIfNumber(e.Row, e.Column)
-            #self.FixHeights(e.Row, e.Column)
-            
-        if e.Column == 3:
-            # "FTF Adjusted"
-            self.CheckIfNumber(e.Row, e.Column)
-            self.UpdateHeightsFromFTF(self.grid.SelectedRow)
+            self.UpdateHeights(self.grid.SelectedRow)
     
     #Util functions
     def RenumberRows(self):
@@ -273,7 +273,10 @@ class LevelsDialog(forms.Dialog):
     def GenData(self):
         bldgNum = self.comboBuildingNum.SelectedIndex
         try:
-            self.grid.DataStore = dt.GetProjectLevelData(self.databaseFile, bldgNum)[::-1]
+            data = dt.GetLevelsFromRhinoDoc()
+            data.reverse()
+            self.grid.DataStore = data
+            #self.grid.DataStore = dt.GetProjectLevelData(self.databaseFile, bldgNum)[::-1]
         except:
             self.grid.DataStore = []
     
@@ -287,31 +290,7 @@ class LevelsDialog(forms.Dialog):
             print "Cell accepts numbers only"
             self.grid.DataStore[row][col] = 0
     
-    def FixHeights(self, row, col):
-        data = list(self.grid.DataStore)
-        data.reverse()
-        
-        #numFloorsBelow = len(self.grid.DataStore) - self.grid.SelectedRow
-        
-        
-        numRows = len(data)
-        selectedRow = numRows - self.grid.SelectedRow - 1
-        
-        print "Number of Rows: {}".format(numRows)
-        print "Selected Row: {}".format(selectedRow)
-        
-        for i in range(numRows-1):
-            if data[i][4] > data[i+1][4]:
-                data[i][4] = data[i+1][4]
-        
-        #   #print data[i][4]
-        data.reverse()
-        
-        self.grid.DataStore = data
-        
-        print "Heights"
-    
-    def UpdateHeightsFromFTF(self, rowNum):
+    def UpdateHeights(self, rowNum):
         print rowNum
         data = list(self.grid.DataStore)
         data.reverse()
@@ -324,6 +303,8 @@ class LevelsDialog(forms.Dialog):
                     data[i][4] = float(data[i-1][3]) + float(data[i-1][4])
                 except:
                     print "Failed"
+            if i == selectedRow:
+                data[i-1][3] =  float(data[i][4])-float(data[i-1][4])
         #
         data.reverse()
         self.grid.DataStore = data
