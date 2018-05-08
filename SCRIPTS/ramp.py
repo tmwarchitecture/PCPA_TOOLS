@@ -2,11 +2,13 @@ import rhinoscriptsyntax as rs
 import Rhino
 import scriptcontext as sc
 
-def GetRampRuns(path, width):
+def MakeRampRuns(path, width):
     topOffset = 12
     btmOffset = 12
     newPath = rs.CopyObject(path)
     segments = rs.ExplodeCurves(newPath, True)
+    if len(segments) < 1:
+        segments = [newPath]
     stPt1 = rs.CurveStartPoint(segments[0])
     stPt2 = rs.CurveStartPoint(segments[0])
     vec = rs.CurveTangent(path, 0)
@@ -30,8 +32,9 @@ def GetRampRuns(path, width):
     nextSegOffsetStPt = stPt1
     
     landingLines = []
+    handrailLines = []
     
-    #Entering Loop
+    #Entering Loop For each segment
     for i, segment in enumerate(segments):
         beginningPt = rs.EvaluateCurve(segment, rs.CurveClosestPoint(segment, nextSegOffsetStPt))
         crossVec = rs.VectorScale(rs.VectorCreate(beginningPt, nextSegOffsetStPt), 2)
@@ -103,8 +106,9 @@ def GetRampRuns(path, width):
     rs.DeleteObject(offsetCrv2)
     return landingLines
 
-def GetRampLandings(allLines):
+def MakeRampLandings(allLines, hdrlCtrOffset):
     landingGeo = []
+    hdrls = []
     rs.DeleteObject(allLines[0])
     rs.DeleteObject(allLines[-1])
     del allLines[0]
@@ -143,6 +147,18 @@ def GetRampLandings(allLines):
         landingPts = [stPt, endPt, endInter, endPtBtm, stPtBtm, stInter, stPt]
         landingCrv = rs.AddPolyline(landingPts)
         landingGeo.append(rs.AddPlanarSrf(landingCrv))
+        
+        #Handrails
+        hdrl1 = rs.AddPolyline([stPt, stInter, stPtBtm])
+        hdrl1b = rs.OffsetCurve(hdrl1 , endPt, hdrlCtrOffset, (0,0,1))
+        hdrls.append(hdrl1b)
+        hdrl2 = rs.AddPolyline([endPt, endInter, endPtBtm])
+        hdrl2b = rs.OffsetCurve(hdrl2, stPt, hdrlCtrOffset, (0,0,1))
+        hdrls.append(hdrl2b)
+        
+        rs.DeleteObject(hdrl1)
+        rs.DeleteObject(hdrl2)
+        
         rs.DeleteObject(landingCrv)
         rs.DeleteObject(stLine)
         rs.DeleteObject(endLine)
@@ -150,14 +166,49 @@ def GetRampLandings(allLines):
         rs.DeleteObject(endLineBtm)
         rs.DeleteObjects([stPtOffset, endPtOffset, stPtOffsetBtm, endPtOffsetBtm, stInter, endInter])
     rs.DeleteObjects(allLines)
-    return landingGeo
+    return landingGeo, hdrls
 
-def Ramp_HeightSlope(path, width, height, slope):
+def MakeHandrailFromRuns(run, HDRLoffset):
+    pt1 = rs.CurveStartPoint(run[0])
+    pt2 = rs.CurveStartPoint(run[1])
+    
+    pt3 = rs.CurveEndPoint(run[0])
+    pt4 = rs.CurveEndPoint(run[1])
+    
+    crossVec = rs.VectorCreate(pt3, pt1)
+    crossVec = rs.VectorUnitize(crossVec)
+    crossVec = rs.VectorScale(crossVec, HDRLoffset)
+    
+    edge1 = rs.AddLine(pt1, pt2)
+    edge2 = rs.AddLine(pt3, pt4)
+    edge1 = rs.MoveObject(edge1,crossVec)
+    edge2 = rs.MoveObject(edge2, rs.VectorReverse(crossVec))
+    
+    return [edge1, edge2]
+
+def Ramp_HeightSlope(path, width, slope):
+    #Variables
+    rampThickness = 6
+    handrailOffset = 3
+    handrailRadius = 1.5
+    handrailHeight = 34
+    if width < 36:
+        width = 36
+    width = width + (handrailOffset*2)
+    comments = ''
+    
+    handrailCenterlineOffset = (handrailOffset - handrailRadius/2)
+    
     rs.EnableRedraw(False)
-    runs = GetRampRuns(path, width)
+    
+    runs = MakeRampRuns(path, width)
     
     runGeo = []
+    hdrls = []
+    finalHandrails = []
     vertMove = (0,0,0)
+    
+    
     
     for run in runs:
         length = rs.Distance(rs.CurveStartPoint(run[0]), rs.CurveStartPoint(run[1]))
@@ -180,9 +231,11 @@ def Ramp_HeightSlope(path, width, height, slope):
         else:
             runGeo.append(srf[0])
         
+        hdrls.append(MakeHandrailFromRuns(run, handrailCenterlineOffset))
+        
         rs.DeleteObjects(run)
     
-    
+    #Get highest and lowest lines
     landingEdges = []
     for run in runGeo:
         curves = rs.DuplicateEdgeCurves(run)
@@ -204,28 +257,79 @@ def Ramp_HeightSlope(path, width, height, slope):
         rs.ReverseCurve(highestEdge)
         landingEdges.append(highestEdge)
         rs.DeleteObjects(curves)
+        comments = "Final ramp height {}".format(str(highestValue))
     
-    landingGeos = GetRampLandings(landingEdges)
+    #Make Landings
+    landingGeos = MakeRampLandings(landingEdges, handrailCenterlineOffset)
+    landings = landingGeos[0]
+    hdrls += landingGeos[1]
+    allHandrails = []
+    for hdrl in hdrls:
+        for each in hdrl:
+            allHandrails.append(each)
+    longRails = rs.JoinCurves(allHandrails, True)
+    
+    
+    #Handrail Extension
+    for rail in longRails:
+        stPt = rs.CurveStartPoint(rail)
+        stVec = rs.CurveTangent(rail, 0)
+        stVecProj = rs.VectorScale(rs.VectorReverse(rs.VectorUnitize((stVec[0], stVec[1], 0))), 12)
+        endPt = rs.CurveEndPoint(rail)
+        endParam = rs.CurveClosestPoint(rail, endPt)
+        endVec = rs.CurveTangent(rail, endParam)
+        endVecProj = rs.VectorScale(rs.VectorUnitize((endVec[0], endVec[1], 0)), 12)
+        stPtTemp = rs.CurveStartPoint(rail)
+        endPtTemp = rs.CurveEndPoint(rail)
+        stPtOffset = rs.MoveObject(stPtTemp , stVecProj)
+        endPtOffset = rs.MoveObject(endPtTemp , endVecProj)
+        stProj = rs.AddLine(stPt, stPtOffset)
+        endProj = rs.AddLine(endPt, endPtOffset)
+        finalHandrails.append(rs.JoinCurves([stProj, rail, endProj], True)[0])
+        
+        rs.DeleteObject(stPtOffset)
+        rs.DeleteObject(endPtOffset)
+    
+    #Move handrails up
+    for rail in finalHandrails:
+        rs.MoveObject(rail, (0,0,handrailHeight))
+    
+    #Make solid geometry
+    topSurface = rs.JoinSurfaces(runGeo + landings, True)
+    if topSurface is None: topSurface = runGeo
+    
+    btmSurface = rs.CopyObject(topSurface, (0,0,-rampThickness))
+    
+    edgeCurves = rs.DuplicateSurfaceBorder(topSurface)
+    
+    extrusionLine = rs.AddLine((0,0,0) , (0,0,-rampThickness))
+    extrusionGeo = rs.ExtrudeCurve(edgeCurves, extrusionLine)
+    rs.DeleteObject(extrusionLine)
+    rs.DeleteObject(edgeCurves)
+    
+    finalGeo = rs.JoinSurfaces([topSurface, btmSurface, extrusionGeo], True)
+    
     rs.EnableRedraw(True)
-    
-    FinalSrf = rs.JoinSurfaces(runGeo + landingGeos, True)
-    
-    return FinalSrf
+    #print "A"
+    if slope <= .05:
+        return [finalGeo, comments]
+    else:
+        return [finalGeo, comments, finalHandrails]
 
 def main():
     #path = rs.GetCurveObject("Select ramp path")
     path = rs.GetObject("Select Ramp Path", rs.filter.curve)
     if path is None: return
-    height = rs.GetReal("Ramp height", 60)
+    height = rs.GetReal("Ramp Total Height", 60)
     if height is None: return
     #length = rs.GetReal("Ramp Length", 180)
     #if length is None: return
-    width = rs.GetReal("Ramp width", 42)
+    width = rs.GetReal("Ramp Clear Width", 36)
     if width is None: return
     slope = rs.GetReal("Ramp slope (e.g. 10% slope is .10)", .20)
     if slope is None: return
     #MakeRamp(path, length, width, height)
-    Ramp_HeightSlope(path, width, height, slope)
+    Ramp_HeightSlope(path, width, slope)
 
 if __name__ == "__main__":
     main()
