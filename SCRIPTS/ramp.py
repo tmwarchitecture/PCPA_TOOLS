@@ -9,6 +9,8 @@ def MakeRampRuns(path, width):
     segments = rs.ExplodeCurves(newPath, True)
     if len(segments) < 1:
         segments = [newPath]
+    
+    
     stPt1 = rs.CurveStartPoint(segments[0])
     stPt2 = rs.CurveStartPoint(segments[0])
     vec = rs.CurveTangent(path, 0)
@@ -59,15 +61,11 @@ def MakeRampRuns(path, width):
             pt4 = rs.CopyObject(nextSegOffsetStPt, shortVec)
             endLine = rs.AddLine(nextSegOffsetStPt, pt4)
             
-            if i == 0:
-                pass
-            else:
+            if i != 0:
                 longVec = rs.VectorReverse(rs.VectorCreate(widthStPt, nextSegOffsetStPt))
                 longVec = rs.VectorScale(rs.VectorUnitize(longVec), btmOffset)
                 stLine = rs.MoveObject(stLine, longVec)
-            if i == len(segments)-1:
-                pass
-            else:
+            if i != len(segments)-1:
                 longVec = rs.VectorCreate(widthStPt, nextSegOffsetStPt)
                 longVec = rs.VectorScale(rs.VectorUnitize(longVec), topOffset)
                 endLine = rs.MoveObject(endLine, longVec)
@@ -77,15 +75,11 @@ def MakeRampRuns(path, width):
             pt4 = rs.CopyObject(nextSegOffsetStPt, shortVec)
             endLine = rs.AddLine(nextSegOffsetStPt, pt4)
             
-            if i == 0:
-                pass
-            else:
+            if i != 0:
                 longVec = rs.VectorReverse(rs.VectorCreate(widthEndPt, nextSegOffsetStPt))
                 longVec = rs.VectorScale(rs.VectorUnitize(longVec), btmOffset)
                 stLine = rs.MoveObject(stLine, longVec)
-            if i == len(segments)-1:
-                pass
-            else:
+            if i != len(segments)-1:
                 longVec = rs.VectorCreate(widthEndPt, nextSegOffsetStPt)
                 longVec = rs.VectorScale(rs.VectorUnitize(longVec), topOffset)
                 endLine = rs.MoveObject(endLine, longVec)
@@ -141,8 +135,14 @@ def MakeRampLandings(allLines, hdrlCtrOffset):
         endLineBtm = rs.AddLine(endPtBtm, endPtOffsetBtm)
         
         #Intersection
-        stInter = rs.AddPoint(rs.LineLineIntersection(stLineBtm, stLine)[0])
-        endInter = rs.AddPoint(rs.LineLineIntersection(endLineBtm, endLine)[0])
+        try:
+            stInter = rs.AddPoint(rs.LineLineIntersection(stLineBtm, stLine)[0])
+        except:
+            stInter = stPt
+        try:
+            endInter = rs.AddPoint(rs.LineLineIntersection(endLineBtm, endLine)[0])
+        except:
+            endInter = endPt
         
         landingPts = [stPt, endPt, endInter, endPtBtm, stPtBtm, stInter, stPt]
         landingCrv = rs.AddPolyline(landingPts)
@@ -164,7 +164,10 @@ def MakeRampLandings(allLines, hdrlCtrOffset):
         rs.DeleteObject(endLine)
         rs.DeleteObject(stLineBtm)
         rs.DeleteObject(endLineBtm)
-        rs.DeleteObjects([stPtOffset, endPtOffset, stPtOffsetBtm, endPtOffsetBtm, stInter, endInter])
+        try:
+            rs.DeleteObjects([stPtOffset, endPtOffset, stPtOffsetBtm, endPtOffsetBtm, stInter, endInter])
+        except:
+            rs.DeleteObjects([stPtOffset, endPtOffset, stPtOffsetBtm, endPtOffsetBtm])
     rs.DeleteObjects(allLines)
     return landingGeo, hdrls
 
@@ -186,6 +189,34 @@ def MakeHandrailFromRuns(run, HDRLoffset):
     
     return [edge1, edge2]
 
+def CheckRunLengths(runs):
+    lengthComment = ''
+    for i, run in enumerate(runs):
+        dist = rs.Distance(rs.CurveStartPoint(run[0]), rs.CurveStartPoint(run[1]))
+        if dist > 360:
+            lengthComment += 'Run {} requires a landing\n'.format(i+1)
+            templine = rs.AddLine(rs.CurveStartPoint(run[0]), rs.CurveStartPoint(run[1]))
+            mdPt = rs.CurveMidPoint(templine)
+            vec = rs.VectorCreate(mdPt, rs.CurveStartPoint(run[0]))
+            landingCenter = rs.CopyObject(run[0], vec)
+            vec = rs.VectorScale(rs.VectorUnitize(vec), 30)
+            upperLine = rs.CopyObject(landingCenter, vec)
+            vec = rs.VectorReverse(vec)
+            lowerLine = rs.MoveObject(landingCenter, vec)
+            rs.DeleteObject(templine)
+            run.insert(1, lowerLine)
+            run.insert(2, upperLine)
+    
+    flatList = []
+    for item in runs:
+        for each in item:
+            flatList.append(each)
+    
+    pairs = []
+    for i in range(0, len(flatList), 2):
+        pairs.append([flatList[i], flatList[i+1]])
+    return pairs, lengthComment
+
 def Ramp_HeightSlope(path, width, slope):
     #Variables
     rampThickness = 6
@@ -199,9 +230,14 @@ def Ramp_HeightSlope(path, width, slope):
     
     handrailCenterlineOffset = (handrailOffset - handrailRadius/2)
     
-    rs.EnableRedraw(False)
+    #rs.EnableRedraw(False)
     
     runs = MakeRampRuns(path, width)
+    
+    if slope > .05:
+        runData = CheckRunLengths(runs)
+        runs = runData[0]
+        comments += runData[1]
     
     runGeo = []
     hdrls = []
@@ -257,7 +293,7 @@ def Ramp_HeightSlope(path, width, slope):
         rs.ReverseCurve(highestEdge)
         landingEdges.append(highestEdge)
         rs.DeleteObjects(curves)
-        comments = "Final ramp height {}".format(str(highestValue))
+    comments += 'Total ramp height {}"\n'.format(str(highestValue))
     
     #Make Landings
     landingGeos = MakeRampLandings(landingEdges, handrailCenterlineOffset)
@@ -309,7 +345,7 @@ def Ramp_HeightSlope(path, width, slope):
     
     finalGeo = rs.JoinSurfaces([topSurface, btmSurface, extrusionGeo], True)
     
-    rs.EnableRedraw(True)
+    #rs.EnableRedraw(True)
     #print "A"
     if slope <= .05:
         return [finalGeo, comments]

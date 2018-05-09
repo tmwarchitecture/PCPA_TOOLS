@@ -44,7 +44,7 @@ def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     
     newDict = {}
     for row in data:
-        newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4])}
+        newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4]),'area': str(row[5]) }
     
     existingData['building'][int(bldgNum)]['level'] = newDict
     
@@ -77,7 +77,7 @@ def GetProjectLevelData(databaseFile, bldgNum):
         return None
     
     for key in levelData.keys():
-        levels.append([key, levelData[key]['name'], levelData[key]['functions'], levelData[key]['ftf'], levelData[key]['z']])
+        levels.append([key, levelData[key]['name'], levelData[key]['functions'], levelData[key]['ftf'], levelData[key]['z'], levelData[key]['area']])
     return levels
 
 def LoadLevelsToRhinoDoc(databaseFile):

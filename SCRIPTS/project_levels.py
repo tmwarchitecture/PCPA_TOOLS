@@ -45,7 +45,7 @@ class LevelsDialog(forms.Dialog):
         def menuBar():
             mnuFile = forms.ButtonMenuItem(Text = "File")
             mnuNew = forms.ButtonMenuItem(Text = "New")
-            mnuNew.Click += self.OnFileSaveClick
+            mnuNew.Click += self.OnNewFileClick
             mnuSave = forms.ButtonMenuItem(Text = "Save")
             mnuSave.Click += self.OnFileSaveClick
             mnuSaveAs = forms.ButtonMenuItem(Text = "Save As...")
@@ -60,7 +60,7 @@ class LevelsDialog(forms.Dialog):
             mnuCopy.Click += self.copyToClipboard
             mnuEdit.Items.Add(mnuCopy)
             
-            #mnuFile.Items.Add(mnuNew)
+            mnuFile.Items.Add(mnuNew)
             mnuFile.Items.Add(mnuOpen)
             mnuFile.Items.Add(mnuSave)
             mnuFile.Items.Add(mnuSaveAs)
@@ -99,11 +99,13 @@ class LevelsDialog(forms.Dialog):
             self.grid.BackgroundColor = drawing.Colors.LightGrey
             self.grid.Size = drawing.Size(300,425)
             self.grid.GridLines = forms.GridLines.Both
+            self.grid.AllowMultipleSelection = True
             self.grid.CellEdited += self.OnCellEdited
+            self.grid.CellFormatting += self.OnCellFormatting
             
             #COLUMNS
             numberColumn = forms.GridColumn()
-            numberColumn.HeaderText = "#\t"
+            numberColumn.HeaderText = "#"
             numberColumn.DataCell = forms.TextBoxCell(0)
             
             nameColumn = forms.GridColumn()
@@ -129,11 +131,18 @@ class LevelsDialog(forms.Dialog):
             levelColumn.DataCell = forms.TextBoxCell(4)
             levelColumn.DataCell.TextAlignment = forms.TextAlignment.Right
             
+            areaColumn = forms.GridColumn()
+            areaColumn.HeaderText = "Area\t"
+            areaColumn.Editable = True
+            areaColumn.DataCell = forms.TextBoxCell(5)
+            areaColumn.DataCell.TextAlignment = forms.TextAlignment.Right
+            
             self.grid.Columns.Add(numberColumn)
             self.grid.Columns.Add(nameColumn)
             self.grid.Columns.Add(funcColumn)
             self.grid.Columns.Add(ftfColumn)
             self.grid.Columns.Add(levelColumn)
+            self.grid.Columns.Add(areaColumn)
         
         labels()
         combobox()
@@ -160,6 +169,11 @@ class LevelsDialog(forms.Dialog):
     
     def OnCancelPressed(self, sender, e):
         self.Close()
+    
+    #New File
+    def OnNewFileClick(self, sender, e):
+        self.grid.DataStore = []
+        print "New File"
     
     #Open File
     def OnFileOpenClick(self, sender, e):
@@ -188,7 +202,7 @@ class LevelsDialog(forms.Dialog):
         self.GenData()
         
         
-        print "Openig new file"
+        print "Opening new file"
     
     #Save
     def OnFileSaveAsClick(self, sender, e):
@@ -235,30 +249,37 @@ class LevelsDialog(forms.Dialog):
             newRowFunc = data[self.grid.SelectedRow][2]
             newRowFTF = float(data[self.grid.SelectedRow][3])
             newRowHeight = newRowFTF + float(data[self.grid.SelectedRow][4])
+            newRowArea = ''
         except:
             newRowFTF = ''
             newRowHeight = ''
             newRowFunc = ''
-        blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight]
+            newRowArea = ''
+        blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea]
         data.insert(self.grid.SelectedRow, blankRow)
         self.grid.DataStore = data
         self.RenumberRows()
-        self.UpdateHeightsFromFTF(self.grid.SelectedRow)
+        self.UpdateHeights()
     
     def OnDeleteRow(self, sender, e):
         data = self.grid.DataStore
-        rowDeleted = self.grid.SelectedRow
-        del data[self.grid.SelectedRow]
+        
+        for row in self.grid.SelectedRows:
+            del data[row]
         
         self.grid.DataStore = data
         self.RenumberRows()
-        self.UpdateHeightsFromFTF(rowDeleted)
+        self.UpdateHeights()
     
     def OnCellEdited(self, sender, e):
         if e.Column == 4 or e.Column == 3:
             # "Height Adjusted"
             self.CheckIfNumber(e.Row, e.Column)
-            self.UpdateHeights(self.grid.SelectedRow)
+            self.UpdateHeights()
+    
+    def OnCellFormatting(self, sender, e):
+        if e.Column.HeaderText == '#':
+            e.ForegroundColor = drawing.Colors.DarkGray
     
     #Util functions
     def RenumberRows(self):
@@ -290,21 +311,14 @@ class LevelsDialog(forms.Dialog):
             print "Cell accepts numbers only"
             self.grid.DataStore[row][col] = 0
     
-    def UpdateHeights(self, rowNum):
-        print rowNum
+    def UpdateHeights(self):
         data = list(self.grid.DataStore)
         data.reverse()
         #
         numRows = len(data)
-        selectedRow = numRows - rowNum - 1
         for i in range(1,numRows):
-            if i > selectedRow:
-                try:
-                    data[i][4] = float(data[i-1][3]) + float(data[i-1][4])
-                except:
-                    print "Failed"
-            if i == selectedRow:
-                data[i-1][3] =  float(data[i][4])-float(data[i-1][4])
+            data[i][4] = float(data[i-1][3]) + float(data[i-1][4])
+            data[i-1][3] =  float(data[i][4])-float(data[i-1][4])
         #
         data.reverse()
         self.grid.DataStore = data

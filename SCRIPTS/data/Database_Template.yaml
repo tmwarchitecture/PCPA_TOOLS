@@ -1,58 +1,114 @@
 building:
   0:
-    guid: Test
     functions:
     - residential
     - commercial
     geometry: none
+    guid: Test
     level:
       0:
-        ftf: 15.0
-        functions: Lobby
+        area: '10000'
+        ftf: 10.0
+        functions: Parking
         name: L1
         z: 0.0
       1:
-        ftf: 15.0
-        functions: Lobby
-        name: Mezzanine
+        area: '0.0'
+        ftf: 10.0
+        functions: Parking
+        name: L2
         z: 10.0
       2:
-        ftf: 15.0
-        functions: Office
-        name: L2
+        area: '0.0'
+        ftf: 10.0
+        functions: Parking
+        name: L3
         z: 20.0
       3:
-        ftf: 15.0
-        functions: MEP
-        name: Roof
+        area: '0.0'
+        ftf: 10.0
+        functions: Parking
+        name: L4
         z: 30.0
+      4:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L5
+        z: 40.0
+      5:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L6
+        z: 50.0
+      6:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L7
+        z: 60.0
+      7:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L8
+        z: 70.0
+      8:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L9
+        z: 80.0
+      9:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L10
+        z: 90.0
+      10:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L11
+        z: 100.0
+      11:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L12
+        z: 110.0
     name: Tower 1
   1:
-    guid: Test
     functions:
     - residential
     geometry: none
+    guid: Test
     level:
       -1:
+        area: 0.0
         ftf: 15.0
         functions: -Lobby
         name: b1
         z: -10.0
       0:
+        area: 0.0
         ftf: 15.0
         functions: -Lobby
         name: l1
         z: 0.0
       1:
+        area: 0.0
         ftf: 15.0
         functions: -Lobby
         name: mezz
         z: 10.0
       2:
+        area: 0.0
         ftf: 15.0
         functions: -Lobby
         name: roof
-        z: 20.0
+        z: 20.0.
     name: Tower 2
 constraints:
   maxheight: 120
