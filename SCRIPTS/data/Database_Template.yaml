@@ -13,7 +13,7 @@ building:
         name: L1
         z: 0.0
       1:
-        area: '0.0'
+        area: ''
         ftf: 10.0
         functions: Parking
         name: L2
@@ -22,62 +22,68 @@ building:
         area: '0.0'
         ftf: 10.0
         functions: Parking
-        name: L3
+        name: L2
         z: 20.0
       3:
         area: '0.0'
         ftf: 10.0
         functions: Parking
-        name: L4
+        name: L3
         z: 30.0
       4:
-        area: ''
+        area: '0.0'
         ftf: 10.0
         functions: Parking
-        name: L5
+        name: L4
         z: 40.0
       5:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L6
+        name: L5
         z: 50.0
       6:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L7
+        name: L6
         z: 60.0
       7:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L8
+        name: L7
         z: 70.0
       8:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L9
+        name: L8
         z: 80.0
       9:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L10
+        name: L9
         z: 90.0
       10:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L11
+        name: L10
         z: 100.0
       11:
         area: ''
         ftf: 10.0
         functions: Parking
-        name: L12
+        name: L11
         z: 110.0
+      12:
+        area: ''
+        ftf: 10.0
+        functions: Parking
+        name: L12
+        z: 120.0
     name: Tower 1
   1:
     functions:

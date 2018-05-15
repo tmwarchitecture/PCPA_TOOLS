@@ -46,7 +46,12 @@ def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     for row in data:
         newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4]),'area': str(row[5]) }
     
-    existingData['building'][int(bldgNum)]['level'] = newDict
+    try:
+        existingData['building'][int(bldgNum)]['level'] = newDict
+    except:
+        existingData = GetDatabaseTemplate()
+        existingData['building'][int(bldgNum)]['level'] = newDict
+        print "Save failed"
     
     #print newDict
     

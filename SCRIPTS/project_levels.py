@@ -107,6 +107,7 @@ class LevelsDialog(forms.Dialog):
             numberColumn = forms.GridColumn()
             numberColumn.HeaderText = "#"
             numberColumn.DataCell = forms.TextBoxCell(0)
+            numberColumn.DataCell.TextAlignment = forms.TextAlignment.Right
             
             nameColumn = forms.GridColumn()
             nameColumn.HeaderText = "Floor\t"
@@ -238,17 +239,21 @@ class LevelsDialog(forms.Dialog):
     def OnInsertRowAbove(self, sender, e):
         print "Inserting above"
         data = self.grid.DataStore
+        selectedRow = self.grid.SelectedRow
+        if len(data) == 0:
+            self.grid.DataStore = [[1,'L1','',10.0,0.0, '']]
+            return
         
         try:
-            newRowNameRaw = int(data[self.grid.SelectedRow][1][1:]) + 1
+            newRowNameRaw = int(data[selectedRow][1][1:]) + 1
             newRowName = "L" + str(newRowNameRaw)
         except:
-            newRowName = data[self.grid.SelectedRow][1]
+            newRowName = data[selectedRow][1]
         
         try:
-            newRowFunc = data[self.grid.SelectedRow][2]
-            newRowFTF = float(data[self.grid.SelectedRow][3])
-            newRowHeight = newRowFTF + float(data[self.grid.SelectedRow][4])
+            newRowFunc = data[selectedRow][2]
+            newRowFTF = float(data[selectedRow][3])
+            newRowHeight = newRowFTF + float(data[selectedRow][4])
             newRowArea = ''
         except:
             newRowFTF = ''
@@ -256,7 +261,7 @@ class LevelsDialog(forms.Dialog):
             newRowFunc = ''
             newRowArea = ''
         blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea]
-        data.insert(self.grid.SelectedRow, blankRow)
+        data.insert(selectedRow, blankRow)
         self.grid.DataStore = data
         self.RenumberRows()
         self.UpdateHeights()
@@ -286,7 +291,7 @@ class LevelsDialog(forms.Dialog):
         data = self.grid.DataStore
         data.reverse()
         for i, row in enumerate(data):
-            row[0] = i
+            row[0] = i+1
         data.reverse()
         self.grid.DataStore = data
         #print "Renumbered"
@@ -322,6 +327,9 @@ class LevelsDialog(forms.Dialog):
         #
         data.reverse()
         self.grid.DataStore = data
+    
+    def InchesToFeet(self):
+        print "A"
     
     #I/O Functions
     def copyToClipboard(self, sender, e):
