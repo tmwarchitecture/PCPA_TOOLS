@@ -79,7 +79,7 @@ class LevelsDialog(forms.Dialog):
                 for i, key in enumerate(bldgData.keys()):
                     bldgNames.append(str(i) + " - " + bldgData[key]['name'])
             except:
-                bldgNames = [''] 
+                bldgNames = ['Sheet 1','--Create New--']
             
             self.comboBuildingNum = forms.ComboBox()
             self.comboBuildingNum.DataStore = bldgNames
@@ -232,6 +232,16 @@ class LevelsDialog(forms.Dialog):
     def OnBldgNumChanged(self, sender, e):
         try:
             self.GenData()
+            if self.comboBuildingNum.SelectedIndex == 1:
+                print "Creating new!"
+                print self.comboBuildingNum.DataStore
+                
+                data = self.comboBuildingNum.DataStore
+                data.append('New Layout')
+                self.comboBuildingNum.DataStore = data
+                print data
+                self.comboBuildingNum.UpdateBindings()
+                self.comboBuildingNum.SelectedIndex = 0
         except:
             print "Error reading the database"
     
