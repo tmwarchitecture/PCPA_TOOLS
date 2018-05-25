@@ -51,10 +51,12 @@ class GetNumberOfFloors(forms.Dialog):
         self.Padding = drawing.Padding(5)
         
         self.ApplyBoo = False
+        self.NumFloors = 3
         
         self.numericButton = forms.NumericUpDown()
         self.numericButton.DecimalPlaces = 0
-        self.numericButton.MinValue = 3.0
+        self.numericButton.MinValue = 2.0
+        self.numericButton.Value = self.NumFloors
         
         self.DefaultButton = forms.Button(Text = 'OK')
         self.DefaultButton.Click += self.OnOKButtonClick
@@ -68,7 +70,8 @@ class GetNumberOfFloors(forms.Dialog):
         self.Content = layout
 
     def OnOKButtonClick(self, sender, e):
-        return self.numericButton.Value
+        self.NumFloors = self.numericButton.Value
+        #print self.NumFloors
         self.ApplyBoo = True
         self.Close()
 
@@ -328,7 +331,15 @@ class LevelsDialog(forms.Dialog):
     #Grid editing
     def OnInsertManyRowsAbove(self, sender, e):
         numFloorsDialog = GetNumberOfFloors()
+        numberOfFloors = numFloorsDialog.NumFloors
+        applyBoo = numFloorsDialog.ApplyBoo
         numFloorsDialog.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
+        
+        print applyBoo
+        
+        for i in range(numberOfFloors):
+            print i
+            self.OnInsertRowAbove(sender, e)
         print "Inserting many rows"
     
     def OnInsertRowAbove(self, sender, e):
@@ -357,9 +368,14 @@ class LevelsDialog(forms.Dialog):
             newRowArea = ''
         blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea]
         data.insert(selectedRow, blankRow)
+        
+        
+        
         self.grid.DataStore = data
         self.RenumberRows()
         self.UpdateHeights()
+        
+        self.grid.SelectedRow = selectedRow
     
     def OnDeleteRow(self, sender, e):
         data = self.grid.DataStore
