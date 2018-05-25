@@ -157,16 +157,16 @@
         <locale_1033>Version</locale_1033>
       </text>
       <tooltip>
-        <locale_1033>Version 0.2.2</locale_1033>
+        <locale_1033>Version 0.2.3</locale_1033>
       </tooltip>
       <help_text>
-        <locale_1033>Version 0.2.2</locale_1033>
+        <locale_1033>Version 0.2.3</locale_1033>
       </help_text>
       <button_text>
-        <locale_1033>Version 0.2.2</locale_1033>
+        <locale_1033>Version 0.2.3</locale_1033>
       </button_text>
       <menu_text>
-        <locale_1033>Version 0.2.2</locale_1033>
+        <locale_1033>Version 0.2.3</locale_1033>
       </menu_text>
     </macro_item>
     <macro_item guid="25760cd1-3775-435b-8fc0-3bf49a725c5c">
@@ -438,7 +438,7 @@
       <bitmap_item guid="33b21c21-24e4-439e-a036-79c27406edf2" index="11" />
       <bitmap_item guid="eb6ea511-976f-4306-86a0-0404de33538d" index="12" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABAAAADQCAYAAAAOG+HVAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwAAADsABataJCQAABEdJREFUaEPtlEtonFUUx8e3iAXdCW6sCCKI5NEkxpnJ5DF5m2Q6ycz3
+AAAOvwAADr8BOAVTJAAABEdJREFUaEPtlEtonFUUx8e3iAXdCW6sCCKI5NEkxpnJ5DF5m2Q6ycz3
 uN9r3qmUdtNVV0p9LQRRF+IDhdBFUVqtVjcuqqAFQdqFBQXRVBokq2Ioglibv/9z7YRYv2g+s5P7
 h19mcnLued1zk1KujSGrjjfDKVzZ9wh+a3VitZ5F3SlhyA4w6/j4rDpM+x783OrAlcU9OOKVMGkr
 uE6AlMsAg/zyfjSKi/U0Cq6Hb2oDOMsgvVYT5+sZrDW6cEBZKLs+jlbG8XI4iynHg+u6SCnlY9AK
@@ -474,7 +474,7 @@ WGMSYo1JiDUmIdaYhFhjEmKNSYg1JiHWuG1W8QfLgDT+quZPfQAAAABJRU5ErkJggg==</bitmap>
       <bitmap_item guid="33b21c21-24e4-439e-a036-79c27406edf2" index="11" />
       <bitmap_item guid="eb6ea511-976f-4306-86a0-0404de33538d" index="12" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABgAAAE4CAYAAABBrDN6AAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwAAADsABataJCQAACLtJREFUeF7tmHuMXHUVx9dofMUm/qs0IdoS/zBGK9DSbtt9tPve7qu7
+AAAOvwAADr8BOAVTJAAACLtJREFUeF7tmHuMXHUVx9dofMUm/qs0IdoS/zBGK9DSbtt9tPve7qu7
 c+feO3feu9vaYiGiYiIG0xJaY7QYDKilREGhI1DZSCURUlsbSmsD29IHitYgIWqkKkGMEePxc34z
 v2RpZ7vzuCGG/D7Jye7O/O75nt953aYtYZCU/mRWMkEoezL98sLUCnlj0yfl39PL5K+TK+WJbJcU
 /QnZkAylK5mWIT+S72UG5HRxDWeukdc49w/sjU3XyI+z/XJD6EkfZ8c5FyTTpZYAgT7+KIRJ2Zft
@@ -530,7 +530,7 @@ NWsE43uuQNy8dQJzrVni9udwOBwOh8PxNqCl5X/B2dAZ605M+AAAAABJRU5ErkJggg==</bitmap>
       <bitmap_item guid="33b21c21-24e4-439e-a036-79c27406edf2" index="11" />
       <bitmap_item guid="eb6ea511-976f-4306-86a0-0404de33538d" index="12" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAACAAAAGgCAYAAADLvWWYAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwAAADsABataJCQAADcZJREFUeF7tl3eslfUZx+meNm3TlTRtanfToYKAcIG7uYu777lnvGef
+AAAOvwAADr8BOAVTJAAADcZJREFUeF7tl3eslfUZx+meNm3TlTRtanfToYKAcIG7uYu777lnvGef
 O8Co4KriPIpatVbiisWBqXuhqNCG1omC9aJiK1aNdQGhmrio0Zg6nn6+77kvOTUoULH/9Pkm35z3
 nPP7/Z79/J53QpBKWFcya/XxIZsfxO2iXLvdPzTD3pz3C3tz7t72r9F9bOvIVHtuaKZdmWuzoWTM
 +pMpq09krZV9XcmMnZrtsbuKDfbUcA3r97XXRifaK6N72+tzJ3LGvnZHsdkWpWM2gqy2RGB97Emx
