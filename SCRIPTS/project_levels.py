@@ -6,6 +6,75 @@ import os
 import database_tools as dt
 
 
+def ConvertImperialLength(numberString, ToInches = True):
+    """
+    ConvertLength(numberString, ToInches = True)
+    -Acceptable formats:
+        4.5'
+        36.1"
+        4'6"
+    """
+    try:
+        return float(numberString)
+    except:
+        if ToInches:
+            footScale = 12
+            inchScale = 1
+        else:
+            footScale = 1
+            inchScale = 1/12
+        if '"' in numberString and "'" in numberString:
+            if numberString.find("'") < numberString.find('"'):
+                try:
+                    values = numberString.split("'")
+                    feetInches = float(values[0])*footScale
+                    inches = float(values[-1].split('"')[0])*inchScale
+                    return feetInches + inches
+                except:
+                    pass
+        elif "'" in numberString:
+            try:
+                return float(numberString.split("'")[0])*footScale
+            except:
+                pass
+        elif '"' in numberString:
+            try:
+                return float(numberString.split('"')[0])*inchScale
+            except:
+                pass
+        return None
+
+class GetNumberOfFloors(forms.Dialog):
+    def __init__(self):
+        self.Title = "Insert Many Floors"
+        #self.Size = drawing.Size(100,100)
+        self.Padding = drawing.Padding(5)
+        
+        self.ApplyBoo = False
+        
+        self.numericButton = forms.NumericUpDown()
+        self.numericButton.DecimalPlaces = 0
+        self.numericButton.MinValue = 3.0
+        
+        self.DefaultButton = forms.Button(Text = 'OK')
+        self.DefaultButton.Click += self.OnOKButtonClick
+        
+        self.AbortButton = forms.Button(Text = 'Cancel')
+        self.AbortButton.Click += self.OnCancelButtonClick
+        
+        layout = forms.DynamicLayout()
+        layout.AddRow(self.numericButton, None)
+        layout.AddSeparateRow(None, self.DefaultButton, self.AbortButton)
+        self.Content = layout
+
+    def OnOKButtonClick(self, sender, e):
+        return self.numericButton.Value
+        self.ApplyBoo = True
+        self.Close()
+
+    def OnCancelButtonClick(self, sender, e):
+        self.Close()
+
 class LevelsDialog(forms.Dialog):
     def __init__(self):
         self.Initialize()
@@ -32,13 +101,21 @@ class LevelsDialog(forms.Dialog):
             self.tboxFileName.ReadOnly = True
         def contextMenu():
             ctxtMnu = forms.ContextMenu()
-            ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert New Floor Above")
+            
+            ctxtInsertManyRows = forms.ButtonMenuItem(Text = "Insert Many Floors Above")
+            ctxtInsertManyRows.Click += self.OnInsertManyRowsAbove
+            
+            ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert Floor Above")
             ctxtInsertRow.Click += self.OnInsertRowAbove
             
             ctxtDeleteRow = forms.ButtonMenuItem(Text = "Remove Floor")
             ctxtDeleteRow.Click += self.OnDeleteRow
             
+            self.seperator1 = forms.SeparatorMenuItem()
+            
+            ctxtMnu.Items.Add(ctxtInsertManyRows)
             ctxtMnu.Items.Add(ctxtInsertRow)
+            ctxtMnu.Items.Add(self.seperator1)
             ctxtMnu.Items.Add(ctxtDeleteRow)
             
             self.grid.ContextMenu = ctxtMnu
@@ -94,6 +171,9 @@ class LevelsDialog(forms.Dialog):
             self.btnCancel = forms.Button()
             self.btnCancel.Text = "Cancel"
             self.btnCancel.Click += self.OnCancelPressed
+            
+            self.DefaultButton = self.btnApply
+            self.AbortButton = self.btnCancel
         def grid():
             self.grid = forms.GridView()
             self.grid.BackgroundColor = drawing.Colors.LightGrey
@@ -246,6 +326,11 @@ class LevelsDialog(forms.Dialog):
             print "Error reading the database"
     
     #Grid editing
+    def OnInsertManyRowsAbove(self, sender, e):
+        numFloorsDialog = GetNumberOfFloors()
+        numFloorsDialog.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
+        print "Inserting many rows"
+    
     def OnInsertRowAbove(self, sender, e):
         print "Inserting above"
         data = self.grid.DataStore
@@ -288,7 +373,7 @@ class LevelsDialog(forms.Dialog):
     
     def OnCellEdited(self, sender, e):
         if e.Column == 4 or e.Column == 3:
-            # "Height Adjusted"
+            self.grid.DataStore[e.Row][e.Column] = ConvertImperialLength(self.grid.DataStore[e.Row][e.Column], False)
             self.CheckIfNumber(e.Row, e.Column)
             self.UpdateHeights()
     

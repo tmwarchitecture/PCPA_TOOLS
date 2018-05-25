@@ -4,11 +4,7 @@ import Rhino
 import os.path
 import datetime
 import layers
-
-def GetDatePrefix():
-    year = int(datetime.datetime.today().strftime('%Y'))-2000
-    md = datetime.datetime.today().strftime('%m%d')
-    return str(year) + str(md)
+from pcpa_tools import GetDatePrefix
 
 def AddTitleBlock(size):
     rs.EnableRedraw(False)

@@ -153,7 +153,10 @@ def CollapseRootLayers(roots):
             pass
     rs.EnableRedraw(True)
 
-def AddSpecificLayer(layerNumRequested):
+def AddSpecificLayer(layerNumRequested, collapse = True):
+    """
+    AddSpecificLayer(layerNumRequested, collapse = True)
+    """
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
@@ -162,9 +165,10 @@ def AddSpecificLayer(layerNumRequested):
     layerNums.sort()
     
     roots = AddLayers(layerData, layerNums)
-    CollapseRootLayers(roots)
+    if collapse:
+        CollapseRootLayers(roots)
     rs.EnableRedraw(True)
-    return None
+    return roots
 
 if __name__ == "__main__":
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
