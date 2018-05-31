@@ -17,6 +17,9 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 207,Millwork_Generic,0,255-255-255,-1,,255-255-255,,,
 208,Wall_Generic,0,255-255-255,-1,,255-255-255,,,
 ,,,,,,,,,
+301,Column,0,255-0-255,-1,,0-0-0,,,2.1
+302,Beam,0,255-165-0,-1,,0-0-0,,,2.1
+,,,,,,,,,
 1000,1_SITE,,234-153-153,,,0-0-0,,,
 1001,Context Buildings_Generic,1000,255-255-255,,,255-255-255,,,
 1002,Ground_Curb Lines,1000,230-230-230,,,230-230-230,,,

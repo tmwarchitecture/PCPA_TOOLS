@@ -5,7 +5,6 @@ import rhinoscriptsyntax as rs
 import stat
 
 import config
-fileLocations = config.GetDict()
 
 def CheckPaths():
     print "Checking paths"
@@ -124,6 +123,14 @@ def LoadDisplayModes(filepath):
     else:
         print "\t{} Display modes updated".format(len(allFiles))
 
+def LoadPCPAMaterials(filepath):
+    try:
+        rs.EnableRedraw(False)
+        rs.Command("-_Import " + '"' + filepath + '"  Enter' , echo = False)
+        rs.EnableRedraw(True)
+    except:
+        print "Failed to load PCPA Materials"
+
 def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
@@ -199,5 +206,23 @@ def LoadGHDependencies(sourceFolder):
         return None
 
 if __name__ == "__main__":
-    ReloadPCPAStandards()
+    standardsRequested = rs.GetInteger("Standards to import", number = 0, minimum = 0, maximum = 10000)
+    fileLocations = config.GetDict()
+    if standardsRequested == 0:
+        LoadPCPAMaterials(fileLocations['Material File'])
+    elif standardsRequested == 1:
+        SetTemplateFolder(fileLocations['Template Folder'])
+        SetTemplateFile(fileLocations['Template File'])
+    elif standardsRequested == 2:
+        LoadPCPAComponents(fileLocations['PCPA GH Components'])
+        LoadGHDependencies(fileLocations['GH Dependencies'])
+    elif standardsRequested == 3:
+        LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
+    elif standardsRequested == 4:
+        UpdateStyles(fileLocations['Template File'])
+    elif standardsRequested == 5:
+        LoadDisplayModes(fileLocations['Display Mode Folder'])
+    else:
+        pass
+        #ReloadPCPAStandards()
     #fc.IterateCounter()
