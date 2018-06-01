@@ -3,6 +3,10 @@ import scriptcontext as sc
 import Rhino
 
 def loadMatsFromFile(path):
+    folder = r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\PCPA Rhino Materials'
+    
+    
+    
     rdk = rs.GetPlugInObject("Renderer Development Kit")
     rdk.ContentLoadFromFile(path)
 
@@ -66,7 +70,7 @@ def test():
 
 path = r'C:\Users\Tim\Desktop\temp\mats\airplane.rmtl'
 #loadMatsFromFile(path)
-getMaterialNames()
+#getMaterialNames()
 #test()
 #rs.AddMaterialToLayer(
 

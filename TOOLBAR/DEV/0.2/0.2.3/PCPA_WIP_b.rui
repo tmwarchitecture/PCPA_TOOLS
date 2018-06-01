@@ -19,7 +19,11 @@
         <macro_id>527f2c21-f9f5-4cc4-8c7e-4408b2374869</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator" />
+      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu_item guid="bde6c4ed-797b-4e80-8193-9cc471745ed7">
         <text>
           <locale_1033>Add Layers (version 1.0)</locale_1033>
@@ -34,7 +38,11 @@
         <macro_id>6615f5ec-dd18-4027-95b9-5f82f8191ee1</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator" />
+      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu_item guid="5cf010c9-b35b-4d8d-be64-20e802901b50">
         <text>
           <locale_1033>Project Info</locale_1033>
@@ -49,7 +57,11 @@
         <macro_id>4f60c793-b88e-417b-a294-fc97a166bb4d</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator" />
+      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu guid="3eed0838-f574-4a3b-88c4-b528ee9c6673">
         <text>
           <locale_1033>Layout</locale_1033>
@@ -75,7 +87,11 @@
           <macro_id>c8c8a617-3da8-4123-b614-5054bda70e75</macro_id>
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
-        <menu_item guid="8c4e08bf-6d56-47ea-90d6-a536bc1241ac" item_type="separator" />
+        <menu_item guid="8c4e08bf-6d56-47ea-90d6-a536bc1241ac" item_type="separator">
+          <text>
+            <locale_1033 />
+          </text>
+        </menu_item>
         <menu_item guid="522d12e9-1d8c-47db-a7b1-15cd7400a5c0">
           <text>
             <locale_1033>Batch Print</locale_1033>
@@ -84,14 +100,66 @@
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
       </menu>
-      <menu_item guid="e0f096aa-d0d8-4fd9-99ff-b398c4fcb58b">
+      <menu_item guid="230360dc-e2ca-40aa-82cd-a8e27a757012" item_type="separator">
         <text>
-          <locale_1033>Reload Standards</locale_1033>
+          <locale_1033 />
         </text>
-        <macro_id>25760cd1-3775-435b-8fc0-3bf49a725c5c</macro_id>
-        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator" />
+      <menu guid="806159a5-9ee2-4d96-8a89-71b8b2f35969">
+        <text>
+          <locale_1033>Standards</locale_1033>
+        </text>
+        <menu_item guid="41f3c321-8d3d-4038-a9fa-ebc63d62aadc">
+          <text>
+            <locale_1033>Import Materials</locale_1033>
+          </text>
+          <macro_id>a20d06e1-abfb-4d17-b1e3-cf40a0c8ff47</macro_id>
+          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+        </menu_item>
+        <menu_item guid="fb82ecc8-a637-4b11-9492-32bfe5417674">
+          <text>
+            <locale_1033>Import Annotation Styles</locale_1033>
+          </text>
+          <macro_id>ee12852d-eeaa-46a6-9d45-2b9ca3b01519</macro_id>
+          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+        </menu_item>
+        <menu_item guid="e53df15e-22c9-45e4-b7dc-cb7ea68615d9">
+          <text>
+            <locale_1033>Import Display Modes</locale_1033>
+          </text>
+          <macro_id>7f0b0820-92e1-4f57-af81-1d687511a12a</macro_id>
+          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+        </menu_item>
+        <menu_item guid="2f306832-4c7c-4c28-b778-77f580df9768" item_type="separator">
+          <text>
+            <locale_1033 />
+          </text>
+        </menu_item>
+        <menu_item guid="f9833d7a-f245-4d42-89c6-d5bc2eb0f7fe">
+          <text>
+            <locale_1033>Update Grasshopper Components</locale_1033>
+          </text>
+          <macro_id>137b28e6-9b07-4a89-a6b9-f754d0a2f4a7</macro_id>
+          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+        </menu_item>
+        <menu_item guid="d97bd28d-6099-4918-a3b9-9bf0896cc802" item_type="separator">
+          <text>
+            <locale_1033 />
+          </text>
+        </menu_item>
+        <menu_item guid="d07d735a-1b22-4c6c-b6d9-45b13d1404e6">
+          <text>
+            <locale_1033>Set Template File</locale_1033>
+          </text>
+          <macro_id>33a3ff59-de3c-44fc-b016-ddd102c8dfc9</macro_id>
+          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+        </menu_item>
+      </menu>
+      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu_item guid="375676d6-2c90-4256-853c-cce35dcd82c5">
         <text>
           <locale_1033>Run Test</locale_1033>
@@ -109,7 +177,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="9445b9b4-2446-49b1-8782-622714170ae1" active_tool_bar_group="dd4e4aa9-ae86-450c-acdb-26b168107d00" single_file="False" hide_single_tab="False" point_floating="842,407">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="9445b9b4-2446-49b1-8782-622714170ae1" active_tool_bar_group="ee615e8a-0722-4fd3-b842-c754c89fbafc" single_file="False" hide_single_tab="False" point_floating="842,407">
       <text>
         <locale_1033>PCPA</locale_1033>
       </text>
@@ -131,7 +199,7 @@
         </text>
         <tool_bar_id>1529eff0-7d74-431e-9eed-83728a773172</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59468" mru_width="868" point_pos="0,0" float_point="842,407" rect_mru_dock_pos="0,0,56,878" dock_location_u="59421" dock_location="right" float_size="363,118" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59468" mru_width="868" point_pos="0,0" float_point="842,407" rect_mru_dock_pos="0,0,56,877" dock_location_u="59421" dock_location="right" float_size="363,118" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars>
@@ -253,24 +321,6 @@
       <menu_text>
         <locale_1033>Version 0.2.3</locale_1033>
       </menu_text>
-    </macro_item>
-    <macro_item guid="25760cd1-3775-435b-8fc0-3bf49a725c5c">
-      <text>
-        <locale_1033>Reload Standards</locale_1033>
-      </text>
-      <tooltip>
-        <locale_1033>Reload Standards</locale_1033>
-      </tooltip>
-      <help_text>
-        <locale_1033>Reload Standards</locale_1033>
-      </help_text>
-      <button_text>
-        <locale_1033>Reload Standards</locale_1033>
-      </button_text>
-      <menu_text>
-        <locale_1033>Reload Standards</locale_1033>
-      </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\reload_standards.py)</script>
     </macro_item>
     <macro_item guid="4f6124ea-720e-4326-8906-74936e80e023">
       <text>
@@ -837,6 +887,114 @@ _enter </script>
         <locale_1033>IconTest</locale_1033>
       </text>
     </macro_item>
+    <macro_item guid="a20d06e1-abfb-4d17-b1e3-cf40a0c8ff47">
+      <text>
+        <locale_1033>Standards-Import Materials</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Import Materials</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Import Materials</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Import Materials</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Import Materials</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 0 </script>
+    </macro_item>
+    <macro_item guid="ee12852d-eeaa-46a6-9d45-2b9ca3b01519">
+      <text>
+        <locale_1033>Standards-Import Annotation Styles</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Import Annotation Styles</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Import Annotation Styles</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Import Annotation Styles</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Import Annotation Styles</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 4 </script>
+    </macro_item>
+    <macro_item guid="7f0b0820-92e1-4f57-af81-1d687511a12a">
+      <text>
+        <locale_1033>Standards-Import Display Modes</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Import Display Modes</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Import Display Modes</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Import Display Modes</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Import Display Modes</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 5 </script>
+    </macro_item>
+    <macro_item guid="33a3ff59-de3c-44fc-b016-ddd102c8dfc9">
+      <text>
+        <locale_1033>Standards-Set Template File</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Set Template File</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Set Template File</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Set Template File</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Set Template File</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 1 </script>
+    </macro_item>
+    <macro_item guid="137b28e6-9b07-4a89-a6b9-f754d0a2f4a7">
+      <text>
+        <locale_1033>Standards-Update Grasshopper Components</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Update Grasshopper Components</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Update Grasshopper Components</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Update Grasshopper Components</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Update Grasshopper Components</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 2 </script>
+    </macro_item>
+    <macro_item guid="93f26566-4e04-476b-9c25-fb44d8b0a09a">
+      <text>
+        <locale_1033>Standards-Import ACAD Schemes</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Import ACAD Schemes</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Import ACAD Schemes</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Import ACAD Schemes</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Import ACAD Schemes</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 3 </script>
+    </macro_item>
   </macros>
   <bitmaps>
     <small_bitmap item_width="16" item_height="16">
@@ -875,7 +1033,7 @@ _enter </script>
       <bitmap_item guid="fda1a873-b9e1-4c1c-a07d-91f62d3db5af" index="32" />
       <bitmap_item guid="7c4f2ffa-cf48-4a32-833c-768e3ccaa8fc" index="33" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABAAAAIgCAYAAACMFunlAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOvAAADrwBlbxySQAAFdFJREFUeF7tXHl8Tdfa3qWlZlXVXkrb297rM0uEyDyaMhBDhnNOkpOc
+AAAOvgAADr4B6kKxwAAAFdFJREFUeF7tXHl8Tdfa3qWlZlXVXkrb297rM0uEyDyaMhBDhnNOkpOc
 DIZranpFE9FMIlr8FF8vLT4S0VK0BNWiQgZDpY4YS1sU1VBTiDRE8nzvu86Qk+Qkcvjn3t79/H6P
 tdfa633Wu9619sre+6xNUimD4BYYiZVqL1RM7IuH461QHOmESIU/3IJCMVIRgv0adyq3wZ3x/VEx
 wQapwf4YEaSCUhEKSUkCrnSwJWwILkc6wE8ZjDMRzjhKIoMCo3Ey0hElUdaYqgpEgDIEWeHDsEQ9
@@ -1011,7 +1169,7 @@ MVN6GmMmxUiGDBkyCJL0/3t4rfpoptapAAAAAElFTkSuQmCC</bitmap>
       <bitmap_item guid="fda1a873-b9e1-4c1c-a07d-91f62d3db5af" index="32" />
       <bitmap_item guid="7c4f2ffa-cf48-4a32-833c-768e3ccaa8fc" index="33" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABgAAAMwCAYAAAA6YKA+AAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOvAAADrwBlbxySQAAExRJREFUeF7tnH2MHVd5xtcOLXYSh7giiloipU2M+keF2jSQkNiJv+31
+AAAOvgAADr4B6kKxwAAAExRJREFUeF7tnH2MHVd5xtcOLXYSh7giiloipU2M+keF2jSQkNiJv+31
 ev21sffuvXfvfu/aaQIJKi1UKg1VgnBQ1QZEBWlDogIt5BYSYpUUCaibDxGSRsQJ+YBSElGKSlsM
 pZSqKlVPn2f2vpuz574zc2bu3MWK3kd6fO/MnPP8zpxz5tyDx2Gg2RhzQ2NTbrLRdHdNDrlvLFzp
 fnLsV93/HL3MfX/+KveFqZ1urn7E7Rtrup1jE25/veX+dHKve3buGpR5o/sRyv0n/JNjb3R/OTXk
@@ -1135,7 +1293,7 @@ IBM2RVLXNwAAAABJRU5ErkJggg==</bitmap>
       <bitmap_item guid="fda1a873-b9e1-4c1c-a07d-91f62d3db5af" index="32" />
       <bitmap_item guid="7c4f2ffa-cf48-4a32-833c-768e3ccaa8fc" index="33" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAACAAAARACAYAAACPwVG9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOvAAADrwBlbxySQAAQzhJREFUeF7tvQV8VMf3PrwECxASIAluwbVFihQL7m4xQgjB3TWQBHda
+AAAOvgAADr4B6kKxwAAAQzhJREFUeF7tvQV8VMf3PrwECxASIAluwbVFihQL7m4xQgjB3TWQBHda
 rFjRAhXc3d0lWKGlBYomuJNw3ueZ3Q2bsDGk/f3f7zyfnt7cu3PnPHPOmTNzh925Bi9Pd6nv0VIq
 ubWR7l5uMtenthxvU07edvxK3nYoIm/aF5XH7UrJnTblZalPLWnj0UyaeHhKJfeWUhP31ffwljEt
 G8qe1pXlz7ZlUf4bed6+mDxqX0RedCiGOr6RXa2ryfAWzaQddNVy95LGuMcT93p4eAeaCHijQl/p

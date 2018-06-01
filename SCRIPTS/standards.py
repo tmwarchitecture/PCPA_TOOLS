@@ -222,6 +222,15 @@ if __name__ == "__main__":
         UpdateStyles(fileLocations['Template File'])
     elif standardsRequested == 5:
         LoadDisplayModes(fileLocations['Display Mode Folder'])
+    elif standardsRequested == 99:
+        LoadPCPAMaterials(fileLocations['Material File'])
+        SetTemplateFolder(fileLocations['Template Folder'])
+        SetTemplateFile(fileLocations['Template File'])
+        LoadDisplayModes(fileLocations['Display Mode Folder'])
+        UpdateStyles(fileLocations['Template File'])
+        LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
+        LoadPCPAComponents(fileLocations['PCPA GH Components'])
+        LoadGHDependencies(fileLocations['GH Dependencies'])
     else:
         pass
         #ReloadPCPAStandards()
