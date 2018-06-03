@@ -2,7 +2,41 @@ import rhinoscriptsyntax as rs
 from pcpa_tools import GetDatePrefix
 import layers
 
-def MakeUnique(blockObj):
+def SuperExplodeBlock():
+    block = rs.GetObject("Select block to explode", filter = 4096, preselect = True)
+    objs = rs.ExplodeBlockInstance(block, True)
+    return objs
+
+def RenameBlockCmd():
+    block = rs.GetObject("Select block to rename", filter = 4096, preselect = True)
+    
+    #Default Name
+    try:
+        number = int(rs.BlockInstanceName(block).split('_')[-1])
+        number += 1
+        if len(str(number))<2:
+            numString = '0' + str(number)
+        else:
+            numString = str(number)
+    except:
+        numString = '01a'
+    defaultName = GetDatePrefix() + "_OPTION_" + numString
+    
+    looping = True
+    while looping:
+        newName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Rename Block')
+        if newName is None: return
+        if rs.IsBlock(newName):
+            print "Block name already exists"
+        elif len(newName) == 0:
+            print "Must specify a name"
+            pass
+        else:
+            looping = False
+    
+    return rs.RenameBlock(rs.BlockInstanceName(block), newName)
+
+def ReplicateBlock(blockObj):
     #Check if a block
     try:
         if rs.IsBlockInstance(blockObj):
@@ -42,10 +76,51 @@ def MakeUnique(blockObj):
     #Create new block
     return rs.InsertBlock2(newBlockName, xform)
 
-def main():
+def MakeBlockUnique():
+    block = rs.GetObject("Select block to make unique", filter = 4096, preselect = True)
+    if block is None: return
+    
+    #Default Name
+    try:
+        number = int(rs.BlockInstanceName(block).split('_')[-1])
+        number += 1
+        if len(str(number))<2:
+            numString = '0' + str(number)
+        else:
+            numString = str(number)
+    except:
+        numString = '01a'
+    defaultName = GetDatePrefix() + "_OPTION_" + numString
+    
+    looping = True
+    while looping:
+        newName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'MakeUnique')
+        if newName is None: return
+        if rs.IsBlock(newName):
+            print "Block name already exists"
+        elif len(newName) == 0:
+            print "Must specify a name"
+            pass
+        else:
+            looping = False
+    
+    if newName is None: return
+    rs.EnableRedraw(False)
+    xform = rs.BlockInstanceXform(block)
+    insertPt = rs.BlockInstanceInsertPoint(block)
+    objs = rs.ExplodeBlockInstance(block, False)
+    rs.TransformObjects(objs, rs.XformInverse(xform))
+    pt = rs.TransformObject(insertPt, rs.XformInverse(xform))
+    rs.AddBlock(objs, insertPt, newName, True)
+    newBlock = rs.InsertBlock2(newName, xform)
+    rs.DeleteObject(pt)
+    rs.EnableRedraw(True)
+    rs.SelectObject(newBlock)
+
+def Iterate():
     block = rs.GetObject("Select block to make unique", rs.filter.instance, True)
     if block is None: return
-    newBlock = MakeUnique(block)
+    newBlock = ReplicateBlock(block)
     try:
         optionLayer = layers.AddSpecificLayer(3000, False)[0]
         color = rs.LayerColor(optionLayer)
@@ -58,4 +133,14 @@ def main():
         pass
 
 if __name__ == "__main__":
-    main()
+    func = rs.GetInteger("", 0, 0, 100)
+    if func == 0:
+        Iterate()
+    elif func == 1:
+        MakeBlockUnique()
+    elif func == 2:
+        SuperExplodeBlock()
+    elif func == 3:
+        RenameBlockCmd()
+    else:
+        print "No function found"
