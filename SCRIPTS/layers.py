@@ -4,6 +4,9 @@ import os
 import scriptcontext as sc
 
 from libs import csv
+import config
+
+fileLocations = config.GetDict()
 
 filename = "PCPA LAYERS_V2.csv"
 dataDir = "data"
@@ -21,8 +24,65 @@ printwidthColumn = 7
 global fullLayerNameColumn
 fullLayerNameColumn = 8
 
-#sc.doc.Materials.FindIndex(
-#print "HERE: " + str(Rhino.DocObjects.Tables.MaterialTable.CurrentMaterialIndex).
+
+def MaterialToLayer(layer, matName):
+    def loadMatFromPath(path):
+        if os.path.isfile(path):
+            rdk = rs.GetPlugInObject("Renderer Development Kit")
+            rc = rdk.ContentLoadFromFile(path)
+            return rc
+        else: return None
+    
+    def ApplyMaterialToLayer(material, layer):
+        matName = '"' + str(material) + '"'
+        layName = '"' + layer + '"'
+        rs.Command("-_RenderAssignMaterialToLayer " + str(matName) + " " + str(layName) + " ", False)
+    
+    def getMaterialNames():
+        rdk = rs.GetPlugInObject("Renderer Development Kit")
+        rdkALL = rdk.FactoryList()
+        arrMatIDList = rdk.ContentList("material") 
+        arrMatNames = []
+        try:
+            len(arrMatIDList)
+        except:
+            return None
+        for i in range(len(arrMatIDList)):
+            arrMatNames.append(rdk.ContentInstanceName(arrMatIDList[i]))
+        return arrMatNames
+    
+    def IsMaterial(materialName):
+        matNames = getMaterialNames()
+        if matNames is None: return False
+        for name in matNames:
+            if name == materialName:
+                return True
+        return False
+    
+    def ForceMaterialToLayer(materialName, mylayer):
+        """
+        Applies material by name to layer. If no layer found, it is imported.
+            materialName: str
+            mylayer: str
+        """
+        materialNameFull = materialName + '.rmtl'
+        #dir = r'C:\Users\Tim\Desktop\temp\mats'
+        dir = fileLocations['Material Folder']
+        matpath = os.path.join(dir, materialNameFull)
+        
+        print matpath
+        if IsMaterial(materialName):
+            print "Material exists already"
+            ApplyMaterialToLayer(materialName, mylayer)
+        else:
+            print "Trying to load mat"
+            result = loadMatFromPath(matpath)
+            if result is None:
+                print "Material {} not found".format(materialName)
+            else:
+                ApplyMaterialToLayer(materialName, mylayer)
+    
+    ForceMaterialToLayer(matName, layer)
 
 def GetChildNumbers(parentNum, layerData):
     numsInCSV = list(layerData.keys())
@@ -131,6 +191,12 @@ def AddLayers(layerData, layerNumbers):
         rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
         rs.LayerPrintColor(newLayer, thisLayerData[printcolorColumn])
         rs.LayerPrintWidth(newLayer, thisLayerData[printwidthColumn])
+        try:
+            MaterialToLayer(newLayer, thisLayerData[materialColumn])
+            print thisLayerData[materialColumn]
+        except:
+            pass
+        
         if isRoot:
             rootLayers.append(newLayer)
         return newLayer
