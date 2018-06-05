@@ -19,7 +19,30 @@
         <macro_id>527f2c21-f9f5-4cc4-8c7e-4408b2374869</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator" />
+      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
+      <menu_item guid="81f88627-b60e-4ab6-ae02-7e2f62c1a81f">
+        <text>
+          <locale_1033>0_ARCHITECTURE</locale_1033>
+        </text>
+        <macro_id>34036a88-63ff-485a-a52e-e5844accb6f9</macro_id>
+        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+      </menu_item>
+      <menu_item guid="135eb0f7-123e-4217-a04b-7f9adb78c205">
+        <text>
+          <locale_1033>1_SITE</locale_1033>
+        </text>
+        <macro_id>f78a681e-274f-4b88-9038-c305b58c9358</macro_id>
+        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+      </menu_item>
+      <menu_item guid="6b1271dc-3b34-4950-9607-e26f8bd6c926" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu_item guid="bde6c4ed-797b-4e80-8193-9cc471745ed7">
         <text>
           <locale_1033>Add Layers (version 1.0)</locale_1033>
@@ -34,7 +57,11 @@
         <macro_id>6615f5ec-dd18-4027-95b9-5f82f8191ee1</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator" />
+      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu_item guid="5cf010c9-b35b-4d8d-be64-20e802901b50">
         <text>
           <locale_1033>Project Info</locale_1033>
@@ -49,7 +76,11 @@
         <macro_id>4f60c793-b88e-417b-a294-fc97a166bb4d</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator" />
+      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu guid="3eed0838-f574-4a3b-88c4-b528ee9c6673">
         <text>
           <locale_1033>Layout</locale_1033>
@@ -75,7 +106,11 @@
           <macro_id>c8c8a617-3da8-4123-b614-5054bda70e75</macro_id>
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
-        <menu_item guid="8c4e08bf-6d56-47ea-90d6-a536bc1241ac" item_type="separator" />
+        <menu_item guid="8c4e08bf-6d56-47ea-90d6-a536bc1241ac" item_type="separator">
+          <text>
+            <locale_1033 />
+          </text>
+        </menu_item>
         <menu_item guid="522d12e9-1d8c-47db-a7b1-15cd7400a5c0">
           <text>
             <locale_1033>Batch Print</locale_1033>
@@ -91,7 +126,11 @@
         <macro_id>25760cd1-3775-435b-8fc0-3bf49a725c5c</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator" />
+      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator">
+        <text>
+          <locale_1033 />
+        </text>
+      </menu_item>
       <menu_item guid="375676d6-2c90-4256-853c-cce35dcd82c5">
         <text>
           <locale_1033>Run Test</locale_1033>
@@ -836,6 +875,42 @@ _enter </script>
       <text>
         <locale_1033>IconTest</locale_1033>
       </text>
+    </macro_item>
+    <macro_item guid="34036a88-63ff-485a-a52e-e5844accb6f9">
+      <text>
+        <locale_1033>LAYERS-0_ARCHITECTURE</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 0 </script>
+    </macro_item>
+    <macro_item guid="f78a681e-274f-4b88-9038-c305b58c9358">
+      <text>
+        <locale_1033>LAYERS-1_SITE</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>1_SITE</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>1_SITE</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>1_SITE</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>1_SITE</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 1000 </script>
     </macro_item>
   </macros>
   <bitmaps>

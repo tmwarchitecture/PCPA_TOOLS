@@ -20,6 +20,21 @@
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
       <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator" />
+      <menu_item guid="81f88627-b60e-4ab6-ae02-7e2f62c1a81f">
+        <text>
+          <locale_1033>0_ARCHITECTURE</locale_1033>
+        </text>
+        <macro_id>34036a88-63ff-485a-a52e-e5844accb6f9</macro_id>
+        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+      </menu_item>
+      <menu_item guid="135eb0f7-123e-4217-a04b-7f9adb78c205">
+        <text>
+          <locale_1033>1_SITE</locale_1033>
+        </text>
+        <macro_id>f78a681e-274f-4b88-9038-c305b58c9358</macro_id>
+        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+      </menu_item>
+      <menu_item guid="6b1271dc-3b34-4950-9607-e26f8bd6c926" item_type="separator" />
       <menu_item guid="bde6c4ed-797b-4e80-8193-9cc471745ed7">
         <text>
           <locale_1033>Add Layers (version 1.0)</locale_1033>
@@ -836,6 +851,42 @@ _enter </script>
       <text>
         <locale_1033>IconTest</locale_1033>
       </text>
+    </macro_item>
+    <macro_item guid="34036a88-63ff-485a-a52e-e5844accb6f9">
+      <text>
+        <locale_1033>LAYERS-0_ARCHITECTURE</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>0_ARCHITECTURE</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 0 </script>
+    </macro_item>
+    <macro_item guid="f78a681e-274f-4b88-9038-c305b58c9358">
+      <text>
+        <locale_1033>LAYERS-1_SITE</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>1_SITE</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>1_SITE</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>1_SITE</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>1_SITE</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 1000 </script>
     </macro_item>
   </macros>
   <bitmaps>

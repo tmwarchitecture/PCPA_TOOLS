@@ -66,22 +66,20 @@ def MaterialToLayer(layer, matName):
             mylayer: str
         """
         materialNameFull = materialName + '.rmtl'
-        #dir = r'C:\Users\Tim\Desktop\temp\mats'
         dir = fileLocations['Material Folder']
         matpath = os.path.join(dir, materialNameFull)
         
-        print matpath
         if IsMaterial(materialName):
-            print "Material exists already"
             ApplyMaterialToLayer(materialName, mylayer)
         else:
-            print "Trying to load mat"
             result = loadMatFromPath(matpath)
             if result is None:
                 print "Material {} not found".format(materialName)
             else:
                 ApplyMaterialToLayer(materialName, mylayer)
     
+    if len(matName) < 1:
+        return
     ForceMaterialToLayer(matName, layer)
 
 def GetChildNumbers(parentNum, layerData):
@@ -193,7 +191,6 @@ def AddLayers(layerData, layerNumbers):
         rs.LayerPrintWidth(newLayer, thisLayerData[printwidthColumn])
         try:
             MaterialToLayer(newLayer, thisLayerData[materialColumn])
-            print thisLayerData[materialColumn]
         except:
             pass
         
