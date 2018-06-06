@@ -38,7 +38,6 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 2400,Vehicles,2000,,,,,,,
 ,,,,,,,,,
 3000,3_DESIGN OPTIONS,,204-0-0,,,,,,
-3001,Option 01,3000,,,,,,,
 ,,,,,,,,,
 4000,4_BLOCKS,,217-234-211,,,,,,
 4101,Window_3'X8',4000,,,,,,,

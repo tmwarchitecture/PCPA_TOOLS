@@ -9,9 +9,8 @@ import config
 fileLocations = config.GetDict()
 
 filename = "PCPA LAYERS_V2.csv"
-dataDir = "data"
 root = os.path.dirname(os.path.realpath(__file__))
-csvPath = os.path.join(root,dataDir, filename)
+csvPath = os.path.join(root,"data", filename)
 
 layNumColumn = 0
 nameColumn = 1
@@ -23,7 +22,6 @@ printcolorColumn = 6
 printwidthColumn = 7
 global fullLayerNameColumn
 fullLayerNameColumn = 8
-
 
 def MaterialToLayer(layer, matName):
     def loadMatFromPath(path):
@@ -125,6 +123,7 @@ def GetLayerData(fileName):
         row[linetypeColumn], translateColor(row[printcolorColumn]), printwidth]
     
     data = AddLayerFullName(data)
+    
     return data
 
 def AddLayerFullName(data):
@@ -185,6 +184,8 @@ def AddLayers(layerData, layerNumbers):
             isRoot = True
             parentLay = None
         ##########################
+        if rs.IsLayer(thisLayerData[fullLayerNameColumn]):
+            return
         newLayer = rs.AddLayer(thisLayerData[fullLayerNameColumn], thisLayerData[colorColumn])
         rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
         rs.LayerPrintColor(newLayer, thisLayerData[printcolorColumn])
@@ -220,6 +221,7 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     """
     AddSpecificLayer(layerNumRequested, collapse = True)
     """
+    
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
