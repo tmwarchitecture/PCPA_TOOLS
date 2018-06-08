@@ -87,7 +87,12 @@ def GetChildNumbers(parentNum, layerData):
         return list(set(numsInCSV) & set(nums))
     elif parentNum%1000 == 0:
         nums = range(parentNum, parentNum+1000)
+<<<<<<< HEAD
         return list(set(numsInCSV) & set(nums))
+=======
+        finalList = list(set(numsInCSV) & set(nums))
+        return finalList
+>>>>>>> 954d848699143b6cb93c3d9279344ce68cd56f1e
     elif parentNum%100 == 0:
         nums = range(parentNum+1, parentNum+100)
         return list(set(numsInCSV) & set(nums))
@@ -174,13 +179,12 @@ def AddLayers(layerData, layerNumbers):
         try:
             counter += 1
             if counter > 4:
-                print "Looop detected"
+                print "Loooop detected"
                 return
             int(thisLayerData[parentColumn])
             parentLayData = layerData[thisLayerData[parentColumn]]
             parentLay = AddThisLayer(parentLayData, counter)
         except:
-            #rootLayers.append(thisLayerData[nameColumn])
             isRoot = True
             parentLay = None
         ##########################
@@ -221,7 +225,6 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     """
     AddSpecificLayer(layerNumRequested, collapse = True)
     """
-    
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
@@ -235,6 +238,54 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     rs.EnableRedraw(True)
     return roots
 
+#############################################################
+
+def GetLayerFullName(layerData, layerNumbers):
+    def GetThisLayer(thisLayerData, counter, thisLayersName):
+        ##########################
+        isRoot = False
+        try:
+            counter += 1
+            if counter > 4:
+                print "Loooop detected"
+                return
+            int(thisLayerData[parentColumn]) #test if has parent
+            parentLayData = layerData[thisLayerData[parentColumn]]
+            thisLayersName = parentLayData[nameColumn] + "::" + thisLayersName
+            thisLayersName = GetThisLayer(parentLayData, counter, thisLayersName)
+        except:
+            isRoot = True
+            parentLay = None
+        ##########################
+        return thisLayersName
+    
+    counter = 0
+    rootLayers = []
+    allNames = []
+    
+    for layerNumber in layerNumbers:
+        try:
+            thisLayer = layerData[layerNumber]
+            thisName = thisLayer[nameColumn]
+            allNames.append(GetThisLayer(thisLayer, counter, thisName))
+            print x
+        except:
+            pass
+    return allNames
+
+def GetLayerNames(layerNumRequested):
+    rs.EnableRedraw(False)
+    if layerNumRequested is None: return
+    layerData = GetLayerData(csvPath)
+    
+    layerNums = GetChildNumbers(layerNumRequested, layerData)
+    layerNums.sort()
+    
+    layers = GetLayerFullName(layerData, layerNums)
+    
+    return layers
+
 if __name__ == "__main__":
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     AddSpecificLayer(layerNumRequested)
+    #GetLayerNames(layerNumRequested)
