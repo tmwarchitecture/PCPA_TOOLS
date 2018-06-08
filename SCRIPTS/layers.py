@@ -86,7 +86,7 @@ def GetChildNumbers(parentNum, layerData):
         nums = range(0, parentNum)
         return list(set(numsInCSV) & set(nums))
     elif parentNum%1000 == 0:
-        nums = range(parentNum+1, parentNum+1000)
+        nums = range(parentNum, parentNum+1000)
         return list(set(numsInCSV) & set(nums))
     elif parentNum%100 == 0:
         nums = range(parentNum+1, parentNum+100)

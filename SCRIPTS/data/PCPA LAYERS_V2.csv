@@ -1,14 +1,12 @@
 Version 2.0,**Do not change column positions **Layer Numbers must be unique,,,,,,,,
-Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print Width,,Version Modified
+Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print Width,,Date Modified
 0,0_ARCHITECTURE,,244-204-204,,,0-0-0,,,
-101,2D_Lines,0,0-0-0,,Dashed,0-0-0,,,
-102,Facade_Generic,0,255-255-255,ARCHITECTURE_Facade_Generic,Dots,255-255-255,,,
-103,Glazing_Spandrel_Generic,0,220-240-255,ARCHITECTURE_Glazing_Spandrel_Generic,Continuous,220-240-255,0.35,,
-104,Glazing_Vision_Generic,0,220-240-255,ARCHITECTURE_Glazing_Vision_Generic,,220-240-255,,,
-105,Hardware_Generic,0,190-190-190,ARCHITECTURE_Hardware_Generic,,190-190-190,,,
-106,Mullions_Generic,0,105-105-105,ARCHITECTURE_Mullions_Generic,,105-105-105,0.5,,
-107,Railings_Generic,0,0-0-0,ARCHITECTURE_Railings_Generic,,0-0-0,,,
-108,Slabs_Generic,0,190-190-190,ARCHITECTURE_Slabs_Generic,,190-190-190,,,
+101,Facade_Generic,0,255-255-255,ARCHITECTURE_Facade_Generic,,0-0-0,,,
+102,Glazing_Spandrel_Generic,0,33-150-243,ARCHITECTURE_Glazing_Spandrel_Generic,,0-0-0,,,
+103,Glazing_Vision_Generic,0,187-222-251,ARCHITECTURE_Glazing_Vision_Generic,,0-0-0,,,
+104,Hardware_Generic,0,190-190-190,ARCHITECTURE_Hardware_Generic,,0-0-0,,,
+105,Mullions_Generic,0,13-71-161,ARCHITECTURE_Mullions_Generic,,0-0-0,,,
+106,Railings_Generic,0,233-30-99,ARCHITECTURE_Railings_Generic,,0-0-0,,,180608
 ,,,,,,,,,
 202,Ceiling_Generic,0,255-255-255,INTERIOR_Ceiling_Generic,,255-255-255,,,
 203,Doors_Generic,0,230-230-230,INTERIOR_Doors_Generic,,230-230-230,,,
@@ -17,8 +15,12 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 207,Millwork_Generic,0,255-255-255,INTERIOR_Millwork_Generic,,255-255-255,,,
 208,Wall_Generic,0,255-255-255,INTERIOR_Wall_Generic,,255-255-255,,,
 ,,,,,,,,,
-301,Column,0,255-0-255,,,0-0-0,,,2.1
-302,Beam,0,255-165-0,,,0-0-0,,,2.1
+301,Structure_Column,0,255-0-255,ARCHITECTURE_Structure,,0-0-0,,,180608
+302,Structure_Beam,0,255-141-0,ARCHITECTURE_Structure,,0-0-0,,,180608
+303,Structure_Slab,0,255-0-108,ARCHITECTURE_Structure,,0-0-0,,,180608
+,,,,,,,,,
+901,_Lines,0,0-0-0,,,0-0-0,,,180608
+902,_Hidden,0,230-230-230,,,0-0-0,-1,,180608
 ,,,,,,,,,
 1000,1_SITE,,234-153-153,,,0-0-0,,,
 1001,Context Buildings_Generic,1000,255-255-255,SITE_Context Buildings_Generic,,255-255-255,,,
@@ -30,6 +32,7 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 1007,Water_Generic,1000,240-249-254,SITE_Water_Generic,,240-249-254,,,
 ,,,,,,,,,
 2000,2_ENTOURAGE,,224-102-102,,,,,,
+2901,_Hidden,2000,230-230-230,,,0-0-0,-1,,180608
 2100,Furniture,2000,,,,,,,
 2200,People,2000,,,,,,,
 2201,Gradient_Woman 4A,2200,255-255-255,,,,,,
@@ -43,11 +46,12 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 4101,Window_3'X8',4000,,,,,,,
 4102,Window_4'X8',4000,,,,,,,
 4103,Door_3'X8',4000,,,,,,,
+4901,_Hidden,4000,230-230-230,,,0-0-0,-1,,180608
 ,,,,,,,,,
 5000,5_ZONING,,182-215-168,,,,,,
-5101,Property Line,5000,255-0-0,,DashDot,0-0-0,,,2.1
-5102,Setbacks,5000,0-0-255,,DashDot,0-0-0,,,2.1
-5103,Sky Exposure Plane,5000,255-127-0,,,0-0-0,,,2.1
+5101,Property Line,5000,255-0-0,,DashDot,0-0-0,,,180608
+5102,Setbacks,5000,0-0-255,,DashDot,0-0-0,,,180608
+5103,Sky Exposure Plane,5000,255-127-0,,,0-0-0,,,180608
 ,,,,,,,,,
 6000,6_CAD IMPORT,,106-168-79,,,,,,
 ,,,,,,,,,
@@ -85,17 +89,17 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 8102,Leaders,8000,,,,0-0-0,,,
 8103,Text,8000,,,,0-0-0,,,
 8104,Hatch,8000,,,,0-0-0,,,
-8105,Layout,8000,108-108-108,,,0-0-0,,,2.1
-8106,Viewport,8000,220-220-220,,,0-0-0,-1,,2.1
-8201,PCP-01,8000,255-255-255,,,0-0-0,0.889,,2.1
-8202,PCP-02,8000,255-0-255,,,0-0-0,0.635,,2.1
-8203,PCP-03,8000,0-0-255,,,0-0-0,0.3556,,2.1
-8204,PCP-04,8000,0-255-255,,,0-0-0,0.1778,,2.1
-8205,PCP-05,8000,0-255-0,,,0-0-0,0.127,,2.1
-8206,PCP-06,8000,255-255-0,,,0-0-0,0.0762,,2.1
-8207,PCP-07,8000,255-0-0,,,0-0-0,0.0508,,2.1
-8208,PCP-08,8000,128-128-128,,,0-0-0,0.508,,2.1
-8209,PCP-09,8000,192-192-192,,,0-0-0,0.508,,2.1
+8105,Layout,8000,108-108-108,,,0-0-0,,,180608
+8106,Viewport,8000,220-220-220,,,0-0-0,-1,,180608
+8201,PCP-01,8000,255-255-255,,,0-0-0,0.889,,180608
+8202,PCP-02,8000,255-0-255,,,0-0-0,0.635,,180608
+8203,PCP-03,8000,0-0-255,,,0-0-0,0.3556,,180608
+8204,PCP-04,8000,0-255-255,,,0-0-0,0.1778,,180608
+8205,PCP-05,8000,0-255-0,,,0-0-0,0.127,,180608
+8206,PCP-06,8000,255-255-0,,,0-0-0,0.0762,,180608
+8207,PCP-07,8000,255-0-0,,,0-0-0,0.0508,,180608
+8208,PCP-08,8000,128-128-128,,,0-0-0,0.508,,180608
+8209,PCP-09,8000,192-192-192,,,0-0-0,0.508,,180608
 ,,,,,,,,,
 9000,9_RENDER,,17-85-204,,,,,,
 9101,Lights,9000,,,,,,,

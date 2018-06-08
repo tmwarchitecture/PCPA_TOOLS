@@ -56,7 +56,8 @@ def SetTemplateFile(filepath):
     except:
         print "FAIL-----Template File"
 
-def UpdateStyles(filepath):
+def LoadStyles(filepath):
+    filepath = '"' + filepath + '"'
     #try:
     #    rs.Command('-_DocumentProperties l l ' + filepath + ' Enter Enter Enter', False)
     #    print "\tLinetypes Updated"
@@ -64,6 +65,7 @@ def UpdateStyles(filepath):
     #    print "FAIL-----Linetype Import Failed"
     
     try:
+        
         rs.Command('-_ImportAnnotationStyles ' + filepath + ' Enter Enter Enter', False)
         print "\tAnnotation Styles Updated"
     except:
@@ -219,7 +221,7 @@ if __name__ == "__main__":
     elif standardsRequested == 3:
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
     elif standardsRequested == 4:
-        UpdateStyles(fileLocations['Template File'])
+        LoadStyles(fileLocations['Template File'])
     elif standardsRequested == 5:
         LoadDisplayModes(fileLocations['Display Mode Folder'])
     elif standardsRequested == 99:

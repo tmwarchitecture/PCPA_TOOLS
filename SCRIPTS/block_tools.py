@@ -19,7 +19,7 @@ def RenameBlockCmd():
         else:
             numString = str(number)
     except:
-        numString = '01a'
+        numString = '01A'
     defaultName = GetDatePrefix() + "_OPTION_" + numString
     
     looping = True
@@ -118,7 +118,7 @@ def MakeBlockUnique():
     rs.SelectObject(newBlock)
 
 def Iterate():
-    block = rs.GetObject("Select block to make unique", rs.filter.instance, True)
+    block = rs.GetObject("Select Design Option Block to iterate", rs.filter.instance, True)
     if block is None: return
     newBlock = ReplicateBlock(block)
     try:
