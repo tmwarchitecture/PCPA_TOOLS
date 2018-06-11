@@ -55,7 +55,9 @@ def RandomBlock(type):
         block = rs.BlockNames(True)
         if len(block) < 1: 
             return None
-        name = rs.BlockInstanceName(rs.GetObject('Select block to populate', rs.filter.instance, True))
+        obj = rs.GetObject('Select block to populate', rs.filter.instance, True)
+        if obj is None: return
+        name = rs.BlockInstanceName(obj)
         return name
     else:
         blocks = []

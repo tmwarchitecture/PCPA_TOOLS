@@ -169,6 +169,7 @@ def translateColor(dashColor):
 def AddLayers(layerData, layerNumbers):
     counter = 0
     rootLayers = []
+    
     def AddThisLayer(thisLayerData, counter):
         ##########################
         isRoot = False
@@ -185,7 +186,9 @@ def AddLayers(layerData, layerNumbers):
             parentLay = None
         ##########################
         if rs.IsLayer(thisLayerData[fullLayerNameColumn]):
-            return
+            rootLayers.append(thisLayerData[fullLayerNameColumn])
+            
+            return thisLayerData[fullLayerNameColumn]
         newLayer = rs.AddLayer(thisLayerData[fullLayerNameColumn], thisLayerData[colorColumn])
         rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
         rs.LayerPrintColor(newLayer, thisLayerData[printcolorColumn])
@@ -203,6 +206,7 @@ def AddLayers(layerData, layerNumbers):
         try:
             thisLayer = layerData[layerNumber]
             AddThisLayer(thisLayer, counter)
+            
         except:
             pass
     return list(set(rootLayers))
@@ -229,9 +233,11 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     layerNums.sort()
     
     roots = AddLayers(layerData, layerNums)
+    
     if collapse:
         CollapseRootLayers(roots)
     rs.EnableRedraw(True)
+    print ""
     return roots
 
 #############################################################
