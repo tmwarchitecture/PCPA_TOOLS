@@ -3,6 +3,8 @@ import random
 import config
 import os
 
+import utils
+
 fileLocations = config.GetDict()
 
 def RandomPtsOnSrf(srf, numPts):
@@ -53,7 +55,7 @@ def RandomBlock(type):
         block = rs.BlockNames(True)
         if len(block) < 1: 
             return None
-        name = rs.MultiListBox(block)[0]
+        name = rs.BlockInstanceName(rs.GetObject('Select block to populate', rs.filter.instance, True))
         return name
     else:
         blocks = []
@@ -106,3 +108,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    utils.SaveToAnalytics('blocks-Populate')

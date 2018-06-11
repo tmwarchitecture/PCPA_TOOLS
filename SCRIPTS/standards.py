@@ -5,6 +5,7 @@ import rhinoscriptsyntax as rs
 import stat
 
 import config
+import utils
 
 def CheckPaths():
     print "Checking paths"
@@ -212,28 +213,33 @@ if __name__ == "__main__":
     fileLocations = config.GetDict()
     if standardsRequested == 0:
         LoadPCPAMaterials(fileLocations['Material File'])
+        utils.SaveToAnalytics('standards-Load Materials')
     elif standardsRequested == 1:
         SetTemplateFolder(fileLocations['Template Folder'])
         SetTemplateFile(fileLocations['Template File'])
+        utils.SaveToAnalytics('standards-Set Template')
     elif standardsRequested == 2:
         LoadPCPAComponents(fileLocations['PCPA GH Components'])
         LoadGHDependencies(fileLocations['GH Dependencies'])
+        utils.SaveToAnalytics('standards-Load GH Components')
     elif standardsRequested == 3:
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
+        utils.SaveToAnalytics('standards-Load ACADSchemes')
     elif standardsRequested == 4:
         LoadStyles(fileLocations['Template File'])
+        utils.SaveToAnalytics('standards-Load Styles')
     elif standardsRequested == 5:
         LoadDisplayModes(fileLocations['Display Mode Folder'])
+        utils.SaveToAnalytics('standards-Load Display Modes')
     elif standardsRequested == 99:
         LoadPCPAMaterials(fileLocations['Material File'])
         SetTemplateFolder(fileLocations['Template Folder'])
         SetTemplateFile(fileLocations['Template File'])
         LoadDisplayModes(fileLocations['Display Mode Folder'])
-        UpdateStyles(fileLocations['Template File'])
+        LoadStyles(fileLocations['Template File'])
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
         LoadPCPAComponents(fileLocations['PCPA GH Components'])
         LoadGHDependencies(fileLocations['GH Dependencies'])
+        utils.SaveToAnalytics('standards-All')
     else:
         pass
-        #ReloadPCPAStandards()
-    #fc.IterateCounter()

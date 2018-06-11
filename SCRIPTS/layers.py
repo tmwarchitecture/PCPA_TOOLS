@@ -5,6 +5,7 @@ import scriptcontext as sc
 
 from libs import csv
 import config
+import utils
 
 fileLocations = config.GetDict()
 
@@ -283,4 +284,5 @@ def GetLayerNames(layerNumRequested):
 if __name__ == "__main__":
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     AddSpecificLayer(layerNumRequested)
+    utils.SaveToAnalytics('layers-'+str(layerNumRequested))
     #GetLayerNames(layerNumRequested)

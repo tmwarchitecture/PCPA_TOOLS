@@ -1,9 +1,10 @@
 import rhinoscriptsyntax as rs
 from utils import GetDatePrefix
 import layers
+import utils
 
 def SuperExplodeBlock():
-    block = rs.GetObject("Select block to explode", filter = 4096, preselect = True)
+    block = rs.GetObject("Select block to explode", rs.filter.instance, preselect = True)
     objs = rs.ExplodeBlockInstance(block, True)
     return objs
 
@@ -136,11 +137,15 @@ if __name__ == "__main__":
     func = rs.GetInteger("", 0, 0, 100)
     if func == 0:
         Iterate()
+        utils.SaveToAnalytics('blocks-iterate')
     elif func == 1:
         MakeBlockUnique()
+        utils.SaveToAnalytics('blocks-Make Unique')
     elif func == 2:
         SuperExplodeBlock()
+        utils.SaveToAnalytics('blocks-Super Explode')
     elif func == 3:
         RenameBlockCmd()
+        utils.SaveToAnalytics('blocks-Rename Block')
     else:
         print "No function found"
