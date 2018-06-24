@@ -119,8 +119,7 @@ def CollapseRootLayers(roots):
 
 def main():
     rs.EnableRedraw(False)
-    layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
-    if layerNumRequested is None: return
+    layerNumRequested = 10000
     layerData = GetLayerData(csvPath)
     
     layerNums = GetChildNumbers(layerNumRequested, layerData)
