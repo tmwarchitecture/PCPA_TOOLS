@@ -32,6 +32,10 @@ def AddTitleBlock(size):
         txtSizeL = .125
         txtSizeM = .094
     
+        logoPlane = [13.834,.247,0]
+        logoWidth = 2.823
+        logoHeight = .116
+    
     elif size == 8:
         offset = .229
         row1 = offset
@@ -56,6 +60,10 @@ def AddTitleBlock(size):
         txtSizeL = .125
         txtSizeM = .063
         
+        logoPlane = [8.347,.157,0]
+        logoWidth = 2.434
+        logoHeight = .100
+        
     elif size == 18:
         offset = .5
         row1 = offset
@@ -79,6 +87,12 @@ def AddTitleBlock(size):
         
         txtSizeL = .250
         txtSizeM = .125
+        
+        logoPlane = [19.627,.367,0]
+        logoWidth = 3.885
+        logoHeight = .160
+
+    
     
     layout = sc.doc.Views.GetPageViews()[-1]
     if layout is None:  return
@@ -86,7 +100,7 @@ def AddTitleBlock(size):
     sc.doc.Views.ActiveView = layout
     
     if rs.GetDocumentData(section = "PCPA", entry = "Project_Name") is None:
-        rs.SetDocumentData(section = "PCPA", entry = "Project_Name", value = "Project Title")
+        rs.SetDocumentData(section = "PCPA", entry = "Project_Name", value = "PROJECT TITLE")
     projectTitle = '%<DocumentText("PCPA\Project_Name")>%'
     
     if rs.GetDocumentData(section = "PCPA", entry = "Client_Name") is None:
@@ -100,7 +114,15 @@ def AddTitleBlock(size):
     textList.append(rs.AddText('%<Date("MMMM d, yyyy")>%', txtBase3, txtSizeM, justification = 4))
     
     textList.append(rs.AddText(clientName, txtBase4, txtSizeM, justification = 1))
-    textList.append(rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4))
+    
+    
+    #ADD PCPA LOGO
+    PCPAlogo = r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\0.2\ICONS\PCPA_LOGO.png'
+    if os.path.isfile(PCPAlogo):
+        pictureframe = rs.AddPictureFrame(logoPlane, PCPAlogo, logoWidth, logoHeight, True, True, True)
+        rs.ObjectLayer(pictureframe, '8_DRAWING::Layout')
+    else:
+        textList.append(rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4))
     
     line = rs.AddLine(lineSt, lineEnd)
     
