@@ -7,6 +7,24 @@ import utils
 
 fileLocations = config.GetDict()
 
+def congregate(objs, threshold, loops):
+    scaleFactOrig = .1
+    for j in range(loops):
+        scaleF = ((loops-j)/loops) * scaleFactOrig
+        for i, pt1 in enumerate(objs):
+            tempList = list(objs)
+            del tempList[i]
+            pt2 = rs.PointClosestObject(pt1, tempList)[1]
+            vec = rs.VectorCreate(pt2, pt1)
+            dist = rs.Distance(pt2, pt1)
+            if dist < threshold:
+                vec = rs.VectorReverse(vec)
+            vec2 = rs.VectorScale(vec, scaleF)
+            rs.MoveObject(pt1, vec2)
+            line = rs.AddLine(pt1, pt2)
+            rs.DeleteObject(line)
+    return objs
+
 def RandomPtsOnSrf(srf, numPts):
     pts = []
     firstPt = RandomPtOnSrf(srf)
@@ -92,10 +110,14 @@ def main():
     
     pts = RandomPtsOnSrf(srf, numObjects)
     
+    realPts = rs.AddPoints(pts)
+    congregate(realPts, 36, 5)
+    
     blockName = RandomBlock(type)
     
-    for pt in pts:
+    for pt in realPts:
         angle = random.uniform(0,360)
+        
         
         if type != 'Custom Block':
             blockName = RandomBlock(type)
@@ -105,6 +127,11 @@ def main():
         
         if TryLoadBlock(type, blockName):
             rs.InsertBlock(blockName, pt, angle_degrees = angle)
+    
+    try:
+        rs.DeleteObjects(realPts)
+    except:
+        pass
     
     rs.EnableRedraw(True)
 
