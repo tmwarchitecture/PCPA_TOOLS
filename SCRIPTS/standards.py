@@ -16,31 +16,10 @@ def CheckPaths():
             print "Path exists"
         else:print "Path not found"
 
-def ReloadPCPAStandards():
-    #Check Rhino Version
+def PreloadCheck():
     if rs.ExeVersion() < 6:
         print "***Reload standards only works for Rhino 6***"
         return None
-    #CheckPaths()
-    print "Loading PCPA Standards"
-
-    SetTemplateFolder(fileLocations['Template Folder'])
-
-    SetTemplateFile(fileLocations['Template File'])
-
-    print "\tImport Annotation Styles Broken"
-    #UpdateStyles(fileLocations['Template File'])
-    
-    #print "\tACAD Schemes Broken"
-    LoadAcadSchemes(fileLocations['ACAD Scheme Folder']) #GOOD
-    
-    print "\tDisplay Modes Broken"
-    #LoadDisplayModes(fileLocations['Display Mode Folder'])
-    
-    LoadPCPAComponents(fileLocations['PCPA GH Components'])
-    
-    LoadGHDependencies(fileLocations['GH Dependencies'])
-    print "Reload complete"
 
 def SetTemplateFolder(filepath):
     if os.path.isdir(filepath) is False:
@@ -67,7 +46,7 @@ def LoadStyles(filepath):
     
     try:
         
-        rs.Command('-_ImportAnnotationStyles ' + filepath + ' Enter Enter Enter', False)
+        rs.Command('-_ImportAnnotationStyles ' + filepath + ' Enter Enter Enter', echo=False)
         print "\tAnnotation Styles Updated"
     except:
         print "FAIL-----Annotation Style Import Failed"
@@ -120,7 +99,7 @@ def LoadDisplayModes(filepath):
         rs.Command('-_Options v d i ' + fullFilePath + ' Enter Enter Enter', echo=False)
     
     if len(allFiles)==0:
-        print "\tNo files updated"
+        print "\tNo display modes updated"
     elif len(allFiles)==1:
         print "\t{} Display mode updated".format(len(allFiles))
     else:
@@ -209,6 +188,8 @@ def LoadGHDependencies(sourceFolder):
         return None
 
 if __name__ == "__main__":
+    PreloadCheck()
+    
     standardsRequested = rs.GetInteger("Standards to import", number = 0, minimum = 0, maximum = 10000)
     fileLocations = config.GetDict()
     if standardsRequested == 0:

@@ -87,7 +87,7 @@ class LevelsDialog(forms.Dialog):
     def Initialize(self):
         #Setup the dialog
         self.Title = "Project Levels"
-        self.Size = drawing.Size(450,565)
+        self.Size = drawing.Size(550,565)
         self.Padding = drawing.Padding(5, 5)
         
         self.databasePath = r'C:\Users\twilliams\Desktop\TEMP\Database'
@@ -105,10 +105,10 @@ class LevelsDialog(forms.Dialog):
         def contextMenu():
             ctxtMnu = forms.ContextMenu()
             
-            ctxtInsertManyRows = forms.ButtonMenuItem(Text = "Insert Many Floors Above")
+            ctxtInsertManyRows = forms.ButtonMenuItem(Text = "Insert Many Floors")
             ctxtInsertManyRows.Click += self.OnInsertManyRowsAbove
             
-            ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert Floor Above")
+            ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert Floor")
             ctxtInsertRow.Click += self.OnInsertRowAbove
             
             ctxtDeleteRow = forms.ButtonMenuItem(Text = "Remove Floor")
@@ -221,12 +221,19 @@ class LevelsDialog(forms.Dialog):
             areaColumn.DataCell = forms.TextBoxCell(5)
             areaColumn.DataCell.TextAlignment = forms.TextAlignment.Right
             
+            commentColumn = forms.GridColumn()
+            commentColumn.HeaderText = "Comments\t\t"
+            commentColumn.Editable = True
+            commentColumn.DataCell = forms.TextBoxCell(6)
+            commentColumn.DataCell.TextAlignment = forms.TextAlignment.Left
+            
             self.grid.Columns.Add(numberColumn)
             self.grid.Columns.Add(nameColumn)
             self.grid.Columns.Add(funcColumn)
             self.grid.Columns.Add(ftfColumn)
             self.grid.Columns.Add(levelColumn)
             self.grid.Columns.Add(areaColumn)
+            self.grid.Columns.Add(commentColumn)        
         
         labels()
         combobox()
@@ -334,20 +341,17 @@ class LevelsDialog(forms.Dialog):
         numberOfFloors = numFloorsDialog.NumFloors
         applyBoo = numFloorsDialog.ApplyBoo
         numFloorsDialog.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
-        
-        print applyBoo
+        numberOfFloors = int(numFloorsDialog.NumFloors)
         
         for i in range(numberOfFloors):
-            print i
             self.OnInsertRowAbove(sender, e)
-        print "Inserting many rows"
+        #print "Inserting many rows"
     
     def OnInsertRowAbove(self, sender, e):
-        print "Inserting above"
         data = self.grid.DataStore
         selectedRow = self.grid.SelectedRow
         if len(data) == 0:
-            self.grid.DataStore = [[1,'L1','',10.0,0.0, '']]
+            self.grid.DataStore = [[1,'L1','',10.0,0.0, '', '']]
             return
         
         try:
@@ -361,12 +365,14 @@ class LevelsDialog(forms.Dialog):
             newRowFTF = float(data[selectedRow][3])
             newRowHeight = newRowFTF + float(data[selectedRow][4])
             newRowArea = ''
+            newRowComment = ''
         except:
             newRowFTF = ''
             newRowHeight = ''
             newRowFunc = ''
             newRowArea = ''
-        blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea]
+            newRowComment = ''
+        blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea, newRowComment]
         data.insert(selectedRow, blankRow)
         
         
