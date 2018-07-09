@@ -89,8 +89,9 @@ def RandomBlock(type):
     return blocks[index]
 
 def main():
-    srf = rs.GetSurfaceObject('Select surface to populate', True)[0]
+    srf = rs.GetSurfaceObject('Select surface to populate', True)
     if srf is None: return
+    srf = srf[0]
     
     numObjects = rs.GetInteger('Number of objects to populate', 30, 1, 500)
     if numObjects is None: return
@@ -107,6 +108,8 @@ def main():
         type = 'Vegetation 2D Folder'
     
     rs.EnableRedraw(False)
+    
+    #layers.AddSpecificLayer(2000)
     
     pts = RandomPtsOnSrf(srf, numObjects)
     
@@ -126,7 +129,17 @@ def main():
             return
         
         if TryLoadBlock(type, blockName):
-            rs.InsertBlock(blockName, pt, angle_degrees = angle)
+            eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
+            try:
+                if type == 'People 2D Folder' or type == 'People 3D Folder':
+                    layerName = '2_ENTOURAGE::' + 'People'
+                elif type == 'Vegetation 2D Folder':
+                    layerName = '2_ENTOURAGE::' + 'Vegetation'
+                else:
+                    layerName = '2_ENTOURAGE'
+                rs.ObjectLayer(eachBlock, layerName)
+            except:
+                pass
     
     try:
         rs.DeleteObjects(realPts)

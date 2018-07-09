@@ -5,9 +5,11 @@ import layers
 import utils
 
 def SuperExplodeBlock():
-    block = rs.GetObject("Select block to explode", rs.filter.instance, preselect = True)
-    if block is None: return
-    objs = rs.ExplodeBlockInstance(block, True)
+    blocks = rs.GetObjects("Select block to explode", rs.filter.instance, preselect = True)
+    if blocks is None: return
+    objs = []
+    for block in blocks:
+        objs.append(rs.ExplodeBlockInstance(block, True))
     return objs
 
 def RenameBlockCmd():

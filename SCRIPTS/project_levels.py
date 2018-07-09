@@ -180,7 +180,7 @@ class LevelsDialog(forms.Dialog):
         def grid():
             self.grid = forms.GridView()
             self.grid.BackgroundColor = drawing.Colors.LightGrey
-            self.grid.Size = drawing.Size(300,425)
+            self.grid.Size = drawing.Size(300,445)
             self.grid.GridLines = forms.GridLines.Both
             self.grid.AllowMultipleSelection = True
             self.grid.CellEdited += self.OnCellEdited
@@ -247,7 +247,7 @@ class LevelsDialog(forms.Dialog):
     def CreateLayouts(self):
         layoutButtons = forms.DynamicLayout()
         layoutButtons.AddRow(self.tboxFileName)
-        layoutButtons.AddRow(self.comboBuildingNum)
+        #layoutButtons.AddRow(self.comboBuildingNum)
         layoutButtons.AddRow(self.grid)
         layoutButtons.AddSeparateRow(None, self.btnCancel, self.btnApply)
         layoutButtons.Spacing = drawing.Size(1,1)
@@ -268,37 +268,27 @@ class LevelsDialog(forms.Dialog):
     
     #Open File
     def OnFileOpenClick(self, sender, e):
+        print "Begin"
         self.databaseFile = rs.OpenFileName("Open file")
         if self.databaseFile is None: return
-        self.OpenFile()
-        rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
+        #self.OpenFile()
+        #rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
         dt.LoadLevelsToRhinoDoc(self.databaseFile)
-        self.UpdateFileLabel(self.databaseFile)
+        print "End"
+        #self.UpdateFileLabel(self.databaseFile)
     
     def OpenFile(self):
         data = dt.GetProjectDatabase(self.databaseFile)
         
-        #Fix dropdown
-        bldgNames = []
-        try:
-            bldgData = data['building']
-            for key in bldgData.keys():
-                bldgNames.append(bldgData[key]['name'])
-        except:
-            bldgNames = [''] 
-        
-        self.comboBuildingNum.DataStore = bldgNames
-        self.comboBuildingNum.SelectedIndex = 0
-        
         self.GenData()
         
         
-        print "Opening new file"
+        print "Opened new file"
     
     #Save
     def OnFileSaveAsClick(self, sender, e):
         newFile = rs.SaveFileName("Save", "YAML Files (*.yaml)|*.yaml||")
-        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, newFile, self.comboBuildingNum.SelectedIndex)
+        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, newFile, 0)
         self.databaseFile = newFile
         rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
         self.UpdateFileLabel(newFile)

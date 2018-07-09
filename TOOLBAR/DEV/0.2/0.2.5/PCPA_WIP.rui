@@ -26,11 +26,7 @@
         <macro_id>4f6124ea-720e-4326-8906-74936e80e023</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator" />
       <menu_item guid="81f88627-b60e-4ab6-ae02-7e2f62c1a81f">
         <text>
           <locale_1033>0_ARCHITECTURE</locale_1033>
@@ -100,11 +96,7 @@
         <macro_id>edfa042b-3a58-4ecd-8bab-6fd56d87290e</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator" />
       <menu guid="d71b2bfc-8659-4e85-983c-1858ce269fd0">
         <text>
           <locale_1033>SoftBIM (WIP)</locale_1033>
@@ -117,11 +109,7 @@
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
       </menu>
-      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator" />
       <menu guid="3eed0838-f574-4a3b-88c4-b528ee9c6673">
         <text>
           <locale_1033>Layout</locale_1033>
@@ -148,11 +136,7 @@
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
       </menu>
-      <menu_item guid="7e7b459a-6ce1-46c2-b825-472c5e540aed" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="7e7b459a-6ce1-46c2-b825-472c5e540aed" item_type="separator" />
       <menu guid="645acb9f-d412-4319-9b38-80889b89efcd">
         <text>
           <locale_1033>Standards</locale_1033>
@@ -164,11 +148,7 @@
           <macro_id>ded2a87b-93c3-44cd-9fe0-1ee0a13e4424</macro_id>
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
-        <menu_item guid="a2d203ff-d578-4a5d-a7a3-1d870406ac72" item_type="separator">
-          <text>
-            <locale_1033 />
-          </text>
-        </menu_item>
+        <menu_item guid="a2d203ff-d578-4a5d-a7a3-1d870406ac72" item_type="separator" />
         <menu_item guid="d3e05811-4cb4-4bc2-bdc4-029f6143f1b7">
           <text>
             <locale_1033>Load GH Components</locale_1033>
@@ -212,11 +192,7 @@
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
       </menu>
-      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator">
-        <text>
-          <locale_1033 />
-        </text>
-      </menu_item>
+      <menu_item guid="b335fbba-20d7-48e4-98a1-5ba97738367c" item_type="separator" />
       <menu_item guid="9ccbb385-abc8-4c8b-b994-9285161c1141">
         <text>
           <locale_1033>Help</locale_1033>

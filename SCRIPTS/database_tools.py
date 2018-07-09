@@ -34,7 +34,7 @@ def SaveDatabase(data, databaseFile):
         yaml.safe_dump(data, stream, default_flow_style=False)
         return "DONE"
     except:
-        return "ERROR"
+        return "ERROR SaveDatabase"
 
 def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     existingData = GetProjectDatabase(oldDatabaseFile)
@@ -44,8 +44,8 @@ def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     
     newDict = {}
     for row in data:
-        newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4]),'area': str(row[5]) }
-    
+        newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4]),'area': str(row[5]),'comments': str(row[6]) }
+    print newDict
     try:
         existingData['building'][int(bldgNum)]['level'] = newDict
     except:
@@ -60,10 +60,9 @@ def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
 
 def GetProjectDatabase(databaseFile):
     '''
-    Gets the yaml project databse
+    Gets the yaml project database
     Input:
         databaseFile - path to the database
-        versionName - name for the yaml file (e.g. 180426_Database.yaml)
     Returns: Dictionary of yaml file on success
     '''
     try:
@@ -74,20 +73,25 @@ def GetProjectDatabase(databaseFile):
         return None
 
 def GetProjectLevelData(databaseFile, bldgNum):
-    data = GetProjectDatabase(databaseFile)
+    data = GetProjectDatabase(yamlPath)
+    print "Data: " + str(data)
     levels = []
     try:
         levelData = data['building'][int(bldgNum)]['level']
     except:
         return None
     
+    print 'levelData: ' + str(levelData)
+    
     for key in levelData.keys():
-        levels.append([key, levelData[key]['name'], levelData[key]['functions'], levelData[key]['ftf'], levelData[key]['z'], levelData[key]['area']])
+        levels.append([key, levelData[key]['name'], levelData[key]['functions'], levelData[key]['ftf'], levelData[key]['z'], levelData[key]['area'], levelData[key]['comments']])
     return levels
 
 def LoadLevelsToRhinoDoc(databaseFile):
+    print "Loading levels to rhino doc"
     bldgNum = 0
     data = GetProjectLevelData(databaseFile, bldgNum)
+    print data
     rs.SetDocumentData('PCPA', 'Levels', str(data))
     return 1
 
@@ -98,6 +102,7 @@ def GetLevelsFromRhinoDoc():
 
 if __name__ == "__main__":
     pass
+    print ""
     
     #data = GetDatabaseTemplate()
     #data['project']['name'] = "TEst"
