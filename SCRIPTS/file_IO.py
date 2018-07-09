@@ -1,9 +1,14 @@
 import rhinoscriptsyntax as rs
 import Rhino
-import layers
-import utils
 import scriptcontext as sc
+import os.path
+import layers
 import block_tools
+import config
+from utils import GetDatePrefix
+
+################################################################################
+#Utils
 
 def flatten(lst):
     return sum( ([x] if not isinstance(x, list) else flatten(x) for x in lst), [] )
@@ -12,6 +17,9 @@ def diff(list1, list2):
     c = set(list1).union(set(list2))
     d = set(list1).intersection(set(list2))
     return list(c - d)
+
+################################################################################
+#Import 2D Functions
 
 def moveToOrigin(allObjects, CADinMilli):
     cadOrigin = rs.GetDocumentData("Project Info", "CAD coordinate (X,Y,Z)")
@@ -117,7 +125,7 @@ def importCAD(savePath0, CADinMilli):
     print "Import EXECUTED"
     return finalAllObjects
 
-def  main():
+def importDWG():
     #Import CAD
     filePath = rs.OpenFileName("Open", "Autocad (*.dwg)|*.dwg||")
     if filePath is None: return
@@ -137,4 +145,111 @@ def  main():
     rs.ZoomSelected()
     rs.EnableRedraw(True)
 
-main()
+################################################################################
+#Export Functions
+def AddMasterRootLayer(masterRoot):
+    rs.EnableRedraw(False)
+    
+    exceptionLayer = 'BLOCKS'
+    
+    parentLayers = []
+    allLayers = rs.LayerNames()
+    for each in allLayers:
+        if rs.ParentLayer(each) is None:
+            parentLayers.append(each)
+    
+    newLayer = rs.AddLayer(str(masterRoot))
+    for eachLayer in parentLayers:
+        if eachLayer == newLayer:
+            pass
+        elif eachLayer == exceptionLayer:
+            pass
+        else:
+            rs.ParentLayer(eachLayer, newLayer)
+    rs.EnableRedraw(True)
+
+def RemoveMasterRootLayer(masterRoot):
+    rs.EnableRedraw(False)
+    
+    subRoots = []
+    allLayers = rs.LayerNames()
+    for each in allLayers:
+        if rs.ParentLayer(each) == masterRoot:
+            subRoots.append(each)
+    
+    for eachLayer in subRoots:
+        rs.ParentLayer(eachLayer, '')
+    rs.DeleteLayer(masterRoot)
+    rs.EnableRedraw(True)
+
+def exportToRender():
+    fileLocations = config.GetDict()
+    
+    print "Exporting to 3ds max"
+    objs = rs.GetObjects("Select objects to export", preselect=True)
+    if objs is None: return
+    
+    #SAVE FILE NAME
+    defaultFolder = rs.DocumentPath()
+    defaultFilename = GetDatePrefix() + '_OPTION_01'
+    fileName = rs.SaveFileName("Export to render", "Autocad (*.dwg)|*.dwg||", defaultFolder, defaultFilename)
+    if fileName is None: return
+    base=os.path.basename(fileName)
+    cadName = os.path.splitext(base)[0]
+    
+    #SUPER EXPLODE
+    #EXPLODE SELECTED BLOCKS (CHECKLIST) [this is broken]
+        #blockNames = rs.BlockNames(True)
+        #print blockNames
+        
+        #results = rs.CheckListBox(blockNames, "Select blocks to explode", "Explode for render")
+    #CHECK BACKFACES
+    #CHECK GEOMETRY
+    #EXPORT EACH LAYER AS SAT FILE.
+    #CHECK ORIGIN 
+    #INSERT ORIGIN
+    #CHECK SCALE (Units)
+    if rs.UnitSystem() == 8:
+        print "Units checked"
+    else:
+        print "This model is in {}, it should be in Inches".format(rs.UnitSystemName(singular=False))
+    #UNIFY MESH NORMALS
+    #MERGE ALL EDGES
+    #MERGE ALL FACES
+    
+    #DELETE DUPS
+    #rs.UnselectAllObjects()
+    #rs.Command('-_Seldup ', echo=False)
+    #dupObjs = rs.SelectedObjects()
+    #if len(dupObjs) > 0:
+    #    rs.DeleteObjects(dupObjs)
+    #    print "{} duplicate objects deleted".format(len(dupObjs))
+    
+    #JOIN BY LAYER
+    
+    #PLACE UNDER A PARENT LAYER W/ DATESTAMP
+    AddMasterRootLayer(cadName)
+    
+    #CHANGE LAYER NAMES?
+    #IMPORT ACAD SCHEME
+    #SET DEFAULT FOLDER TO REFERENCE FOLDER UNDER RENDERING
+    
+    #EXPORT TO DWG
+    rs.SelectObjects(objs)
+    acadSchemeFolder = fileLocations['ACAD Scheme Folder']
+    exportScheme = 'MaxSolids.ini'
+    iniFile = os.path.join(acadSchemeFolder, exportScheme)
+    rs.Command('-_Export ' + '"' + fileName + '" F ' + '"' + iniFile + '"' + ' Enter P 100 Enter')
+    
+    #REMOVE MASTER ROOT LAYER
+    RemoveMasterRootLayer(cadName)
+
+def  main():
+    func = rs.GetInteger("Function to run", number = 0)
+    if func == 0:
+        importDWG()
+    elif func == 1:
+        exportToRender()
+
+if __name__ == "__main__":
+    main()

@@ -4,26 +4,41 @@ import os
 import scriptcontext as sc
 
 from libs import csv
+
 import config
 import utils
 
-fileLocations = config.GetDict()
 
-filename = "PCPA LAYERS_V2.csv"
-root = os.path.dirname(os.path.realpath(__file__))
-csvPath = os.path.join(root,"data", filename)
 
-layNumColumn = 0
-nameColumn = 1
-parentColumn = 2
-colorColumn = 3
-materialColumn = 4
-linetypeColumn = 5
-printcolorColumn = 6
-printwidthColumn = 7
-global fullLayerNameColumn
-fullLayerNameColumn = 8
+#Utils
+def setupVariables():
+    fileLocations = config.GetDict()
+    
+    filename = "PCPA LAYERS_V2.csv"
+    root = os.path.dirname(os.path.realpath(__file__))
+    global csvPath
+    csvPath = os.path.join(root,"data", filename)
+    
+    global layNumColumn
+    layNumColumn = 0
+    global nameColumn
+    nameColumn = 1
+    global parentColumn
+    parentColumn = 2
+    global colorColumn
+    colorColumn = 3
+    global materialColumn
+    materialColumn = 4
+    global linetypeColumn
+    linetypeColumn = 5
+    global printcolorColumn
+    printcolorColumn = 6
+    global printwidthColumn
+    printwidthColumn = 7
+    global fullLayerNameColumn
+    fullLayerNameColumn = 8
 
+#Layers
 def MaterialToLayer(layer, matName):
     def loadMatFromPath(path):
         if os.path.isfile(path):
@@ -225,8 +240,11 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     """
     AddSpecificLayer(layerNumRequested, collapse = True)
     """
+    setupVariables()
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
+    
+    global csvPath
     layerData = GetLayerData(csvPath)
     
     layerNums = GetChildNumbers(layerNumRequested, layerData)
@@ -237,7 +255,6 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     if collapse:
         CollapseRootLayers(roots)
     rs.EnableRedraw(True)
-    print ""
     return roots
 
 #############################################################
@@ -276,6 +293,8 @@ def GetLayerFullName(layerData, layerNumbers):
     return allNames
 
 def GetLayerNames(layerNumRequested):
+    setupVariables()
+    
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
@@ -288,6 +307,7 @@ def GetLayerNames(layerNumRequested):
     return layers
 
 if __name__ == "__main__":
+    setupVariables()
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     AddSpecificLayer(layerNumRequested)
     utils.SaveToAnalytics('layers-'+str(layerNumRequested))

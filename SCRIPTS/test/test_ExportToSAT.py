@@ -18,13 +18,21 @@ def ExportEachLayerAsSat(objs):
             layer = rs.ObjectLayer(obj)
             if layer not in allLayers:
                 allLayers.append(layer)
-        
+        print ""
         for eachLayer in allLayers:
             try:
-                filepath = os.path.join(newFolder,newFolderName+ '_' + eachLayer + '.sat')
-                rhobjs = sc.doc.Objects.FindByLayer(eachLayer)
+                
+                print "1"
+                #FindByLayer doesnt work with full layer names
+                id = rs.LayerId(eachLayer)
+                shortName = rs.LayerName(id, False)
+                
+                filepath = os.path.join(newFolder,newFolderName+ '_' + shortName + '.sat')
+                
+                rhobjs = sc.doc.Objects.FindByLayer(shortName)
+                print "2"
                 rs.SelectObjects(rhobjs)
-                print ""
+                print "3"
                 rs.Command('-_Export ' + '"' + filepath + '"' + ' Enter ')
                 rs.UnselectAllObjects() 
             except:

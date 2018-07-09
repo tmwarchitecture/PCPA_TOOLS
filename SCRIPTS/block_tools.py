@@ -186,7 +186,6 @@ def ResetBlockScale():
 
 if __name__ == "__main__":
     func = rs.GetInteger("", 0, 0, 100)
-
     if func == 0:
         Iterate()
         utils.SaveToAnalytics('blocks-iterate')
