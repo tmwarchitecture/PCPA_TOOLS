@@ -8,16 +8,19 @@ from libs import csv
 import config
 import utils
 
-
-
 #Utils
 def setupVariables():
     fileLocations = config.GetDict()
     
-    filename = "PCPA LAYERS_V2.csv"
-    root = os.path.dirname(os.path.realpath(__file__))
-    global csvPath
-    csvPath = os.path.join(root,"data", filename)
+    try:
+        filename = "PCPA LAYERS_V2.csv"
+        root = os.path.dirname(os.path.realpath(__file__))
+        global csvPath
+        csvPath = os.path.join(root,"data", filename)
+    except:
+        global csvPath
+        csvPath = fileLocations['PCPA Layers']
+    
     
     global layNumColumn
     layNumColumn = 0
@@ -37,6 +40,7 @@ def setupVariables():
     printwidthColumn = 7
     global fullLayerNameColumn
     fullLayerNameColumn = 8
+#############################################################
 
 #Layers
 def MaterialToLayer(layer, matName):
@@ -79,6 +83,7 @@ def MaterialToLayer(layer, matName):
             materialName: str
             mylayer: str
         """
+        fileLocations = config.GetDict()
         materialNameFull = materialName + '.rmtl'
         dir = fileLocations['Material Folder']
         matpath = os.path.join(dir, materialNameFull)
@@ -211,7 +216,8 @@ def AddLayers(layerData, layerNumbers):
         try:
             MaterialToLayer(newLayer, thisLayerData[materialColumn])
         except:
-            pass
+            print "Material failed"
+            #pass
         
         if isRoot:
             rootLayers.append(newLayer)
@@ -310,26 +316,44 @@ def GetLayerFullName(layerData, layerNumbers):
             thisLayer = layerData[layerNumber]
             thisName = thisLayer[nameColumn]
             allNames.append(GetThisLayer(thisLayer, counter, thisName))
-            print x
         except:
             pass
     return allNames
 
 def GetLayerNameByNumber(layerNumRequested):
+    if layerNumRequested is None: return
+    
     setupVariables()
     
-    rs.EnableRedraw(False)
-    if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
     
-    layers = GetLayerFullName(layerData, [layerNumRequested])[0]
+    try:
+        layers = GetLayerFullName(layerData, [layerNumRequested])[0]
+    except:
+        layers = GetLayerFullName(layerData, [layerNumRequested])
     
     return layers
+
+def GetAllLayerNames():
+    allLayerNames = []
+    layerNums = []
+    
+    setupVariables()
+    
+    global csvPath
+    layerData = GetLayerData(csvPath)
+    for i in range(0,10000,1000):
+        layerNumsSet = GetChildNumbers(i, layerData)
+        layerNumsSet.sort()
+        layerNums = layerNums + layerNumsSet
+    
+    for each in layerNums:
+        allLayerNames.append(GetLayerNameByNumber(each))
+    return allLayerNames
 
 if __name__ == "__main__":
     setupVariables()
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     AddLayerByNumber(layerNumRequested)
     utils.SaveToAnalytics('layers-'+str(layerNumRequested))
-    
     #print GetLayerNameByNumber(layerNumRequested)
