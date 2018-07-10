@@ -120,7 +120,7 @@ def AddTitleBlock(size):
     PCPAlogo = r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\0.2\ICONS\PCPA_LOGO.png'
     if os.path.isfile(PCPAlogo):
         pictureframe = rs.AddPictureFrame(logoPlane, PCPAlogo, logoWidth, logoHeight, True, True, True)
-        rs.ObjectLayer(pictureframe, '8_DRAWING::Layout')
+        rs.ObjectLayer(pictureframe, layers.GetLayerNameByNumber(8105))
     else:
         textList.append(rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4))
     
@@ -129,18 +129,18 @@ def AddTitleBlock(size):
     #Add detail
     detail = rs.AddDetail(layout.ActiveViewportID, pt1, pt2, "PCPA " + str(layout.PageName), 7)
     
-    #Change layers
+    #Change layers AddLayerByNumber
     try:
-        rs.ObjectLayer(line, "8_DRAWING::PCP-02")
+        rs.ObjectLayer(line, layers.GetLayerNameByNumber(8202))
     except:
         pass
     try:
-        rs.ObjectLayer(detail, "8_DRAWING::Viewport")
+        rs.ObjectLayer(detail, layers.GetLayerNameByNumber(8106))
     except:
         pass
     try:
         for eachText in textList:
-            rs.ObjectLayer(eachText, "8_DRAWING::Layout")
+            rs.ObjectLayer(eachText, layers.GetLayerNameByNumber(8105))
     except:
         pass
     rs.EnableRedraw(True)
@@ -161,7 +161,7 @@ def AddLayout(size):
     result = rs.Command('-_Layout ' + name + width + height + '0 ', False)
     
     if result:
-        layers.AddSpecificLayer(8000)
+        layers.AddLayerByNumber(8000)
         AddTitleBlock(size)
 
 def BatchPrintLayouts():

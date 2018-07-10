@@ -38,7 +38,7 @@ def importCAD(savePath0, CADinMilli):
     explodeBlockBoo = True
     
     #setup the layers
-    importLayerObj = layers.AddSpecificLayer(6000)
+    importLayerObj = layers.AddLayerByNumber(6000)
     importLayerName = layers.GetLayerNames(6000)[0]
     
     #Shorten cad file name

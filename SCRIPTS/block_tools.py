@@ -127,7 +127,7 @@ def Iterate():
     if block is None: return
     newBlock = ReplicateBlock(block)
     try:
-        optionLayers = layers.AddSpecificLayer(3000, False)
+        optionLayers = layers.AddLayerByNumber(3000, False)
 
         try:
             rootLayer = optionLayers[0]

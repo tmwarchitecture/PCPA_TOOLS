@@ -240,6 +240,7 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     """
     AddSpecificLayer(layerNumRequested, collapse = True)
     """
+    print "AddSpecificLayer is obsolete"
     setupVariables()
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
@@ -256,6 +257,28 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
         CollapseRootLayers(roots)
     rs.EnableRedraw(True)
     return roots
+
+def AddLayerByNumber(layerNumRequested, collapse = True):
+    """
+    AddSpecificLayer(layerNumRequested, collapse = True)
+    """
+    setupVariables()
+    rs.EnableRedraw(False)
+    if layerNumRequested is None: return
+    
+    global csvPath
+    layerData = GetLayerData(csvPath)
+    
+    layerNums = GetChildNumbers(layerNumRequested, layerData)
+    layerNums.sort()
+    
+    roots = AddLayers(layerData, layerNums)
+    
+    if collapse:
+        CollapseRootLayers(roots)
+    rs.EnableRedraw(True)
+    return roots
+
 
 #############################################################
 
@@ -292,23 +315,21 @@ def GetLayerFullName(layerData, layerNumbers):
             pass
     return allNames
 
-def GetLayerNames(layerNumRequested):
+def GetLayerNameByNumber(layerNumRequested):
     setupVariables()
     
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
     layerData = GetLayerData(csvPath)
     
-    layerNums = GetChildNumbers(layerNumRequested, layerData)
-    layerNums.sort()
-    
-    layers = GetLayerFullName(layerData, layerNums)
+    layers = GetLayerFullName(layerData, [layerNumRequested])[0]
     
     return layers
 
 if __name__ == "__main__":
     setupVariables()
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
-    AddSpecificLayer(layerNumRequested)
+    AddLayerByNumber(layerNumRequested)
     utils.SaveToAnalytics('layers-'+str(layerNumRequested))
-    #GetLayerNames(layerNumRequested)
+    
+    #print GetLayerNameByNumber(layerNumRequested)
