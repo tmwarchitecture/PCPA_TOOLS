@@ -118,10 +118,10 @@ def ExportEachLayerAsOBJ(objs, newFolder, newFolderName):
         print 'ExportEachLayerAsSat failed'
 
 def ExportAsSKP(objs, newFolder, newFolderName):
-    #try:
     tempLayers = []
     
     copiedObjs = []
+    
     rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
     
     for i, obj in enumerate(objs):
@@ -142,8 +142,8 @@ def ExportAsSKP(objs, newFolder, newFolderName):
             tempLayers.append(newLayer)
             rs.ObjectLayer(obj, newLayer)
     rs.StatusBarProgressMeterHide()
+    
     try:
-        #FindByLayer doesnt work with full layer names
         filepath = os.path.join(newFolder,newFolderName + '.skp')
         rs.SelectObjects(copiedObjs)
         rs.Command('-_Export ' + '"' + filepath + '"' + ' s SketchUp2015 Enter ', False)
@@ -158,8 +158,6 @@ def ExportAsSKP(objs, newFolder, newFolderName):
             rs.DeleteLayer(layer)
     except:
         print "export failed"
-    #except:
-    #    print 'ExportEachLayerAsSKP failed'
 
 def ExportEachLayerAsDXF(objs, newFolder, newFolderName):
     try:

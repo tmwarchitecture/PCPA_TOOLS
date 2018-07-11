@@ -12,5 +12,6 @@ def ExportAndLinkBlock():
         rs.Command("_-BlockManager _Properties " + '"' + name + '"' + " _UpdateType i " + path + " _UpdateType _Linked _Enter _Enter", False)
     except:
         pass
-if __name__ == "__main__":
+
+f __name__ == "__main__":
     ExportAndLinkBlock()
