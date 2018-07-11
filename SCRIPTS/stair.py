@@ -13,6 +13,7 @@ import scriptcontext
 import System.Guid
 import rhinoscriptsyntax as rs
 import math
+import utils
 
 
 def makeFace(srfs):
@@ -394,6 +395,7 @@ def main():
     if height is None:
         return
     stairHeight(route, width, height)
+    utils.SaveToAnalytics('architecture-stair')
 
 if __name__ == "__main__":
     main()

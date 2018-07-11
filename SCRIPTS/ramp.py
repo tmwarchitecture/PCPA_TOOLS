@@ -1,6 +1,7 @@
 import rhinoscriptsyntax as rs
 import Rhino
 import scriptcontext as sc
+import utils
 
 def MakeRampRuns(path, width):
     topOffset = 12
@@ -365,7 +366,11 @@ def main():
     slope = rs.GetReal("Ramp slope (e.g. 10% slope is .10)", .20)
     if slope is None: return
     #MakeRamp(path, length, width, height)
+    
+    rs.EnableRedraw(False)
     Ramp_HeightSlope(path, width, slope)
+    rs.EnableRedraw(True)
+    utils.SaveToAnalytics('architecture-ramp')
 
 if __name__ == "__main__":
     main()
