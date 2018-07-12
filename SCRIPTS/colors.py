@@ -1,7 +1,8 @@
 import rhinoscriptsyntax as rs
+import scriptcontext as sc
 from random import shuffle
 
-def ColorObjsWithGradient():
+def ColorObjsWithGradient2Pt():
     objs= rs.GetObjects("Select objects to color", preselect = True)
     if objs is None: return
     pt1 = rs.GetPoint("Select first color point")
@@ -32,7 +33,7 @@ def ColorObjsWithGradient():
     rs.DeleteObject(origLine)
     rs.EnableRedraw(True)
 
-def ColorObjsRandom():
+def ColorObjsRandomRange():
     objs= rs.GetObjects("Select objects to color", preselect = True)
     if objs is None: return
     print "Select First Color"
@@ -55,10 +56,23 @@ def ColorObjsRandom():
     rs.DeleteObject(colorLine)
     rs.EnableRedraw(True)
 
+def ObjectColorToMaterial():
+    objs = rs.GetObjects("Select objects to transfer color to material", preselect = True)
+    for obj in objs:
+        color = rs.ObjectColor(obj)
+        index = sc.doc.Materials.Add()
+        mat = sc.doc.Materials[index]
+        mat.DiffuseColor = color
+        mat.Name = str(color)
+        mat.CommitChanges()
+        rs.ObjectMaterialIndex(obj, index)
+        rs.ObjectMaterialSource(obj, 1)
+
 if __name__ == "__main__":
-    #func = rs.GetInteger("Input func number")
-    func = 1
+    func = rs.GetInteger("Input func number")
     if func == 0:
-        ColorObjsWithGradient()
+        ColorObjsWithGradient2Pt()
     elif func == 1:
-        ColorObjsRandom()
+        ColorObjsRandomRange()
+    elif func == 2:
+        ObjectColorToMaterial()

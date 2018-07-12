@@ -1,15 +1,14 @@
 import rhinoscriptsyntax as rs
 import utils
-#import subprocess
+import subprocess
+import config
+
 
 def launchHelp():
-    #PDF METHOD
-    #path = r'C:\Users\twilliams\Desktop\TEMP\temp.pdf'
-    #subprocess.Popen([path],shell=True)
-    
     try:
-        path = r'"https://github.com/tmwarchitecture/PCPA_TOOLS/wiki/Rhino-Toolbar"'
-        rs.Command('-_WebBrowser n ' + path + ' Enter ', False)
+        fileLocations = config.GetDict()
+        path = fileLocations['Help File']
+        subprocess.Popen([path],shell=True)
         return True
     except:
         return False

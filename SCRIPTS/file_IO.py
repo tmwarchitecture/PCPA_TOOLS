@@ -5,7 +5,7 @@ import os.path
 import layers
 import block_tools
 import config
-from utils import GetDatePrefix
+import utils
 
 ################################################################################
 #Utils
@@ -34,12 +34,13 @@ def moveToOrigin(allObjects, CADinMilli):
     rs.MoveObjects(allObjects,moveVec)
     return
 
-def importCAD(savePath0, CADinMilli):
+def importCAD(savePath0, scaleDWG):
     explodeBlockBoo = True
     
     #setup the layers
-    importLayerObj = layers.AddLayerByNumber(6000)
-    importLayerName = layers.GetLayerNames(6000)[0]
+    importLayerNumber = 6000
+    importLayerObj = layers.AddLayerByNumber(importLayerNumber, False)
+    importLayerName = layers.GetLayerNameByNumber(importLayerNumber)
     
     #Shorten cad file name
     fileNameExt = savePath0.split('\\')[-1]
@@ -108,11 +109,10 @@ def importCAD(savePath0, CADinMilli):
     
     
     #Scale objects
-    if CADinMilli:
+    if scaleDWG:
         rs.ScaleObjects(finalAllObjects, [0,0,0], [.001, .001, .001])
     
     #importGroup = rs.AddGroup(str(layerName))
-    
     #rs.AddObjectsToGroup(finalAllObjects, importGroup)
     
     #Collapse layers
@@ -127,21 +127,21 @@ def importCAD(savePath0, CADinMilli):
 
 def importDWG():
     #Import CAD
-    filePath = rs.OpenFileName("Open", "Autocad (*.dwg)|*.dwg||")
+    filePath = rs.OpenFileName("Select CAD to Import", "Autocad (*.dwg)|*.dwg||")
     if filePath is None: return
     
     #itemsMM = [ ["Units", "Meters", "Millimeters"] ]
     #CADinMilli = rs.GetBoolean("Is that CAD file in meters or mm?", itemsMM, [True])[0]
-    CADinMilli = False
+    scaleDWG = False
     
     #originItems = ("Use_CAD_Origin", "No", "Yes")
     #useOrigin = rs.GetBoolean("Use CAD Coordinate?", originItems, (True))[0]
     useOrigin = False
     
     rs.EnableRedraw(False)
-    allImportedObjects = importCAD(filePath, CADinMilli)
-    if useOrigin:
-        moveToOrigin(allImportedObjects, CADinMilli)
+    allImportedObjects = importCAD(filePath, scaleDWG)
+    #if useOrigin:
+    #    moveToOrigin(allImportedObjects, scaleDWG)
     rs.ZoomSelected()
     rs.EnableRedraw(True)
 
@@ -182,7 +182,7 @@ def RemoveMasterRootLayer(masterRoot):
     rs.DeleteLayer(masterRoot)
     rs.EnableRedraw(True)
 
-def exportToRender():
+def exportToRenderDWG():
     fileLocations = config.GetDict()
     
     print "Exporting to 3ds max"
@@ -244,12 +244,61 @@ def exportToRender():
     #REMOVE MASTER ROOT LAYER
     RemoveMasterRootLayer(cadName)
 
-def  main():
+def exportToRenderSKP():
+    objs = rs.GetObjects("Select objects to export", preselect = True)
+    if objs is None: return
+    
+    defaultFilename = GetDatePrefix() + '_OPTION_01'
+    fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", filename = defaultFilename)
+    if fileName is None: return
+    
+    tempLayers = []
+    copiedObjs = []
+    
+    baseName = os.path.splitext(os.path.basename(fileName))[0]
+    
+    rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
+    
+    for i, obj in enumerate(objs):
+        tempCopy = rs.CopyObject(obj)
+        rs.ObjectLayer(tempCopy, rs.ObjectLayer(obj))
+        copiedObjs.append(tempCopy)
+        rs.StatusBarProgressMeterUpdate(i)
+    
+    for obj in copiedObjs:
+        shortName = rs.LayerName(rs.ObjectLayer(obj), False)
+        layerName = baseName + ' || ' + shortName
+        if rs.IsLayer(layerName):
+            rs.ObjectLayer(obj, layerName)
+        else:
+            matIndex = rs.LayerMaterialIndex(rs.ObjectLayer(obj))
+            newLayer = rs.AddLayer(layerName, rs.LayerColor(rs.ObjectLayer(obj)))
+            rs.LayerMaterialIndex(newLayer, matIndex)
+            tempLayers.append(newLayer)
+            rs.ObjectLayer(obj, newLayer)
+    rs.StatusBarProgressMeterHide()
+    
+    try:
+        rs.SelectObjects(copiedObjs)
+        rs.Command('-_Export ' + '"' + fileName + '"' + ' s SketchUp2015 Enter ', False)
+        
+        #CLEANUP
+        rs.UnselectAllObjects() 
+        try:
+            rs.DeleteObjects(copiedObjs)
+        except:
+            rs.DeleteObject(copiedObjs)
+        for layer in tempLayers:
+            rs.DeleteLayer(layer)
+    except:
+        print "export failed"
+
+
+if __name__ == "__main__":
     func = rs.GetInteger("Function to run", number = 0)
     if func == 0:
         importDWG()
     elif func == 1:
-        exportToRender()
-
-if __name__ == "__main__":
-    main()
+        exportToRenderDWG()
+    elif func == 2:
+        exportToRenderSKP()

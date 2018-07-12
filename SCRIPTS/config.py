@@ -14,7 +14,8 @@ def GetDict():
     'Material Folder' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\PCPA Rhino Materials',
     'People 3D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\3D',
     'People 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\2D',
-    'Vegetation 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\02_VEGETATION\2D'
+    'Vegetation 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\02_VEGETATION\2D',
+    'Help File' : r'X:\05_RHINO STANDARDS\11 PCPA RHINO MANUAL\PCPA Rhino Tools Manual.pdf'
     }
 
 

@@ -357,8 +357,8 @@ def main():
     #path = rs.GetCurveObject("Select ramp path")
     path = rs.GetObject("Select Ramp Path", rs.filter.curve)
     if path is None: return
-    height = rs.GetReal("Ramp Total Height", 60)
-    if height is None: return
+    #height = rs.GetReal("Ramp Total Height", 60)
+    #if height is None: return
     #length = rs.GetReal("Ramp Length", 180)
     #if length is None: return
     width = rs.GetReal("Ramp Clear Width", 36)
