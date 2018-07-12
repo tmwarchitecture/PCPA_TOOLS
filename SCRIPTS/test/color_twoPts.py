@@ -2,6 +2,7 @@
 import rhinoscriptsyntax as rs
 
 def main():
+    
     objs= rs.GetObjects("Select objects to color", preselect = True)
     if objs is None: return
     pt1 = rs.GetPoint("Select first color point")
@@ -13,12 +14,10 @@ def main():
     secondColor = rs.GetColor(firstColor)
     if secondColor is None: return
     
+    rs.EnableRedraw(False)
     origLine = rs.AddLine(pt1, pt2)
+    colorLine = rs.AddLine(firstColor, secondColor)
     
-    colorpt1 = rs.AddPoint(firstColor)
-    colorpt2 = rs.AddPoint(secondColor)
-    
-    colorLine = rs.AddLine(colorpt1, colorpt2)
     
     for obj in objs:
         bboxpts = rs.BoundingBox(obj)
@@ -32,8 +31,8 @@ def main():
     
     rs.DeleteObject(colorLine)
     rs.DeleteObject(origLine)
+    rs.EnableRedraw(True)
 
 if __name__ == "__main__":
-    rs.EnableRedraw(False)
     main()
-    rs.EnableRedraw(True)
+    
