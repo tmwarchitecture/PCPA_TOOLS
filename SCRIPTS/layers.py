@@ -11,7 +11,6 @@ import utils
 #Utils
 def setupVariables():
     fileLocations = config.GetDict()
-    
     try:
         filename = "PCPA LAYERS_V2.csv"
         root = os.path.dirname(os.path.realpath(__file__))
@@ -87,7 +86,6 @@ def MaterialToLayer(layer, matName):
         materialNameFull = materialName + '.rmtl'
         dir = fileLocations['Material Folder']
         matpath = os.path.join(dir, materialNameFull)
-        
         if IsMaterial(materialName):
             ApplyMaterialToLayer(materialName, mylayer)
         else:

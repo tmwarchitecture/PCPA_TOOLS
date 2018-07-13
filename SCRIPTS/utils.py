@@ -1,6 +1,7 @@
 import datetime
 import os
 from libs import csv
+from libs import encrypt
 import getpass
 
 
@@ -16,8 +17,10 @@ def GetNetworkLocation():
     
     if os.path.isdir(NYPath):
         location = "New York"
+        return 0
     elif os.path.isdir(NHPath):
         location = "New Haven"
+        return 1
     else:
         print "Could not find NY or NH network"
         return 
@@ -35,7 +38,7 @@ def SaveToAnalytics(funcName):
         data[0][1] = 'Last Updated: ' + GetDatePrefix()
         
         #Username
-        userName = getpass.getuser()
+        userName = encrypt.encrypt(getpass.getuser())
         
         #Update Column
         colPos = None
@@ -69,6 +72,17 @@ def SaveToAnalytics(funcName):
             csvwriter.writerows(data)
     except:
         print "Analytics failed"
+
+def RoundNumber(number, decPlaces):
+    """Rounds numbers and adds ',' thousand seperator. Returns string. -1 rounds to 10, 0 leaves no decimals, 1 has one decimal place"""
+    if decPlaces < 0:
+        result = int(round(number, decPlaces))
+        result = "{:,}".format(result)
+    else:
+        result = format(float(number), ',.'+str(decPlaces)+'f')
+    return result
+
+
 
 if __name__ == "__main__":
     #print GetNetworkLocation()

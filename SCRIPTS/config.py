@@ -1,3 +1,5 @@
+import utils
+
 def GetDict():
     fileLocationsPCPNY = {
     'Template File' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\RHINO TEMPLATE\0.2\PCPA_TEMPLATE.3dm',
@@ -18,9 +20,35 @@ def GetDict():
     'Help File' : r'X:\05_RHINO STANDARDS\11 PCPA RHINO MANUAL\PCPA Rhino Tools Manual.pdf'
     }
 
-
-    return fileLocationsPCPNY
+    fileLocationsPCPNH = {
+    'Template File' : r'',
+    'Template Folder' : r'',
+    'ACAD Scheme Folder' : r'',
+    'Display Mode Folder' : r'',
+    'Analytics' : r'',
+    'FunctionCounter.py' : r'',
+    'PCPA Layers' : r'',
+    'CSV' : r'',
+    'PCPA GH Components' : r'',
+    'GH Dependencies' : r'',
+    'Material File' : r'',
+    'Material Folder' : r'',
+    'People 3D Folder' : r'',
+    'People 2D Folder' : r'',
+    'Vegetation 2D Folder' : r'',
+    'Help File' : r''
+    }
+    location = utils.GetNetworkLocation()
+    if location == 0:
+        return fileLocationsPCPNY
+    elif location == 1:
+        return fileLocationsPCPNH
+    else:
+        print "Network Location Error"
 
 def GetValue(key):
     print "GetValue Function obsolete"
     return fileLocationsPCPNY [key]
+
+if __name__ == "__main__":
+    GetDict()

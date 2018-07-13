@@ -1,6 +1,7 @@
 import rhinoscriptsyntax as rs
 import scriptcontext as sc
 from random import shuffle
+import utils
 
 def ColorObjsWithGradient2Pt():
     objs= rs.GetObjects("Select objects to color", preselect = True)
@@ -72,7 +73,10 @@ if __name__ == "__main__":
     func = rs.GetInteger("Input func number")
     if func == 0:
         ColorObjsWithGradient2Pt()
+        utils.SaveToAnalytics('colors-Color Objs With Gradient 2Pt')
     elif func == 1:
         ColorObjsRandomRange()
+        utils.SaveToAnalytics('colors-Color Objs Random Range')
     elif func == 2:
         ObjectColorToMaterial()
+        utils.SaveToAnalytics('colors-Object Color To Material')

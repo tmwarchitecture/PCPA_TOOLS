@@ -9,7 +9,6 @@ import utils
 
 ################################################################################
 #Utils
-
 def flatten(lst):
     return sum( ([x] if not isinstance(x, list) else flatten(x) for x in lst), [] )
 
@@ -68,7 +67,7 @@ def importCAD(savePath0, scaleDWG):
     #get intial list of all layers in the file
     currentLayers = rs.LayerNames()
     
-    rs.Command('_-Import '+savePath1+' _Enter')
+    rs.Command('_-Import '+savePath1+' _Enter', False)
     
     #get new layers added
     endLayersNames = rs.LayerNames()
@@ -122,28 +121,33 @@ def importCAD(savePath0, scaleDWG):
     except:
         pass
     
-    print "Import EXECUTED"
+    print "Import Successful"
     return finalAllObjects
 
 def importDWG():
-    #Import CAD
-    filePath = rs.OpenFileName("Select CAD to Import", "Autocad (*.dwg)|*.dwg||")
-    if filePath is None: return
-    
-    #itemsMM = [ ["Units", "Meters", "Millimeters"] ]
-    #CADinMilli = rs.GetBoolean("Is that CAD file in meters or mm?", itemsMM, [True])[0]
-    scaleDWG = False
-    
-    #originItems = ("Use_CAD_Origin", "No", "Yes")
-    #useOrigin = rs.GetBoolean("Use CAD Coordinate?", originItems, (True))[0]
-    useOrigin = False
-    
-    rs.EnableRedraw(False)
-    allImportedObjects = importCAD(filePath, scaleDWG)
-    #if useOrigin:
-    #    moveToOrigin(allImportedObjects, scaleDWG)
-    rs.ZoomSelected()
-    rs.EnableRedraw(True)
+    try:
+        #Import CAD
+        filePath = rs.OpenFileName("Select CAD to Import", "Autocad (*.dwg)|*.dwg||")
+        if filePath is None: return
+        
+        #itemsMM = [ ["Units", "Meters", "Millimeters"] ]
+        #CADinMilli = rs.GetBoolean("Is that CAD file in meters or mm?", itemsMM, [True])[0]
+        scaleDWG = False
+        
+        #originItems = ("Use_CAD_Origin", "No", "Yes")
+        #useOrigin = rs.GetBoolean("Use CAD Coordinate?", originItems, (True))[0]
+        useOrigin = False
+        
+        rs.EnableRedraw(False)
+        allImportedObjects = importCAD(filePath, scaleDWG)
+        #if useOrigin:
+        #    moveToOrigin(allImportedObjects, scaleDWG)
+        rs.ZoomSelected()
+        rs.EnableRedraw(True)
+        return True
+    except:
+        print "Import Failed"
+        return False
 
 ################################################################################
 #Export Functions
@@ -183,122 +187,199 @@ def RemoveMasterRootLayer(masterRoot):
     rs.EnableRedraw(True)
 
 def exportToRenderDWG():
-    fileLocations = config.GetDict()
-    
-    print "Exporting to 3ds max"
-    objs = rs.GetObjects("Select objects to export", preselect=True)
-    if objs is None: return
-    
-    #SAVE FILE NAME
-    defaultFolder = rs.DocumentPath()
-    defaultFilename = GetDatePrefix() + '_OPTION_01'
-    fileName = rs.SaveFileName("Export to render", "Autocad (*.dwg)|*.dwg||", defaultFolder, defaultFilename)
-    if fileName is None: return
-    base=os.path.basename(fileName)
-    cadName = os.path.splitext(base)[0]
-    
-    #SUPER EXPLODE
-    #EXPLODE SELECTED BLOCKS (CHECKLIST) [this is broken]
-        #blockNames = rs.BlockNames(True)
-        #print blockNames
+    try:
+        fileLocations = config.GetDict()
         
-        #results = rs.CheckListBox(blockNames, "Select blocks to explode", "Explode for render")
-    #CHECK BACKFACES
-    #CHECK GEOMETRY
-    #EXPORT EACH LAYER AS SAT FILE.
-    #CHECK ORIGIN 
-    #INSERT ORIGIN
-    #CHECK SCALE (Units)
-    if rs.UnitSystem() == 8:
-        print "Units checked"
-    else:
-        print "This model is in {}, it should be in Inches".format(rs.UnitSystemName(singular=False))
-    #UNIFY MESH NORMALS
-    #MERGE ALL EDGES
-    #MERGE ALL FACES
-    
-    #DELETE DUPS
-    #rs.UnselectAllObjects()
-    #rs.Command('-_Seldup ', echo=False)
-    #dupObjs = rs.SelectedObjects()
-    #if len(dupObjs) > 0:
-    #    rs.DeleteObjects(dupObjs)
-    #    print "{} duplicate objects deleted".format(len(dupObjs))
-    
-    #JOIN BY LAYER
-    
-    #PLACE UNDER A PARENT LAYER W/ DATESTAMP
-    AddMasterRootLayer(cadName)
-    
-    #CHANGE LAYER NAMES?
-    #IMPORT ACAD SCHEME
-    #SET DEFAULT FOLDER TO REFERENCE FOLDER UNDER RENDERING
-    
-    #EXPORT TO DWG
-    rs.SelectObjects(objs)
-    acadSchemeFolder = fileLocations['ACAD Scheme Folder']
-    exportScheme = 'MaxSolids.ini'
-    iniFile = os.path.join(acadSchemeFolder, exportScheme)
-    rs.Command('-_Export ' + '"' + fileName + '" F ' + '"' + iniFile + '"' + ' Enter P 100 Enter')
-    
-    #REMOVE MASTER ROOT LAYER
-    RemoveMasterRootLayer(cadName)
+        print "Exporting to 3ds max"
+        objs = rs.GetObjects("Select objects to export", preselect=True)
+        if objs is None: return
+        
+        #SAVE FILE NAME
+        defaultFolder = rs.DocumentPath()
+        defaultFilename = GetDatePrefix() + '_OPTION_01'
+        fileName = rs.SaveFileName("Export to render", "Autocad (*.dwg)|*.dwg||", defaultFolder, defaultFilename)
+        if fileName is None: return
+        base=os.path.basename(fileName)
+        cadName = os.path.splitext(base)[0]
+        
+        #SUPER EXPLODE
+        #EXPLODE SELECTED BLOCKS (CHECKLIST) [this is broken]
+            #blockNames = rs.BlockNames(True)
+            #print blockNames
+            
+            #results = rs.CheckListBox(blockNames, "Select blocks to explode", "Explode for render")
+        #CHECK BACKFACES
+        #CHECK GEOMETRY
+        #EXPORT EACH LAYER AS SAT FILE.
+        #CHECK ORIGIN 
+        #INSERT ORIGIN
+        #CHECK SCALE (Units)
+        if rs.UnitSystem() == 8:
+            print "Units checked"
+        else:
+            print "This model is in {}, it should be in Inches".format(rs.UnitSystemName(singular=False))
+        #UNIFY MESH NORMALS
+        #MERGE ALL EDGES
+        #MERGE ALL FACES
+        
+        #DELETE DUPS
+        #rs.UnselectAllObjects()
+        #rs.Command('-_Seldup ', echo=False)
+        #dupObjs = rs.SelectedObjects()
+        #if len(dupObjs) > 0:
+        #    rs.DeleteObjects(dupObjs)
+        #    print "{} duplicate objects deleted".format(len(dupObjs))
+        
+        #JOIN BY LAYER
+        
+        #PLACE UNDER A PARENT LAYER W/ DATESTAMP
+        AddMasterRootLayer(cadName)
+        
+        #CHANGE LAYER NAMES?
+        #IMPORT ACAD SCHEME
+        #SET DEFAULT FOLDER TO REFERENCE FOLDER UNDER RENDERING
+        
+        #EXPORT TO DWG
+        rs.SelectObjects(objs)
+        acadSchemeFolder = fileLocations['ACAD Scheme Folder']
+        exportScheme = 'MaxSolids.ini'
+        iniFile = os.path.join(acadSchemeFolder, exportScheme)
+        rs.Command('-_Export ' + '"' + fileName + '" F ' + '"' + iniFile + '"' + ' Enter P 100 Enter')
+        
+        #REMOVE MASTER ROOT LAYER
+        RemoveMasterRootLayer(cadName)
+        return True
+    except:
+        return False
 
 def exportToRenderSKP():
-    objs = rs.GetObjects("Select objects to export", preselect = True)
-    if objs is None: return
-    
-    defaultFilename = GetDatePrefix() + '_OPTION_01'
-    fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", filename = defaultFilename)
-    if fileName is None: return
-    
-    tempLayers = []
-    copiedObjs = []
-    
-    baseName = os.path.splitext(os.path.basename(fileName))[0]
-    
-    rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
-    
-    for i, obj in enumerate(objs):
-        tempCopy = rs.CopyObject(obj)
-        rs.ObjectLayer(tempCopy, rs.ObjectLayer(obj))
-        copiedObjs.append(tempCopy)
-        rs.StatusBarProgressMeterUpdate(i)
-    
-    for obj in copiedObjs:
-        shortName = rs.LayerName(rs.ObjectLayer(obj), False)
-        layerName = baseName + ' || ' + shortName
-        if rs.IsLayer(layerName):
-            rs.ObjectLayer(obj, layerName)
-        else:
-            matIndex = rs.LayerMaterialIndex(rs.ObjectLayer(obj))
-            newLayer = rs.AddLayer(layerName, rs.LayerColor(rs.ObjectLayer(obj)))
-            rs.LayerMaterialIndex(newLayer, matIndex)
-            tempLayers.append(newLayer)
-            rs.ObjectLayer(obj, newLayer)
-    rs.StatusBarProgressMeterHide()
-    
     try:
-        rs.SelectObjects(copiedObjs)
-        rs.Command('-_Export ' + '"' + fileName + '"' + ' s SketchUp2015 Enter ', False)
+        objs = rs.GetObjects("Select objects to export", preselect = True)
+        if objs is None: return
         
-        #CLEANUP
-        rs.UnselectAllObjects() 
+        defaultFilename = utils.GetDatePrefix() + '_OPTION_01'
+        fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", filename = defaultFilename)
+        if fileName is None: return
+        
+        tempLayers = []
+        copiedObjs = []
+        
+        baseName = os.path.splitext(os.path.basename(fileName))[0]
+        
+        rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
+        for i, obj in enumerate(objs):
+            tempCopy = rs.CopyObject(obj)
+            rs.ObjectLayer(tempCopy, rs.ObjectLayer(obj))
+            copiedObjs.append(tempCopy)
+            rs.StatusBarProgressMeterUpdate(i)
+        
+        for obj in copiedObjs:
+            shortName = rs.LayerName(rs.ObjectLayer(obj), False)
+            layerName = baseName + ' || ' + shortName
+            if rs.IsLayer(layerName):
+                rs.ObjectLayer(obj, layerName)
+            else:
+                matIndex = rs.LayerMaterialIndex(rs.ObjectLayer(obj))
+                newLayer = rs.AddLayer(layerName, rs.LayerColor(rs.ObjectLayer(obj)))
+                rs.LayerMaterialIndex(newLayer, matIndex)
+                tempLayers.append(newLayer)
+                rs.ObjectLayer(obj, newLayer)
+        rs.StatusBarProgressMeterHide()
+        
         try:
-            rs.DeleteObjects(copiedObjs)
+            rs.SelectObjects(copiedObjs)
+            rs.Command('-_Export ' + '"' + fileName + '"' + ' s SketchUp2015 Enter ', False)
+            
+            #CLEANUP
+            rs.UnselectAllObjects() 
+            try:
+                rs.DeleteObjects(copiedObjs)
+            except:
+                rs.DeleteObject(copiedObjs)
+            for layer in tempLayers:
+                rs.DeleteLayer(layer)
         except:
-            rs.DeleteObject(copiedObjs)
-        for layer in tempLayers:
-            rs.DeleteLayer(layer)
+            print "export failed"
+        return True
     except:
-        print "export failed"
+        return False
+
+################################################################################
+#Capture Display modes
+def exportImage(path, name, width, height):
+    try:
+        shortName = os.path.splitext(path)[0]
+        fullName = shortName + '_' + name + '.png'
+        comm=' -_ViewCaptureToFile '  + ' _Width=' + str(width) + ' _Height=' + str(height) + ' _Scale=1 _DrawGrid=_No _DrawWorldAxes=_No _DrawCPlaneAxes=_No _TransparentBackground=_Yes ' + '"' + fullName + '"'+ ' _Enter'
+        rs.Command(comm,False)
+    except:
+        pass
+
+def CaptureDisplayModesToFile():
+    try:
+        displayModeNames = []
+        displayModeBool = []
+        displayModesChecked = []
+        
+        for each in Rhino.Display.DisplayModeDescription.GetDisplayModes():
+            displayModeNames.append(each.EnglishName)
+            if each.EnglishName[:4] == 'PCPA':
+                displayModeBool.append(True)
+            else:
+                displayModeBool.append(False)
+        
+        results = rs.CheckListBox(zip(displayModeNames, displayModeBool), 'Select Display Modes', 'Capture Display Modes To File')
+        if results is None: return
+        for each in results:
+            if each[1]:
+                displayModesChecked.append(each[0])
+        
+        date = utils.GetDatePrefix()
+        if date is None: date = 'DATE'
+        activeView = sc.doc.Views.ActiveView.ActiveViewport.Name
+        if activeView is None: activeView = 'VIEW'
+        path = rs.SaveFileName('Export All Display Modes', "PNG (*.png)|*.png||", filename = date+'_'+activeView)
+        if path is None: return
+        
+        if 'catpureDisplays-width' in sc.sticky:
+            widthDefault = sc.sticky['catpureDisplays-width']
+        else:
+            widthDefault = 5100
+        
+        if 'catpureDisplays-height' in sc.sticky:
+            heightDefault = sc.sticky['catpureDisplays-height']
+        else:
+            heightDefault = 3300
+        
+        width = rs.GetInteger('Image Width', number = widthDefault, minimum = 600, maximum = 20000)
+        height = rs.GetInteger('Image Height', number = heightDefault, minimum = 600, maximum = 20000)
+        
+        sc.sticky['catpureDisplays-width'] = width
+        sc.sticky['catpureDisplays-height'] = height
+        
+        
+        for name in displayModesChecked:
+            try:
+                rs.Command('-_SetDisplayMode m ' +  name  + ' Enter', False)
+                exportImage(path, name, width, height)
+            except:
+                pass
+        return True
+    except:
+        return False
 
 
 if __name__ == "__main__":
     func = rs.GetInteger("Function to run", number = 0)
     if func == 0:
-        importDWG()
+        rc = importDWG()
+        if rc: utils.SaveToAnalytics('IO-Import DWG')
     elif func == 1:
-        exportToRenderDWG()
+        rc = exportToRenderDWG()
+        if rc: utils.SaveToAnalytics('IO-Export To Render DWG')
     elif func == 2:
-        exportToRenderSKP()
+        rc = exportToRenderSKP()
+        if rc: utils.SaveToAnalytics('IO-Export To Render SKP')
+    elif func == 3:
+        rc = CaptureDisplayModesToFile()
+        if rc: utils.SaveToAnalytics('IO-Capture Display Modes')
