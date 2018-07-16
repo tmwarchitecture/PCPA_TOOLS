@@ -57,6 +57,42 @@ def ColorObjsRandomRange():
     rs.DeleteObject(colorLine)
     rs.EnableRedraw(True)
 
+def ColorBySize():
+    objs= rs.GetObjects("Select objects to color", preselect = True)
+    if objs is None: return
+    print "Select First Color"
+    firstColor = rs.GetColor()
+    if firstColor is None: return
+    print "Select Second Color"
+    secondColor = rs.GetColor(firstColor)
+    if secondColor is None: return
+    
+    rs.EnableRedraw(False)
+    colorLine = rs.AddLine(firstColor, secondColor)
+    
+    #This should be replaced by remapped numbers instead of evenly divide
+    colors = rs.DivideCurve(colorLine, len(objs)-1)
+    
+    areas = []
+    for obj in objs:
+        if rs.IsCurve(obj):
+            areas.append(rs.CurveArea(obj)[0])
+        elif rs.IsSurface(obj):
+            areas.append(rs.SurfaceArea(obj)[0])
+        else:
+            print "Only curves and surfaces supported"
+            return
+    
+    objAreas = zip(areas, objs)
+    objAreas.sort()
+    objSorted = [objs for areas, objs in objAreas]
+    
+    for i, obj in enumerate(objSorted):
+        rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))    
+    
+    rs.DeleteObject(colorLine)
+    rs.EnableRedraw(True)
+
 def ObjectColorToMaterial():
     objs = rs.GetObjects("Select objects to transfer color to material", preselect = True)
     for obj in objs:
@@ -80,3 +116,6 @@ if __name__ == "__main__":
     elif func == 2:
         ObjectColorToMaterial()
         utils.SaveToAnalytics('colors-Object Color To Material')
+    elif func == 3:
+        ColorBySize()
+        utils.SaveToAnalytics('colors-Color By Size')

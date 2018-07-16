@@ -2,6 +2,7 @@ import rhinoscriptsyntax as rs
 import Rhino
 import scriptcontext as sc
 import utils
+import layers
 
 def MakeRampRuns(path, width):
     topOffset = 12
@@ -349,27 +350,60 @@ def Ramp_HeightSlope(path, width, slope):
     #rs.EnableRedraw(True)
     #print "A"
     if slope <= .05:
+        rs.DeleteObjects(finalHandrails)
         return [finalGeo, comments]
     else:
         return [finalGeo, comments, finalHandrails]
 
 def main():
     #path = rs.GetCurveObject("Select ramp path")
-    path = rs.GetObject("Select Ramp Path", rs.filter.curve)
+    path = rs.GetObject("Select Ramp Path", rs.filter.curve, True)
     if path is None: return
     #height = rs.GetReal("Ramp Total Height", 60)
     #if height is None: return
     #length = rs.GetReal("Ramp Length", 180)
     #if length is None: return
-    width = rs.GetReal("Ramp Clear Width", 36)
+    
+    if 'ramp-widthDefault' in sc.sticky:
+        widthDefault = sc.sticky['ramp-widthDefault']
+    else:
+        widthDefault = 36
+    if 'ramp-slopeDefault' in sc.sticky:
+        slopeDefault = sc.sticky['ramp-slopeDefault']
+    else:
+        slopeDefault = .0833
+    
+    
+    width = rs.GetReal("Ramp Clear Width", widthDefault, minimum = 36)
     if width is None: return
-    slope = rs.GetReal("Ramp slope (e.g. 10% slope is .10)", .20)
+    slope = rs.GetReal("Ramp slope (e.g. 8.33%(1:12) is .0833)", slopeDefault)
     if slope is None: return
-    #MakeRamp(path, length, width, height)
+    
+    sc.sticky['ramp-widthDefault'] = width
+    sc.sticky['ramp-slopeDefault'] = slope
     
     rs.EnableRedraw(False)
-    Ramp_HeightSlope(path, width, slope)
+    rampGeoList = Ramp_HeightSlope(path, width, slope)
+    try:
+        layers.AddLayerByNumber(402, False)
+        layerName = layers.GetLayerNameByNumber(402)
+        
+        rs.ObjectLayer(rampGeoList[0], layerName)
+        try:
+            if rampGeoList[2] is not None:
+                layers.AddLayerByNumber(106, False)
+                layerName = layers.GetLayerNameByNumber(106)
+                
+                rs.ObjectLayer(rampGeoList[2], layerName)
+        except:
+            pass        
+    except:
+        pass
+    
     rs.EnableRedraw(True)
+    
+    print rampGeoList[1]
+    
     utils.SaveToAnalytics('architecture-ramp')
 
 if __name__ == "__main__":
