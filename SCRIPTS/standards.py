@@ -36,26 +36,18 @@ def SetTemplateFile(filepath):
     except:
         print "FAIL-----Template File"
 
-def LoadStyles(filepath):
-    filepath = '"' + filepath + '"'
-    #try:
-    #    rs.Command('-_DocumentProperties l l ' + filepath + ' Enter Enter Enter', False)
-    #    print "\tLinetypes Updated"
-    #except:
-    #    print "FAIL-----Linetype Import Failed"
+def LoadStyles(filepath = None):
+    if filepath is None:
+        fileLocations = config.GetDict()
+        filepath = '"' + fileLocations['Template File'] + '"'
+    else:
+        filepath = '"' + filepath + '"'
     
     try:
-        
         rs.Command('-_ImportAnnotationStyles ' + filepath + ' Enter Enter Enter', echo=False)
         print "\tAnnotation Styles Updated"
     except:
         print "FAIL-----Annotation Style Import Failed"
-    
-    #try:
-    #    rs.Command('-_ImportAnnotationStyles ' + filepath + ' Enter Enter Enter', False)
-    #    print "\tAnnotation Styles Updated"
-    #except:
-    #    print "FAIL-----Hatch Import Failed"
 
 def LoadAcadSchemes(filepath):
     if os.path.isdir(filepath) is False:

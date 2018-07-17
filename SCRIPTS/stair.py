@@ -9,11 +9,12 @@ __author__ = 'Tim Williams'
 __version__ = '0.2.0'
 
 import Rhino
-import scriptcontext
+import scriptcontext as sc
 import System.Guid
 import rhinoscriptsyntax as rs
 import math
 import utils
+import layers
 
 
 def makeFace(srfs):
@@ -152,6 +153,7 @@ def stairHeight(route, width = 48, height = 120):
     for i in range(0, len(segments)):
         if not (rs.IsLine(segments[i])):
             print("ERROR: This function only accepts lines. No arcs or nurb curves.")
+            rs.DeleteObjects(segments)
             return
     
     #Clean Segements
@@ -358,9 +360,9 @@ def AddLine():
     #Rhino.Geometry.Polyline(pts)
     #return guideCrv
     
-    id = scriptcontext.doc.Objects.AddLine(pt_start, pt_end)
+    id = sc.doc.Objects.AddLine(pt_start, pt_end)
     if id!=System.Guid.Empty:
-        scriptcontext.doc.Views.Redraw()
+        sc.doc.Views.Redraw()
         return [id]
     return Rhino.Commands.Result.Failure
 
@@ -370,31 +372,49 @@ def main():
         widthMin = 900
         widthMax = 100000
         heightDefault = 5000
+        heightMin = 300
     elif (rs.UnitSystem()==4):
         widthDefault = 1.8
         widthMin = .9
         widthMax = 100.0
         heightDefault = 5.0
+        heightMin = .30
     elif (rs.UnitSystem()==8):
         widthDefault = 42
         widthMin = 36
-        widthMax = 100.0
+        widthMax = 1000.0
         heightDefault = 120
+        heightMin = 12
     else:
-        print("WTF are your units?")
-    
-    #route = AddLine()
-    route = rs.GetObject("Select Stair Guide Curve")
-    
-    if route is None:
+        print "Change your units to inches"
         return
+    
+    route = rs.GetObject("Select Stair Guide Curve", rs.filter.curve, True)
+    if route is None: return
+    
+    if 'stair-widthDefault' in sc.sticky:
+        widthDefault = sc.sticky['stair-widthDefault']
+    if 'stair-heightDefault' in sc.sticky:
+        heightDefault = sc.sticky['stair-heightDefault']
+    
     width = rs.GetReal("Stair Width", number = widthDefault, minimum = widthMin, maximum = widthMax)
-    if width is None:
-        return
-    height = rs.GetReal("Stair Height", number = heightDefault)
-    if height is None:
-        return
-    stairHeight(route, width, height)
+    if width is None: return
+    height = rs.GetReal("Stair Height", number = heightDefault, minimum = heightMin)
+    if height is None: return
+    
+    sc.sticky['stair-widthDefault'] = width
+    sc.sticky['stair-heightDefault'] = height
+    
+    stairGeo = stairHeight(route, width, height)
+    
+    try:
+        layers.AddLayerByNumber(401, False)
+        layerName = layers.GetLayerNameByNumber(401)
+        
+        rs.ObjectLayer(stairGeo, layerName)
+    except:
+        pass
+    
     utils.SaveToAnalytics('architecture-stair')
 
 if __name__ == "__main__":
