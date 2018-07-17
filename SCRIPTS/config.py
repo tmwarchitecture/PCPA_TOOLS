@@ -17,7 +17,8 @@ def GetDict():
     'People 3D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\3D',
     'People 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\2D',
     'Vegetation 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\02_VEGETATION\2D',
-    'Help File' : r'X:\05_RHINO STANDARDS\11 PCPA RHINO MANUAL\PCPA Rhino Tools Manual.pdf'
+    'Help File' : r'X:\05_RHINO STANDARDS\11 PCPA RHINO MANUAL\PCPA Rhino Tools Manual.pdf',
+    'PCPA Logo' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\ICONS\PCPA_LOGO.png'
     }
 
     fileLocationsPCPNH = {

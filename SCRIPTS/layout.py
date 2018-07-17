@@ -2,11 +2,12 @@ import rhinoscriptsyntax as rs
 import scriptcontext as sc
 import Rhino
 import os.path
-import datetime
 import layers
+import config
 from utils import GetDatePrefix
 
 def AddTitleBlock(size):
+    filelocations = config.GetDict()
     rs.EnableRedraw(False)
     if size == 11:
         offset = .354
@@ -117,7 +118,7 @@ def AddTitleBlock(size):
     
     
     #ADD PCPA LOGO
-    PCPAlogo = r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\0.2\ICONS\PCPA_LOGO.png'
+    PCPAlogo = filelocations['PCPA Logo']
     if os.path.isfile(PCPAlogo):
         pictureframe = rs.AddPictureFrame(logoPlane, PCPAlogo, logoWidth, logoHeight, True, True, True)
         rs.ObjectLayer(pictureframe, layers.GetLayerNameByNumber(8105))
@@ -164,6 +165,18 @@ def AddLayout(size):
         layers.AddLayerByNumber(8000)
         AddTitleBlock(size)
 
+def AddLayoutButton():
+    layouts = ['8.5x11 Landscape', '11x17 Landscape', '18x24 Landscape']
+    result = rs.ListBox(layouts, "Select layout to add", "Add Layout", "11x17 Landscape")
+    if result == "11x17 Landscape":
+        func = 11
+    elif result == "8.5x11 Landscape":
+        func = 8
+    elif result == "18x24 Landscape":
+        func = 18
+    print ""
+    AddLayout(func)
+
 def BatchPrintLayouts():
     print "BatchPrintLayout is WIP. Use with caution."
     try:
@@ -209,14 +222,17 @@ def BatchPrintLayouts():
         print str(e)
         return
 
-def main(func):
+def main():
+    func = rs.GetInteger()
     if func is None: return
     
-    if func < 50:
+    if func == 0:
+        AddLayoutButton()
+    elif func > 0:
         AddLayout(func)
-    elif func == 90:
-        BatchPrintLayouts()
+    
+    #elif func == 90:
+    #    BatchPrintLayouts()
 
 if __name__ == "__main__":
-    func = rs.GetInteger()
-    main(func)
+    main()

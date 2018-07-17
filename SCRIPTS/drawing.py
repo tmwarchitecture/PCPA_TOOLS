@@ -35,7 +35,7 @@ def AreaTag(obj, decPlaces):
         return 0
 
 def AddAreaTag():
-    objs = rs.GetObjects("Select curves to add area tag", preselect = True)
+    objs = rs.GetObjects("Select curves to add area tag", rs.filter.curve, preselect = True)
     if objs is None: return
     
     decPlaces = rs.GetInteger("Number of decimal places", 0, maximum = 8)

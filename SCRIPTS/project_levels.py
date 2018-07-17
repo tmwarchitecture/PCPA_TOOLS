@@ -131,6 +131,7 @@ class LevelsDialog(forms.Dialog):
             mnuSaveAs = forms.ButtonMenuItem(Text = "Save As...")
             mnuSaveAs.Click += self.OnFileSaveAsClick
             mnuOpen = forms.ButtonMenuItem(Text = "Open")
+            mnuOpen.Enabled = False
             mnuOpen.Click += self.OnFileOpenClick
             mnuClose = forms.ButtonMenuItem(Text = "Close")
             mnuClose.Click += self.OnFileCloseClick
@@ -294,7 +295,7 @@ class LevelsDialog(forms.Dialog):
         self.UpdateFileLabel(newFile)
     
     def OnFileSaveClick(self, sender, e):
-        dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.comboBuildingNum.SelectedIndex)
+        #dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.comboBuildingNum.SelectedIndex)
         data = self.grid.DataStore
         data.reverse()
         rs.SetDocumentData('PCPA', 'Levels', str(data))

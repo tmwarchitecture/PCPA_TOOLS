@@ -14,22 +14,40 @@ def IntersectGeo(obj, level):
     xCurves = x[1]
     if xCurves is None: return
     try:
-        rs.JoinCurves(xCurves)
+        newCurves = Rhino.Geometry.Curve.JoinCurves(xCurves)
+        #newCurves = rs.JoinCurves(xCurves)
     except:
-        pass
-    for curve in xCurves:
-        pass
+        newCurves = xCurves
+    #if len(xCurves)>1:
+    #    rs.DeleteObjects(xCurves)
+    #else:
+    #    rs.DeleteObject(xCurves)
+    for curve in newCurves:
         finalCurve = sc.doc.Objects.AddCurve(curve)
         rs.MatchObjectAttributes(finalCurve, obj)
     sc.doc.Views.Redraw()
 
-if __name__ == "__main__":
-    objs = rs.GetObjects()
-    levels = [8, 18, 30]
-    
+def IntersectGeoAtPt():
+    objs = rs.GetObjects("Select objects to contour", rs.filter.allobjects, False, True)
+    if objs is None: return
+    pt = rs.GetPoint("Select point to contour at")
+    if pt is None: return
+    ptZ = pt[2]
     for obj in objs:
-        for level in levels:
-            IntersectGeo(obj, level)
+        IntersectGeo(obj, ptZ)
+
+if __name__ == "__main__":
+    #func = rs.GetInteger("func num")
+    func = 0
+    if func == 0:
+        IntersectGeoAtPt()
+    
+    #objs = rs.GetObjects()
+    #levels = [8, 18, 30]
+    
+    #for obj in objs:
+    #    for level in levels:
+    #        IntersectGeo(obj, level)
     #circle = Rhino.Geometry.Circle(plane, 999999)
     #negShape = Rhino.Geometry.Cylinder(circle, 999999)
     #negShapeBrep = negShape.ToBrep(True, True)

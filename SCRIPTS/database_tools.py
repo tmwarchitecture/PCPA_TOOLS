@@ -102,7 +102,7 @@ def GetLevelsFromRhinoDoc():
 
 if __name__ == "__main__":
     pass
-    print ""
+    #print ""
     
     #data = GetDatabaseTemplate()
     #data['project']['name'] = "TEst"
