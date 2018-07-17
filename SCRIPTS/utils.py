@@ -82,7 +82,15 @@ def RoundNumber(number, decPlaces):
         result = format(float(number), ',.'+str(decPlaces)+'f')
     return result
 
-
+def RemapList(values, newMin, newMax):
+    origMin = min(values)
+    origMax = max(values)
+    OldRange = (origMax - origMin)  
+    NewRange = (newMax - newMin)
+    newValues = []
+    for value in values:
+        newValues.append((((value - origMin  ) * NewRange) / OldRange) + newMin)
+    return newValues
 
 if __name__ == "__main__":
     #print GetNetworkLocation()
