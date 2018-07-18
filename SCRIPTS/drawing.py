@@ -20,8 +20,12 @@ def AreaTag(obj, decPlaces):
             
             #add text tag
             dimStyle = sc.doc.DimStyles.FindName('PCPA_1-8')
-            textHeight = dimStyle.TextHeight
-            areaTag = rs.AddText(areaText, rs.CurveAreaCentroid(obj)[0], height = textHeight, justification = 131074)
+            
+            if dimStyle is not None:
+                textHeight = dimStyle.TextHeight
+                areaTag = rs.AddText(areaText, rs.CurveAreaCentroid(obj)[0], height = textHeight, justification = 131074)
+            else:
+                areaTag = rs.AddText(areaText, rs.CurveAreaCentroid(obj)[0], height = 1, justification = 131074)
             
             #Change layers
             hostLayer = layers.AddLayerByNumber(8103, False)
@@ -49,10 +53,13 @@ def AddAreaTag():
     total = 0
     for obj in objs:
         try:
-            total += AreaTag(obj, decPlaces)
+            currentArea = AreaTag(obj, decPlaces)
+            utils.SaveFunctionData('Drawing-Add Area Tag', [rs.DocumentPath(), rs.DocumentName(), rs.ObjectLayer(obj), rs.CurrentDimStyle(), currentArea, decPlaces])
+            total += currentArea
         except:
             pass
     print 'Cumulative Area = ' + str(total)
+    
     rs.EnableRedraw(True)
 
 ###############################################################################
@@ -126,6 +133,6 @@ if __name__=="__main__":
     func = rs.GetInteger("Func num")
     if func == 0:
         AddAreaTag()
-        utils.SaveToAnalytics('IO-Add Area Tag')
+        utils.SaveToAnalytics('Drawing-Add Area Tag')
     elif func == 1:
         dimensionPline_Button()
