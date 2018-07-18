@@ -79,21 +79,26 @@ def SaveFunctionData(funcName, funcData):
     funcData = data to save [list]
     """
     try:
-        filepath = 'data\\' + funcName + '.csv'
+        now=datetime.datetime.now()
+        monthString=('%02d%02d'%(now.year, now.month))[2:]
+        
+        filepath = 'data\\' + monthString + '_' + funcName + '.csv'
         userName = encrypt.encrypt(getpass.getuser())
         now=datetime.datetime.now()
         timeString=('%02d-%02d-%02d_%02d:%02d:%02d.%d'%(now.year, now.month, now.day, now.hour, now.minute,now.second,now.microsecond))[:-4]
         
-        
-        if os.path.isfile(filepath):
-            with open(filepath, 'rb') as File:
-                reader = csv.reader(File)
-                data = list(reader)
-            row = [timeString] + [userName]  + funcData
-            data.append(row)
-        else:
+        if not os.path.isfile(filepath):
             data = [[funcName],['Date', 'User']]
+            myFile = open(filepath, 'wb')
+            with myFile:
+                csvwriter = csv.writer(myFile)
+                csvwriter.writerows(data)    
         
+        with open(filepath, 'rb') as File:
+            reader = csv.reader(File)
+            data = list(reader)
+        row = [timeString] + [userName]  + funcData
+        data.append(row)
         
         myFile = open(filepath, 'wb')
         with myFile:
