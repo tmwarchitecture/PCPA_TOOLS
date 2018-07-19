@@ -4,7 +4,6 @@ from libs import csv
 from libs import encrypt
 import getpass
 
-
 def GetDatePrefix():
     year = int(datetime.datetime.today().strftime('%Y'))-2000
     md = datetime.datetime.today().strftime('%m%d')
@@ -73,6 +72,41 @@ def SaveToAnalytics(funcName):
     except:
         print "Analytics failed"
 
+def SaveFunctionData(funcName, funcData):
+    """
+    SaveFunctionData(funcName, funcData)
+    funcName = name of function(str)
+    funcData = data to save [list]
+    """
+    try:
+        now=datetime.datetime.now()
+        monthString=('%02d%02d'%(now.year, now.month))[2:]
+        
+        filepath = 'data\\' + monthString + '_' + funcName + '.csv'
+        userName = encrypt.encrypt(getpass.getuser())
+        now=datetime.datetime.now()
+        timeString=('%02d-%02d-%02d_%02d:%02d:%02d.%d'%(now.year, now.month, now.day, now.hour, now.minute,now.second,now.microsecond))[:-4]
+        
+        if not os.path.isfile(filepath):
+            data = [[funcName],['Date', 'User']]
+            myFile = open(filepath, 'wb')
+            with myFile:
+                csvwriter = csv.writer(myFile)
+                csvwriter.writerows(data)    
+        
+        with open(filepath, 'rb') as File:
+            reader = csv.reader(File)
+            data = list(reader)
+        row = [timeString] + [userName]  + funcData
+        data.append(row)
+        
+        myFile = open(filepath, 'wb')
+        with myFile:
+            csvwriter = csv.writer(myFile)
+            csvwriter.writerows(data)
+    except:
+        print "SaveFunctionData failed"
+
 def RoundNumber(number, decPlaces):
     """Rounds numbers and adds ',' thousand seperator. Returns string. -1 rounds to 10, 0 leaves no decimals, 1 has one decimal place"""
     if decPlaces < 0:
@@ -93,6 +127,7 @@ def RemapList(values, newMin, newMax):
     return newValues
 
 if __name__ == "__main__":
+    SaveFunctionData('geometry-Test', ['Area', 'Geometry', 42, 'Result', 'Failed'])
     #print GetNetworkLocation()
     #SaveToAnalytics('Count')
-    pass
+    #pass
