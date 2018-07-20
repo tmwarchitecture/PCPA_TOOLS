@@ -4,39 +4,46 @@ from random import shuffle
 import utils
 
 def ColorObjsWithGradient2Pt():
-    objs= rs.GetObjects("Select objects to color", preselect = True)
-    if objs is None: return
-    pt1 = rs.GetPoint("Select first color point")
-    if pt1 is None: return
-    firstColor = rs.GetColor()
-    if firstColor is None: return
-    pt2 = rs.GetPoint("Select second color point")
-    if pt2 is None: return
-    secondColor = rs.GetColor(firstColor)
-    if secondColor is None: return
-    
-    rs.EnableRedraw(False)
-    origLine = rs.AddLine(pt1, pt2)
-    colorLine = rs.AddLine(firstColor, secondColor)
-    
-    
-    for obj in objs:
-        bboxpts = rs.BoundingBox(obj)
-        ctrPt = (bboxpts[0] + bboxpts[6]) / 2
-        param = rs.CurveClosestPoint(origLine, ctrPt)
-        normParam = rs.CurveNormalizedParameter(origLine, param)
-        colorParam = rs.CurveParameter(colorLine, normParam)
-        finalPt = rs.EvaluateCurve(colorLine, colorParam)
-        color = (finalPt.X, finalPt.Y, finalPt.Z)
-        rs.ObjectColor(obj, color)    
-    
-    rs.DeleteObject(colorLine)
-    rs.DeleteObject(origLine)
-    rs.EnableRedraw(True)
+    result = True
+    try:
+        objs= rs.GetObjects("Select objects to color", 1073750077,  preselect = True)
+        if objs is None: return
+        pt1 = rs.GetPoint("Select first color point")
+        if pt1 is None: return
+        firstColor = rs.GetColor()
+        if firstColor is None: return
+        pt2 = rs.GetPoint("Select second color point")
+        if pt2 is None: return
+        secondColor = rs.GetColor(firstColor)
+        if secondColor is None: return
+        
+        rs.EnableRedraw(False)
+        origLine = rs.AddLine(pt1, pt2)
+        colorLine = rs.AddLine(firstColor, secondColor)
+        
+        try:
+            for obj in objs:
+                bboxpts = rs.BoundingBox(obj)
+                ctrPt = (bboxpts[0] + bboxpts[6]) / 2
+                param = rs.CurveClosestPoint(origLine, ctrPt)
+                normParam = rs.CurveNormalizedParameter(origLine, param)
+                colorParam = rs.CurveParameter(colorLine, normParam)
+                finalPt = rs.EvaluateCurve(colorLine, colorParam)
+                color = (finalPt.X, finalPt.Y, finalPt.Z)
+                rs.ObjectColor(obj, color)    
+        except:
+            result = False
+        rs.DeleteObject(colorLine)
+        rs.DeleteObject(origLine)
+        rs.EnableRedraw(True)
+    except:
+        result = False
+    utils.SaveFunctionData('colors-Gradient', [firstColor, secondColor, len(objs), result])
+    return result
 
 def ColorObjsRandomRange():
     try:
-        objs= rs.GetObjects("Select objects to color", preselect = True)
+        objs= rs.GetObjects("Select objects to color", 1073750077, preselect = True)
         if objs is None: return
         print "Select First Color"
         firstColor = rs.GetColor()
@@ -48,13 +55,15 @@ def ColorObjsRandomRange():
         rs.EnableRedraw(False)
         colorLine = rs.AddLine(firstColor, secondColor)
         
-        colors = rs.DivideCurve(colorLine, len(objs)-1)
-        
-        shuffle(colors)
-        
-        for i, obj in enumerate(objs):
-            rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))    
-        
+        try:
+            colors = rs.DivideCurve(colorLine, len(objs)-1)
+            
+            shuffle(colors)
+            
+            for i, obj in enumerate(objs):
+                rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))    
+        except:
+            pass
         rs.DeleteObject(colorLine)
         rs.EnableRedraw(True)
         return True
@@ -63,7 +72,7 @@ def ColorObjsRandomRange():
 
 def ColorBySize():
     try:
-        objs= rs.GetObjects("Select objects to color", preselect = True)
+        objs= rs.GetObjects("Select objects to color", 1073750077, preselect = True)
         if objs is None: return
         print "Select First Color"
         firstColor = rs.GetColor()
@@ -116,7 +125,7 @@ def ColorBySize():
 
 def ObjectColorToMaterial():
     try:
-        objs = rs.GetObjects("Select objects to transfer color to material", preselect = True)
+        objs = rs.GetObjects("Select objects to transfer color to material", 1073750077, preselect = True)
         if objs is None: return
         for obj in objs:
             color = rs.ObjectColor(obj)
@@ -136,16 +145,16 @@ if __name__ == "__main__":
     if func == 0:
         result = ColorObjsWithGradient2Pt()
         if result:
-            utils.SaveToAnalytics('colors-Color Objs With Gradient 2Pt')
+            utils.SaveToAnalytics('colors-Gradient')
     elif func == 1:
         result = ColorObjsRandomRange()
         if result:
-            utils.SaveToAnalytics('colors-Color Objs Random Range')
+            utils.SaveToAnalytics('colors-Random Range')
     elif func == 2:
         result = ObjectColorToMaterial()
         if result:
-            utils.SaveToAnalytics('colors-Object Color To Material')
+            utils.SaveToAnalytics('colors-Color To Material')
     elif func == 3:
         result = ColorBySize()
         if result:
-            utils.SaveToAnalytics('colors-Color By Size')
+            utils.SaveToAnalytics('colors-By Size')

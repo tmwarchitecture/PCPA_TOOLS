@@ -1,1 +1,0 @@
-This is the page for grasshopper components

@@ -553,7 +553,7 @@ class LevelsDialog(forms.Dialog):
         try:
             string = "<html><head><style>"
             string += "body {color: dimgray;}"
-            string += "table, th, td{border-collapse: collapse; border: 1px solid black;padding: 10px;}"
+            #string += "table, th, td{border-collapse: collapse; border: 1px solid black;padding: 10px;}"
             string += "</style></head><body><table>"
             
             allHeadings = []
