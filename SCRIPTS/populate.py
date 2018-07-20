@@ -97,7 +97,7 @@ def main():
     if numObjects is None: return
     
     types = ['3D People', '2D People', '2D Trees', 'Custom Block']
-    type = rs.ListBox(types, "Select block type to populate", "Placer", types[0])
+    type = rs.ListBox(types, "Select block type to populate", "Population Type", types[0])
     if type is None: return
     
     if type == '3D People':

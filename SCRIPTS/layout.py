@@ -168,13 +168,13 @@ def AddLayout(size):
 def AddLayoutButton():
     layouts = ['8.5x11 Landscape', '11x17 Landscape', '18x24 Landscape']
     result = rs.ListBox(layouts, "Select layout to add", "Add Layout", "11x17 Landscape")
+    if result is None: return
     if result == "11x17 Landscape":
         func = 11
     elif result == "8.5x11 Landscape":
         func = 8
     elif result == "18x24 Landscape":
         func = 18
-    print ""
     AddLayout(func)
 
 def BatchPrintLayouts():
