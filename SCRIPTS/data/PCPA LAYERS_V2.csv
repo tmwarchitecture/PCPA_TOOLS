@@ -9,8 +9,8 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 106,Railings,0,0-255-223,ARCHITECTURE_Railings_Generic,,0-0-0,,,180716,,,,
 ,,,,,,,,,,,,,1
 202,Ceiling,0,85-123-225,INTERIOR_Ceiling_Generic,,0-0-0,,,180716,,,,
-203,Door,0,230-230-230,INTERIOR_Doors_Generic,,0-0-0,,,180716,,,,
-204,Floor,0,230-230-230,INTERIOR_Floor_Generic,,0-0-0,,,180716,,,,
+203,Door,0,169-55-55,INTERIOR_Doors_Generic,,0-0-0,,,180716,,,,
+204,Floor,0,255-88-129,INTERIOR_Floor_Generic,,0-0-0,,,180716,,,,
 205,Furniture,0,77-155-255,INTERIOR_Furniture_Generic,,0-0-0,,,180716,,,,
 207,Millwork,0,232-172-69,INTERIOR_Millwork_Generic,,0-0-0,,,180716,,,,
 208,Wall_Generic,0,81-255-200,INTERIOR_Wall_Generic,,0-0-0,,,180716,,,,

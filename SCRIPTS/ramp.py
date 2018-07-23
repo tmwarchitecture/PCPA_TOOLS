@@ -232,7 +232,7 @@ def Ramp_HeightSlope(path, width, slope):
     
     handrailCenterlineOffset = (handrailOffset - handrailRadius/2)
     
-    #rs.EnableRedraw(False)
+    rs.SimplifyCurve(path)
     
     runs = MakeRampRuns(path, width)
     
@@ -246,8 +246,6 @@ def Ramp_HeightSlope(path, width, slope):
     finalHandrails = []
     vertMove = (0,0,0)
     
-    
-    
     for run in runs:
         length = rs.Distance(rs.CurveStartPoint(run[0]), rs.CurveStartPoint(run[1]))
         
@@ -260,7 +258,6 @@ def Ramp_HeightSlope(path, width, slope):
         vertMove = rs.VectorAdd(stHeight, vertMove)
         
         srf = rs.AddLoftSrf(run)
-        #for each in srf:
         
         norm = rs.SurfaceNormal(srf[0], [.5,.5])
         if norm.Z < 0:
@@ -356,13 +353,8 @@ def Ramp_HeightSlope(path, width, slope):
         return [finalGeo, comments, finalHandrails]
 
 def main():
-    #path = rs.GetCurveObject("Select ramp path")
     path = rs.GetObject("Select Ramp Path", rs.filter.curve, True)
     if path is None: return
-    #height = rs.GetReal("Ramp Total Height", 60)
-    #if height is None: return
-    #length = rs.GetReal("Ramp Length", 180)
-    #if length is None: return
     
     if 'ramp-widthDefault' in sc.sticky:
         widthDefault = sc.sticky['ramp-widthDefault']

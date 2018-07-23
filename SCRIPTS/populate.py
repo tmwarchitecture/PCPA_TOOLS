@@ -31,7 +31,6 @@ def RandomPtsOnSrf(srf, numPts):
     pts.append(firstPt)
     for i in range(1, numPts):
         thisPt = RandomPtOnSrf(srf)
-        #rs.PointArrayClosestPoint(
         pts.append(thisPt)
     return pts
 
@@ -42,12 +41,21 @@ def RandomPtOnSrf(srf):
     dom_u = rs.SurfaceDomain(srf, 0)
     dom_v = rs.SurfaceDomain(srf, 1)
     
+    counter = 0
     while True:
+        print counter
         pt_u = random.uniform(dom_u[0], dom_u[1])
         pt_v = random.uniform(dom_v[0], dom_v[1])
         pt = rs.EvaluateSurface(srf, pt_u, pt_v)
-        if rs.IsPointOnSurface(srf, pt):
+        if rs.ObjectType(srf) == 1073741824: #If extrusion objects
+            temp = rs.coercesurface(srf)
+            testSrf = temp.ToBrep()
+        else:
+            testSrf = srf
+        if rs.IsPointOnSurface(testSrf, pt):
             return pt
+        else:
+            counter+=1
 
 def TryLoadBlock(type, name):
     if rs.IsBlock(name):
@@ -89,9 +97,10 @@ def RandomBlock(type):
     return blocks[index]
 
 def main():
-    srf = rs.GetSurfaceObject('Select surface to populate', True)
+    srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
+    #srf = rs.GetSurfaceObject('Select surface to populate', True)
     if srf is None: return
-    srf = srf[0]
+    #srf = srf[0]
     
     numObjects = rs.GetInteger('Number of objects to populate', 30, 1, 500)
     if numObjects is None: return
@@ -108,8 +117,6 @@ def main():
         type = 'Vegetation 2D Folder'
     
     rs.EnableRedraw(False)
-    
-    #layers.AddSpecificLayer(2000)
     
     pts = RandomPtsOnSrf(srf, numObjects)
     

@@ -20,7 +20,7 @@ def AreaTag(obj, decPlaces):
                     areaText = area + ' ' + rs.UnitSystemName(False, True, True)
                 
                 #add text tag
-                dimStyle = sc.doc.DimStyles.FindName('PCPA_1-8')
+                dimStyle = sc.doc.DimStyles.FindName('PCPA_12')
                 
                 if dimStyle is not None:
                     textHeight = dimStyle.TextHeight
@@ -49,7 +49,7 @@ def AddAreaTag():
     if decPlaces is None: return
     
     #Load Anno style if it doesnt exist already
-    if sc.doc.DimStyles.FindName('PCPA_1-8') is None:
+    if sc.doc.DimStyles.FindName('PCPA_12') is None:
         standards.LoadStyles()
     
     rs.EnableRedraw(False)
@@ -96,7 +96,7 @@ def dimensionPline(pline, offsetDist):
                 offsetVec = rs.VectorUnitize(offsetVec)
                 offsetVec = rs.VectorScale(offsetVec, offsetDist)
                 offsetPt = rs.VectorAdd(stPt, offsetVec)
-                dim = rs.AddAlignedDimension(stPt, endPt, rs.coerce3dpoint(offsetPt), 'PCPA_1-8')
+                dim = rs.AddAlignedDimension(stPt, endPt, rs.coerce3dpoint(offsetPt), 'PCPA_12')
                 rs.AddObjectToGroup(dim, dimGroup)
         rs.DeleteObjects(segments)
         result = True
@@ -111,14 +111,14 @@ def dimensionPline_Button():
     if 'dimPline-dist' in sc.sticky:
         distDefault = sc.sticky['dimPline-dist']
     else:
-        distDefault = 120
+        distDefault = 60
     
-    offsetDist = rs.GetInteger('Dimension offset distance', distDefault)
+    offsetDist = rs.GetInteger('Dimension offset distance (in.)', distDefault)
     
     sc.sticky['dimPline-dist'] = offsetDist
     
     #Load Anno style if it doesnt exist already
-    if sc.doc.DimStyles.FindName('PCPA_1-8') is None:
+    if sc.doc.DimStyles.FindName('PCPA_12') is None:
         standards.LoadStyles()
     
     layers.AddLayerByNumber(8101)

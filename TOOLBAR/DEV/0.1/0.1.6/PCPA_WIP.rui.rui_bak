@@ -251,7 +251,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="97fce0a6-b00a-4ab3-8f95-f42bfbb081dc" active_tool_bar_group="1bee15c7-04a7-49e5-b987-454cf41cd438" single_file="False" hide_single_tab="False" point_floating="468,176">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="1bee15c7-04a7-49e5-b987-454cf41cd438" single_file="False" hide_single_tab="False" point_floating="468,176">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
