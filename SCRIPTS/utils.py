@@ -126,8 +126,51 @@ def RemapList(values, newMin, newMax):
         newValues.append((((value - origMin  ) * NewRange) / OldRange) + newMin)
     return newValues
 
+def StringPlusOne(word):
+    """Adds one to the last numbers in a string.
+    Parameters:
+      word (str): String to process.
+    Returns:
+      word(str): String thats been iterated
+    """
+    try:
+        suffixNumber = ''
+        splitIndex = 0
+        for i, l in enumerate(word[::-1]):
+            try:
+                int(l)
+                suffixNumber += l
+            except:
+                splitIndex = i
+                break
+        suffixNumber = suffixNumber[::-1]
+        if len(suffixNumber) < 1:
+            return word
+        newNum = int(suffixNumber)+1
+        finalNum = (len(suffixNumber)-len(str(newNum)))*'0' + str(newNum)
+        return word[:len(word)-splitIndex] + finalNum
+    except:
+        print "StringPlusOne Error"
+        return None
+
+def UpdateString(word):
+    try:
+        prefix = word[:6]
+        int(prefix)
+        curDate = GetDatePrefix()
+        if prefix == curDate:
+            return StringPlusOne(word)
+        else:
+            return  curDate + word[6:]
+    except:
+        return StringPlusOne(word)
+
 if __name__ == "__main__":
-    SaveFunctionData('geometry-Test', ['Area', 'Geometry', 42, 'Result', 'Failed'])
+    print '180723-option1 > ' + UpdateString('180723-option1')
+    print '180724-option1 > ' + UpdateString('180724-option1')
+    print 'option1 > ' + UpdateString('option1')
+    pass
+    #SaveFunctionData('geometry-Test', ['Area', 'Geometry', 42, 'Result', 'Failed'])
     #print GetNetworkLocation()
     #SaveToAnalytics('Count')
     #pass

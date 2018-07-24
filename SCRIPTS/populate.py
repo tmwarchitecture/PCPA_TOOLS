@@ -5,7 +5,6 @@ import os
 
 import utils
 
-fileLocations = config.GetDict()
 
 def congregate(objs, threshold, loops):
     scaleFactOrig = .1
@@ -43,7 +42,6 @@ def RandomPtOnSrf(srf):
     
     counter = 0
     while True:
-        print counter
         pt_u = random.uniform(dom_u[0], dom_u[1])
         pt_v = random.uniform(dom_v[0], dom_v[1])
         pt = rs.EvaluateSurface(srf, pt_u, pt_v)
@@ -97,64 +95,70 @@ def RandomBlock(type):
     return blocks[index]
 
 def main():
-    srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
-    #srf = rs.GetSurfaceObject('Select surface to populate', True)
-    if srf is None: return
-    #srf = srf[0]
-    
-    numObjects = rs.GetInteger('Number of objects to populate', 30, 1, 500)
-    if numObjects is None: return
-    
-    types = ['3D People', '2D People', '2D Trees', 'Custom Block']
-    type = rs.ListBox(types, "Select block type to populate", "Population Type", types[0])
-    if type is None: return
-    
-    if type == '3D People':
-        type = 'People 3D Folder'
-    elif type == '2D People':
-        type = 'People 2D Folder'
-    elif type == '2D Trees':
-        type = 'Vegetation 2D Folder'
-    
-    rs.EnableRedraw(False)
-    
-    pts = RandomPtsOnSrf(srf, numObjects)
-    
-    realPts = rs.AddPoints(pts)
-    congregate(realPts, 36, 5)
-    
-    blockName = RandomBlock(type)
-    
-    for pt in realPts:
-        angle = random.uniform(0,360)
-        
-        
-        if type != 'Custom Block':
-            blockName = RandomBlock(type)
-        if blockName is None:
-            print "No blocks in document"
-            return
-        
-        if TryLoadBlock(type, blockName):
-            eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
-            try:
-                if type == 'People 2D Folder' or type == 'People 3D Folder':
-                    layerName = '2_ENTOURAGE::' + 'People'
-                elif type == 'Vegetation 2D Folder':
-                    layerName = '2_ENTOURAGE::' + 'Vegetation'
-                else:
-                    layerName = '2_ENTOURAGE'
-                rs.ObjectLayer(eachBlock, layerName)
-            except:
-                pass
-    
     try:
-        rs.DeleteObjects(realPts)
+        srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
+        #srf = rs.GetSurfaceObject('Select surface to populate', True)
+        if srf is None: return
+        #srf = srf[0]
+        
+        numObjects = rs.GetInteger('Number of objects to populate', 30, 1, 500)
+        if numObjects is None: return
+        
+        types = ['3D People', '2D People', '2D Trees', 'Custom Block']
+        type = rs.ListBox(types, "Select block type to populate", "Population Type", types[0])
+        if type is None: return
+        
+        if type == '3D People':
+            type = 'People 3D Folder'
+        elif type == '2D People':
+            type = 'People 2D Folder'
+        elif type == '2D Trees':
+            type = 'Vegetation 2D Folder'
+        
+        rs.EnableRedraw(False)
+        
+        pts = RandomPtsOnSrf(srf, numObjects)
+        
+        realPts = rs.AddPoints(pts)
+        congregate(realPts, 36, 5)
+        
+        blockName = RandomBlock(type)
+        
+        for pt in realPts:
+            angle = random.uniform(0,360)
+            
+            
+            if type != 'Custom Block':
+                blockName = RandomBlock(type)
+            if blockName is None:
+                print "No blocks in document"
+                return
+            
+            if TryLoadBlock(type, blockName):
+                eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
+                try:
+                    if type == 'People 2D Folder' or type == 'People 3D Folder':
+                        layerName = '2_ENTOURAGE::' + 'People'
+                    elif type == 'Vegetation 2D Folder':
+                        layerName = '2_ENTOURAGE::' + 'Vegetation'
+                    else:
+                        layerName = '2_ENTOURAGE'
+                    rs.ObjectLayer(eachBlock, layerName)
+                except:
+                    pass
+        
+        try:
+            rs.DeleteObjects(realPts)
+        except:
+            pass
+        
+        rs.EnableRedraw(True)
+        return True
     except:
-        pass
-    
-    rs.EnableRedraw(True)
+        return False
 
 if __name__ == "__main__":
-    main()
-    utils.SaveToAnalytics('blocks-Populate')
+    fileLocations = config.GetDict()
+    result = main()
+    if result:
+        utils.SaveToAnalytics('blocks-Populate')

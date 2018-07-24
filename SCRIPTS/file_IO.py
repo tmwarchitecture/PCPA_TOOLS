@@ -1,11 +1,14 @@
 import rhinoscriptsyntax as rs
 import Rhino
 import scriptcontext as sc
+import random
 import os.path
+
 import layers
 import blocks
 import config
 import utils
+import standards
 
 ################################################################################
 #Utils
@@ -196,14 +199,14 @@ def exportToRenderDWG():
         
         #SAVE FILE NAME
         defaultFolder = rs.DocumentPath()
-        defaultFilename = GetDatePrefix() + '_OPTION_01'
+        defaultFilename = utils.GetDatePrefix() + '_OPTION_01'
         fileName = rs.SaveFileName("Export to render", "Autocad (*.dwg)|*.dwg||", defaultFolder, defaultFilename)
         if fileName is None: return
         base=os.path.basename(fileName)
         cadName = os.path.splitext(base)[0]
         
         #SUPER EXPLODE
-        #EXPLODE SELECTED BLOCKS (CHECKLIST) [this is broken]
+        #EXPLODE SELECTED BLOCKS (CHECKLIST)
             #blockNames = rs.BlockNames(True)
             #print blockNames
             
@@ -213,11 +216,13 @@ def exportToRenderDWG():
         #EXPORT EACH LAYER AS SAT FILE.
         #CHECK ORIGIN 
         #INSERT ORIGIN
+        
         #CHECK SCALE (Units)
         if rs.UnitSystem() == 8:
             print "Units checked"
         else:
             print "This model is in {}, it should be in Inches".format(rs.UnitSystemName(singular=False))
+        
         #UNIFY MESH NORMALS
         #MERGE ALL EDGES
         #MERGE ALL FACES
@@ -236,15 +241,16 @@ def exportToRenderDWG():
         AddMasterRootLayer(cadName)
         
         #CHANGE LAYER NAMES?
+        
         #IMPORT ACAD SCHEME
+        standards.LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
+        
         #SET DEFAULT FOLDER TO REFERENCE FOLDER UNDER RENDERING
         
         #EXPORT TO DWG
         rs.SelectObjects(objs)
-        acadSchemeFolder = fileLocations['ACAD Scheme Folder']
-        exportScheme = 'MaxSolids.ini'
-        iniFile = os.path.join(acadSchemeFolder, exportScheme)
-        rs.Command('-_Export ' + '"' + fileName + '" F ' + '"' + iniFile + '"' + ' Enter P 100 Enter')
+        exportScheme = 'PCPA_MaxSolids'
+        rs.Command('-_Export ' + '"' + fileName + '" S ' + '"' + exportScheme + '"' + ' Enter P 100 Enter', False)
         
         #REMOVE MASTER ROOT LAYER
         RemoveMasterRootLayer(cadName)
@@ -257,8 +263,11 @@ def exportToRenderSKP():
         objs = rs.GetObjects("Select objects to export", preselect = True)
         if objs is None: return
         
+        seperator = ' > '
+        
         defaultFilename = utils.GetDatePrefix() + '_OPTION_01'
-        fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", filename = defaultFilename)
+        defaultFolder = rs.DocumentPath()
+        fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", folder = defaultFolder, filename = defaultFilename)
         if fileName is None: return
         
         tempLayers = []
@@ -266,16 +275,22 @@ def exportToRenderSKP():
         
         baseName = os.path.splitext(os.path.basename(fileName))[0]
         
+        #Copy all objects to export
         rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
         for i, obj in enumerate(objs):
             tempCopy = rs.CopyObject(obj)
-            rs.ObjectLayer(tempCopy, rs.ObjectLayer(obj))
-            copiedObjs.append(tempCopy)
+            if rs.IsBlockInstance(tempCopy):
+                explodedObjs = list(rs.ExplodeBlockInstance(obj, True))
+                copiedObjs += explodedObjs
+            else:
+                copiedObjs.append(tempCopy)
             rs.StatusBarProgressMeterUpdate(i)
         
-        for obj in copiedObjs:
-            shortName = rs.LayerName(rs.ObjectLayer(obj), False)
-            layerName = baseName + ' || ' + shortName
+        #Move all copies to a different layer
+        for i, obj in enumerate(copiedObjs):
+            layerFullName = rs.ObjectLayer(obj)
+            shortName = layerFullName.replace('::', seperator)
+            layerName = baseName + seperator + shortName
             if rs.IsLayer(layerName):
                 rs.ObjectLayer(obj, layerName)
             else:
@@ -300,9 +315,11 @@ def exportToRenderSKP():
                 rs.DeleteLayer(layer)
         except:
             print "export failed"
-        return True
+        result = True
     except:
-        return False
+        result = False
+    utils.SaveFunctionData('IO-Export to Render[SKP]', [fileName, baseName, os.path.getsize(fileName),len(objs), result])
+    return result
 
 ################################################################################
 #Capture Display modes

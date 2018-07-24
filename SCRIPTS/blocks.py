@@ -60,20 +60,23 @@ def ReplicateBlock(blockObj):
     #Copy block
     copiedBlock = rs.CopyObject(blockObj)
 
-
     #Get new block name
-    try:
-        number = int(rs.BlockInstanceName(copiedBlock).split('_')[-1])
-        number += 1
-        if len(str(number))<2:
-            numString = '0' + str(number)
+    defaultName = utils.UpdateString(rs.BlockInstanceName(blockObj))
+    looping = True
+    while looping:
+        newBlockName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Iterate Design Option')
+        if newBlockName is None: return
+        if rs.IsBlock(newBlockName):
+            print "Block name already exists"
+        elif len(newBlockName) == 0:
+            print "Must specify a name"
         else:
-            numString = str(number)
-    except:
-        numString = '01A'
-    defaultName = GetDatePrefix() + "_OPTION_" + numString
-    newBlockName = rs.StringBox("Name for new Block", defaultName, 'Make Block Unique')
-    if newBlockName is None: return
+            looping = False
+    
+    
+    if newBlockName is None:
+        rs.DeleteObject(copiedBlock)
+        return
 
     #Get previous base point
     xform = rs.BlockInstanceXform(copiedBlock)
@@ -87,23 +90,27 @@ def ReplicateBlock(blockObj):
     #Create new block
     return rs.InsertBlock2(newBlockName, xform)
 
-def MakeBlockUnique():
+def MakeBlockUnique(block, newName):
+    """
+    Explodes a block and makes a new one with 'newName'
+    """
+    xform = rs.BlockInstanceXform(block)
+    insertPt = rs.BlockInstanceInsertPoint(block)
+    objs = rs.ExplodeBlockInstance(block, False)
+    rs.TransformObjects(objs, rs.XformInverse(xform))
+    pt = rs.TransformObject(insertPt, rs.XformInverse(xform))
+    rs.AddBlock(objs, insertPt, newName, True)
+    newBlock = rs.InsertBlock2(newName, xform)
+    rs.DeleteObject(pt)
+    return newBlock
+
+def MakeBlockUniqueButton():
     try:
         block = rs.GetObject("Select block to make unique", rs.filter.instance, preselect = True)
         if block is None: return
-    
-        #Default Name
-        try:
-            number = int(rs.BlockInstanceName(block).split('_')[-1])
-            number += 1
-            if len(str(number))<2:
-                numString = '0' + str(number)
-            else:
-                numString = str(number)
-        except:
-            numString = '01A'
-        defaultName = GetDatePrefix() + "_OPTION_" + numString
-    
+        
+        defaultName = utils.UpdateString(rs.BlockInstanceName(block))
+        
         looping = True
         while looping:
             newName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'MakeUnique')
@@ -112,20 +119,13 @@ def MakeBlockUnique():
                 print "Block name already exists"
             elif len(newName) == 0:
                 print "Must specify a name"
-                pass
             else:
                 looping = False
-    
+        
         if newName is None: return
+        
         rs.EnableRedraw(False)
-        xform = rs.BlockInstanceXform(block)
-        insertPt = rs.BlockInstanceInsertPoint(block)
-        objs = rs.ExplodeBlockInstance(block, False)
-        rs.TransformObjects(objs, rs.XformInverse(xform))
-        pt = rs.TransformObject(insertPt, rs.XformInverse(xform))
-        rs.AddBlock(objs, insertPt, newName, True)
-        newBlock = rs.InsertBlock2(newName, xform)
-        rs.DeleteObject(pt)
+        newBlock = MakeBlockUnique(block, newName)
         rs.EnableRedraw(True)
         rs.SelectObject(newBlock)
         return True
@@ -224,7 +224,7 @@ if __name__ == "__main__":
         if result:
             utils.SaveToAnalytics('blocks-iterate')
     elif func == 1:
-        result = MakeBlockUnique()
+        result = MakeBlockUniqueButton()
         if result:
             utils.SaveToAnalytics('blocks-Make Unique')
     elif func == 2:

@@ -97,18 +97,13 @@
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
       <menu_item guid="672215b2-0e60-4dbf-80eb-c7acc969ce34" item_type="separator" />
-      <menu guid="d71b2bfc-8659-4e85-983c-1858ce269fd0">
+      <menu_item guid="ca7519d4-a025-4efe-b45f-2bb23f1c33a3">
         <text>
-          <locale_1033>SoftBIM (WIP)</locale_1033>
+          <locale_1033>Project Levels</locale_1033>
         </text>
-        <menu_item guid="29da0c8a-2e0c-4112-b9a1-7b7d8a1f9d69">
-          <text>
-            <locale_1033>Project Levels</locale_1033>
-          </text>
-          <macro_id>4f60c793-b88e-417b-a294-fc97a166bb4d</macro_id>
-          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
-        </menu_item>
-      </menu>
+        <macro_id>4f60c793-b88e-417b-a294-fc97a166bb4d</macro_id>
+        <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+      </menu_item>
       <menu_item guid="d2828d46-fb51-486e-87c9-9c1fe959cba9" item_type="separator" />
       <menu guid="3eed0838-f574-4a3b-88c4-b528ee9c6673">
         <text>
@@ -243,7 +238,7 @@
       </menu_item>
       <menu_item guid="579aa32d-e435-4b10-937c-3485e1fca627">
         <text>
-          <locale_1033>Version 1.6</locale_1033>
+          <locale_1033>Version 2.0</locale_1033>
         </text>
         <macro_id>275e643f-1239-4c8c-bb35-dc902a839bd6</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
@@ -251,7 +246,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="ee615e8a-0722-4fd3-b842-c754c89fbafc" single_file="False" hide_single_tab="False" point_floating="468,176">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="f0f26756-2380-41b7-b8d4-b6a767010dc1" single_file="False" hide_single_tab="False" point_floating="468,176">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -562,7 +557,7 @@
       <menu_text>
         <locale_1033>Add All Layers (Legacy version)</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers_v1.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers_v1.py) 10000</script>
     </macro_item>
     <macro_item guid="c0a1c8db-7283-4eab-af8e-866975ecd24b" bitmap_id="16f04bdc-f8d7-467a-b589-32f49261e97c">
       <text>
@@ -724,7 +719,7 @@
       <menu_text>
         <locale_1033>Random Unselect</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\05 SCRIPTS\Random Unselect\UnselectRandom.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\unselect_random.py)</script>
     </macro_item>
     <macro_item guid="5f248489-c572-4572-a375-9dbb3cab21d1" bitmap_id="cdf30c7e-9bea-4f53-b543-9952d8c74bc1">
       <text>
@@ -1453,16 +1448,16 @@ _enter </script>
         <locale_1033>Architecture-Ramp</locale_1033>
       </text>
       <tooltip>
-        <locale_1033>Ramp - By Slope</locale_1033>
+        <locale_1033>Ramp-By Slope</locale_1033>
       </tooltip>
       <help_text>
-        <locale_1033>Ramp - By Slope</locale_1033>
+        <locale_1033>Ramp-By Slope</locale_1033>
       </help_text>
       <button_text>
-        <locale_1033>Ramp - By Slope</locale_1033>
+        <locale_1033>Ramp-By Slope</locale_1033>
       </button_text>
       <menu_text>
-        <locale_1033>Ramp - By Slope</locale_1033>
+        <locale_1033>Ramp-By Slope</locale_1033>
       </menu_text>
       <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\ramp.py)</script>
     </macro_item>
@@ -1507,16 +1502,16 @@ _enter </script>
         <locale_1033>Color-ColorToMaterial</locale_1033>
       </text>
       <tooltip>
-        <locale_1033>Color To Material</locale_1033>
+        <locale_1033>Object color to object material</locale_1033>
       </tooltip>
       <help_text>
-        <locale_1033>Color To Material</locale_1033>
+        <locale_1033>Object color to object material</locale_1033>
       </help_text>
       <button_text>
-        <locale_1033>Color To Material</locale_1033>
+        <locale_1033>Color-To Material</locale_1033>
       </button_text>
       <menu_text>
-        <locale_1033>Color To Material</locale_1033>
+        <locale_1033>Color-To Material</locale_1033>
       </menu_text>
       <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\colors.py) 2 </script>
     </macro_item>
