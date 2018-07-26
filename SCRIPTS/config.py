@@ -28,6 +28,7 @@ def GetDict():
     'Display Mode Folder' : r'',
     'Analytics' : r'',
     'PCPA Layers' : r'',
+    'PCPA Layers_V1' : r'',
     'CSV' : r'',
     'PCPA GH Components' : r'',
     'GH Dependencies' : r'',
@@ -36,7 +37,8 @@ def GetDict():
     'People 3D Folder' : r'',
     'People 2D Folder' : r'',
     'Vegetation 2D Folder' : r'',
-    'Help File' : r''
+    'Help File' : r'',
+    'PCPA Logo' : r''
     }
 
     location = utils.GetNetworkLocation()
