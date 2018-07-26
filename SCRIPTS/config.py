@@ -22,23 +22,23 @@ def GetDict():
     }
 
     fileLocationsPCPNH = {
-    'Template File' : r'',
-    'Template Folder' : r'',
+    'Template File' : r'D:\PCPA_Toobar_local\PCPA_TOOLS_dup\RHINO TEMPLATE\0.2\PCPA_TEMPLATE.3dm',
+    'Template Folder' : r'D:\PCPA_Toobar_local\PCPA_TOOLS_dup\RHINO TEMPLATE\0.2',
     'ACAD Scheme Folder' : r'',
     'Display Mode Folder' : r'',
-    'Analytics' : r'',
-    'PCPA Layers' : r'',
-    'PCPA Layers_V1' : r'',
-    'CSV' : r'',
-    'PCPA GH Components' : r'',
-    'GH Dependencies' : r'',
+    'Analytics' : r'D:\PCPA_TOOLS\SCRIPTS\data\Analytics.csv',
+    'PCPA Layers' : r'D:\PCPA_TOOLS\SCRIPTS\data\PCPA LAYERS_V2.csv',
+    'PCPA Layers_V1' : r'D:\PCPA_TOOLS\SCRIPTS\data\PCPA LAYERS_V1.csv',
+    'CSV' : r'D:\PCPA_TOOLS\SCRIPTS\libs\csv.py',
+    'PCPA GH Components' : r'D:\PCPA_TOOLS\GH\PCPA_GH_TOOLBAR',
+    'GH Dependencies' : r'D:\REACHCampus\00_PCPA Standard Set',
     'Material File' : r'',
     'Material Folder' : r'',
     'People 3D Folder' : r'',
     'People 2D Folder' : r'',
     'Vegetation 2D Folder' : r'',
     'Help File' : r'',
-    'PCPA Logo' : r''
+    'PCPA Logo' : r'D:\PCPA_TOOLS\RHINO TEMPLATE\0.2\PCPA_TEMPLATE_embedded_files\PCPA_LOGO.png'
     }
 
     location = utils.GetNetworkLocation()
