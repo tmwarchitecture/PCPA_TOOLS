@@ -2,12 +2,13 @@ import utils
 
 def GetDict():
     fileLocationsPCPNY = {
-    'Template File' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\PCPA_Template.3dm',
-    'Template Folder' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE',
+    'Template File' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT\PCPA_Template.3dm',
+    'Template Folder' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT',
     'ACAD Scheme Folder' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\ACAD_Schemes',
     'Display Mode Folder' : r'X:\05_RHINO STANDARDS\02 DISPLAY SETTINGS\2018 Display Modes',
     'Analytics' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\data\Analytics.csv',
-    'PCPA Layers' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\data\PCPA LAYERS_V2',
+    'PCPA Layers' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\CURRENT\PCPA LAYERS_V2.csv',
+    'PCPA Layers_V1' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\1.0\PCPA LAYERS_V1.csv',
     'CSV' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\libs\csv.py',
     'PCPA GH Components' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\GH\PCPA_GH_TOOLBAR',
     'GH Dependencies' : r'X:\05_RHINO STANDARDS\04 GRASSHOPPER\00_PCPA Standard Set',

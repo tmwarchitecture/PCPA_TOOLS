@@ -19,9 +19,9 @@
         <macro_id>527f2c21-f9f5-4cc4-8c7e-4408b2374869</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
-      <menu_item guid="bde6c4ed-797b-4e80-8193-9cc471745ed7">
+      <menu_item guid="3f374fa0-e5e8-4788-a4e1-8aa5ca1783c6">
         <text>
-          <locale_1033>Add All Layers (Legacy version)</locale_1033>
+          <locale_1033>Add All Layers (version 1.0)</locale_1033>
         </text>
         <macro_id>4f6124ea-720e-4326-8906-74936e80e023</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
@@ -246,7 +246,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="f0f26756-2380-41b7-b8d4-b6a767010dc1" single_file="False" hide_single_tab="False" point_floating="468,176">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="ee615e8a-0722-4fd3-b842-c754c89fbafc" single_file="False" hide_single_tab="False" point_floating="468,176">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -543,19 +543,19 @@
     </macro_item>
     <macro_item guid="4f6124ea-720e-4326-8906-74936e80e023">
       <text>
-        <locale_1033>0.1-Add All Layers (Legacy version)</locale_1033>
+        <locale_1033>0.1-Add All Layers (1.0)</locale_1033>
       </text>
       <tooltip>
-        <locale_1033>Add All Layers (Legacy version)</locale_1033>
+        <locale_1033>Add All Layers (version 1.0)</locale_1033>
       </tooltip>
       <help_text>
-        <locale_1033>Add All Layers (Legacy version)</locale_1033>
+        <locale_1033>Add All Layers (version 1.0)</locale_1033>
       </help_text>
       <button_text>
-        <locale_1033>Add All Layers (Legacy version)</locale_1033>
+        <locale_1033>Add All Layers (version 1.0)</locale_1033>
       </button_text>
       <menu_text>
-        <locale_1033>Add All Layers (Legacy version)</locale_1033>
+        <locale_1033>Add All Layers (version 1.0)</locale_1033>
       </menu_text>
       <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers_v1.py) 10000</script>
     </macro_item>

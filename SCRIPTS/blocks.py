@@ -6,7 +6,7 @@ import utils
 
 def SuperExplodeBlock():
     try:
-        blocks = rs.GetObjects("Select block to explode", rs.filter.instance, preselect = True)
+        blocks = rs.GetObjects("Select blocks to explode", rs.filter.instance, preselect = True)
         if blocks is None: return
         objs = []
         for block in blocks:

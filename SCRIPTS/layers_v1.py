@@ -11,14 +11,8 @@ import utils
 #Utils
 def setupVariables():
     fileLocations = config.GetDict()
-    try:
-        filename = "PCPA LAYERS_V1.csv"
-        root = os.path.dirname(os.path.realpath(__file__))
-        global csvPath
-        csvPath = os.path.join(root,"data", filename)
-    except:
-        global csvPath
-        csvPath = fileLocations['PCPA Layers']
+    global csvPath
+    csvPath = fileLocations['PCPA Layers_V1']
     
     
     global layNumColumn

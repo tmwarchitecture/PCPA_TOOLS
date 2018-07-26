@@ -130,8 +130,8 @@ class LevelsDialog(forms.Dialog):
             mnuSave.Click += self.OnFileSaveClick
             mnuSaveAs = forms.ButtonMenuItem(Text = "Save As...")
             mnuSaveAs.Click += self.OnFileSaveAsClick
-            mnuOpen = forms.ButtonMenuItem(Text = "Open")
-            mnuOpen.Enabled = False
+            mnuOpen = forms.ButtonMenuItem(Text = "Import from 3dm")
+            #mnuOpen.Enabled = False
             mnuOpen.Click += self.OnFileOpenClick
             mnuClose = forms.ButtonMenuItem(Text = "Close")
             mnuClose.Click += self.OnFileCloseClick
@@ -143,9 +143,9 @@ class LevelsDialog(forms.Dialog):
             
             mnuFile.Items.Add(mnuNew)
             mnuFile.Items.Add(mnuOpen)
-            mnuFile.Items.Add(mnuSave)
-            mnuFile.Items.Add(mnuSaveAs)
-            mnuFile.Items.Add(mnuClose)
+            #mnuFile.Items.Add(mnuSave)
+            #mnuFile.Items.Add(mnuSaveAs)
+            #mnuFile.Items.Add(mnuClose)
             mnuBar = forms.MenuBar(mnuFile, mnuEdit)
             #self.Menu.Spacing = drawing.Size(2,2)
             #mnuBar.Padding = 5
@@ -181,7 +181,7 @@ class LevelsDialog(forms.Dialog):
         def grid():
             self.grid = forms.GridView()
             self.grid.BackgroundColor = drawing.Colors.LightGrey
-            self.grid.Size = drawing.Size(300,445)
+            self.grid.Size = drawing.Size(300,470)
             self.grid.GridLines = forms.GridLines.Both
             self.grid.AllowMultipleSelection = True
             self.grid.CellEdited += self.OnCellEdited
@@ -217,7 +217,7 @@ class LevelsDialog(forms.Dialog):
             levelColumn.DataCell.TextAlignment = forms.TextAlignment.Right
             
             areaColumn = forms.GridColumn()
-            areaColumn.HeaderText = "Area\t"
+            areaColumn.HeaderText = "GFA\t"
             areaColumn.Editable = True
             areaColumn.DataCell = forms.TextBoxCell(5)
             areaColumn.DataCell.TextAlignment = forms.TextAlignment.Right
@@ -247,7 +247,7 @@ class LevelsDialog(forms.Dialog):
     
     def CreateLayouts(self):
         layoutButtons = forms.DynamicLayout()
-        layoutButtons.AddRow(self.tboxFileName)
+        #layoutButtons.AddRow(self.tboxFileName)
         #layoutButtons.AddRow(self.comboBuildingNum)
         layoutButtons.AddRow(self.grid)
         layoutButtons.AddSeparateRow(None, self.btnCancel, self.btnApply)
@@ -259,6 +259,7 @@ class LevelsDialog(forms.Dialog):
         #5 - add the layout to the dialog
         self.Content = layout
     
+    #Cancel
     def OnCancelPressed(self, sender, e):
         self.Close()
     
@@ -270,21 +271,17 @@ class LevelsDialog(forms.Dialog):
     #Open File
     def OnFileOpenClick(self, sender, e):
         print "Begin"
-        self.databaseFile = rs.OpenFileName("Open file")
+        self.databaseFile = rs.OpenFileName("Open file", "Rhino 3DM Models (*.3dm)|*.3dm||")
         if self.databaseFile is None: return
-        #self.OpenFile()
-        #rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
-        dt.LoadLevelsToRhinoDoc(self.databaseFile)
+        
+        data = dt.GetLevelsFromAnotherRhinoDoc(self.databaseFile)
+        if data is None: return
+        
+        self.grid.DataStore = data[::-1]
+        
+        self.RegenData()
+        
         print "End"
-        #self.UpdateFileLabel(self.databaseFile)
-    
-    def OpenFile(self):
-        data = dt.GetProjectDatabase(self.databaseFile)
-        
-        self.GenData()
-        
-        
-        print "Opened new file"
     
     #Save
     def OnFileSaveAsClick(self, sender, e):
@@ -295,9 +292,8 @@ class LevelsDialog(forms.Dialog):
         self.UpdateFileLabel(newFile)
     
     def OnFileSaveClick(self, sender, e):
-        #dt.SaveProjectLevelData(self.grid.DataStore, self.databaseFile, self.databaseFile, self.comboBuildingNum.SelectedIndex)
         data = self.grid.DataStore
-        data.reverse()
+        reversed(data)
         rs.SetDocumentData('PCPA', 'Levels', str(data))
         self.Close()
     
@@ -366,13 +362,10 @@ class LevelsDialog(forms.Dialog):
         blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea, newRowComment]
         data.insert(selectedRow, blankRow)
         
-        
-        
         self.grid.DataStore = data
-        self.RenumberRows()
-        self.UpdateHeights()
         
         self.grid.SelectedRow = selectedRow
+        self.RegenData()
     
     def OnDeleteRow(self, sender, e):
         data = self.grid.DataStore
@@ -381,14 +374,14 @@ class LevelsDialog(forms.Dialog):
             del data[row]
         
         self.grid.DataStore = data
-        self.RenumberRows()
-        self.UpdateHeights()
-    
+        self.RegenData()
+        
     def OnCellEdited(self, sender, e):
         if e.Column == 4 or e.Column == 3:
             self.grid.DataStore[e.Row][e.Column] = ConvertImperialLength(self.grid.DataStore[e.Row][e.Column], False)
             self.CheckIfNumber(e.Row, e.Column)
-            self.UpdateHeights()
+            
+            self.RegenData()
     
     def OnCellFormatting(self, sender, e):
         if e.Column.HeaderText == '#':
@@ -396,23 +389,22 @@ class LevelsDialog(forms.Dialog):
     
     #Util functions
     def RenumberRows(self):
-        data = self.grid.DataStore
-        data.reverse()
+        data = list(self.grid.DataStore[::-1])
         for i, row in enumerate(data):
             row[0] = i+1
-        data.reverse()
-        self.grid.DataStore = data
-        #print "Renumbered"
+        self.grid.DataStore = list(data[::-1])
     
     def GenData(self):
-        bldgNum = self.comboBuildingNum.SelectedIndex
         try:
             data = dt.GetLevelsFromRhinoDoc()
-            data.reverse()
             self.grid.DataStore = data
-            #self.grid.DataStore = dt.GetProjectLevelData(self.databaseFile, bldgNum)[::-1]
         except:
             self.grid.DataStore = []
+    
+    def RegenData(self):
+        self.RenumberRows()
+        self.UpdateHeights()
+        #self.ShowTotalsRow()
     
     def UpdateFileLabel(self, name = "--No File Selected--"):
         self.tboxFileName.Text = name
@@ -438,6 +430,19 @@ class LevelsDialog(forms.Dialog):
     
     def InchesToFeet(self):
         print "A"
+    
+    def ShowTotalsRow(self):
+        try:
+            data = self.grid.DataStore
+            
+            print data
+            emptyRow =  len(data[0]) * [' ']
+            data.insert(-1, emptyRow)
+            print data
+            self.grid.DataStore = data
+        except:
+            print "ShowTotalsRow Failed"
+            return
     
     #I/O Functions
     def copyToClipboard(self, sender, e):

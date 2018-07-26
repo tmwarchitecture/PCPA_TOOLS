@@ -1,5 +1,5 @@
-#Read from YAML database
 import os
+import Rhino as rc
 import rhinoscriptsyntax as rs
 import ast
 from libs import yaml
@@ -100,7 +100,18 @@ def GetLevelsFromRhinoDoc():
     levels = ast.literal_eval(strLevels)
     return levels
 
+def GetLevelsFromAnotherRhinoDoc(filePath):
+    try:
+        rhinoFile = rc.FileIO.File3dm.Read(filePath)
+        strLevels = rhinoFile.Strings.GetValue('PCPA', 'Levels')
+        levels = ast.literal_eval(strLevels)
+        return levels
+    except:
+        print "Error: Could not find Project Level data"
+        return None
+
 if __name__ == "__main__":
+    print GetLevelsFromAnotherRhinoDoc(r'C:\Users\twilliams\Desktop\TEMP\temp3.3dm')
     pass
     #print ""
     
