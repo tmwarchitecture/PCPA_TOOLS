@@ -78,10 +78,11 @@ def unfilletObj(obj):
                 newSegments.append(sc.doc.Objects.AddLine(lineSeg))
         
         joinedSegs = rs.JoinCurves(newSegments, True)
-        finalCurve = rs.SimplifyCurve(joinedSegs)
+        rs.SimplifyCurve(joinedSegs)
+        rs.MatchObjectAttributes(joinedSegs, obj)
         rs.DeleteObject(obj)
         sc.doc.Views.Redraw()
-        return finalCurve
+        return joinedSegs
     except:
         print "Unfillet Failed"
         return None

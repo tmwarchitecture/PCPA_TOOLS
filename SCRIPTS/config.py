@@ -5,7 +5,7 @@ def GetDict():
     'Template File' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT\PCPA_Template.3dm',
     'Template Folder' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT',
     'ACAD Scheme Folder' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\ACAD_Schemes',
-    'Display Mode Folder' : r'X:\05_RHINO STANDARDS\02 DISPLAY SETTINGS\2018 Display Modes',
+    'Display Mode Folder' : r'X:\05_RHINO STANDARDS\02 DISPLAY MODES\2018 PCPA Display Modes',
     'Analytics' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\data\Analytics.csv',
     'PCPA Layers' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\CURRENT\PCPA LAYERS_V2.csv',
     'PCPA Layers_V1' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\1.0\PCPA LAYERS_V1.csv',
@@ -17,7 +17,7 @@ def GetDict():
     'People 3D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\3D',
     'People 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\2D',
     'Vegetation 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\02_VEGETATION\2D',
-    'Help File' : r'X:\05_RHINO STANDARDS\10 PCPA RHINO MANUAL\PCPA Rhino Tools Manual.pdf',
+    'Help File' : r'X:\05_RHINO STANDARDS\10 PCPA RHINO MANUAL\CURRENT\PCPA Rhino Tools Manual.pdf',
     'PCPA Logo' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\ICONS\PCPA_LOGO.png'
     }
 

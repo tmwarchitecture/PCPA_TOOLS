@@ -3,7 +3,6 @@ import utils
 import subprocess
 import config
 
-
 def launchHelp():
     try:
         fileLocations = config.GetDict()
