@@ -246,7 +246,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="ee615e8a-0722-4fd3-b842-c754c89fbafc" single_file="False" hide_single_tab="False" point_floating="468,176">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="1bee15c7-04a7-49e5-b987-454cf41cd438" single_file="False" hide_single_tab="False" point_floating="468,176">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -1904,7 +1904,7 @@ _enter </script>
       <bitmap_item guid="ed30e0dd-4a41-4603-85f8-bdf172c1b7fe" index="95" />
       <bitmap_item guid="ff90abe6-2138-4d94-a2be-39b9d496d59d" index="96" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABAAAAYQCAYAAAB8I8pbAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOvwAADr8BOAVTJAAAMdhJREFUeF7tnQecFEX2x0dQcpIMElRUTgSUFQSWHEQlKAaQoCAgGE4U
+AAAOvQAADr0BR/uQrQAAMdhJREFUeF7tnQecFEX2x0dQcpIMElRUTgSUFQSWHEQlKAaQoCAgGE4U
 uT8giBKWYDzTeRgwEPRAOQXMqKBkZGUJgqIoKughgoAiByL7/u9b3TXbM9szO7PjncL1+3x+U9VV
 7/26clf3VHWHjh05LglYCfvxFFQUcnG8i8KKoh5wTHgBBfpWL1SwUqVKa6pUqSKKL8uVK9fG9YuG
 L6lcufJ6G6e6pfV4dIUKFfqov6yiOASFiSxWrFhnjdiEctGiRZtoeL1SpUr1VoNvihQp0rNixYof
@@ -2229,7 +2229,7 @@ gQQSSCgUCv0/EaPPlwimxJsAAAAASUVORK5CYII=</bitmap>
       <bitmap_item guid="ed30e0dd-4a41-4603-85f8-bdf172c1b7fe" index="95" />
       <bitmap_item guid="ff90abe6-2138-4d94-a2be-39b9d496d59d" index="96" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABgAAAkYCAYAAAB173grAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOvwAADr8BOAVTJAAAPvNJREFUeF7tnQnYHlV590Ni9u3NvicsIUQkEAKxhIopCAhGhLJvJrIX
+AAAOvQAADr0BR/uQrQAAPvNJREFUeF7tnQnYHlV590Ni9u3NvicsIUQkEAKxhIopCAhGhLJvJrIX
 FBWRylIJ2LhUUBtFWaqi2AKiAi5dPjd6ldoLIf1ayuVHoSJ+IlVpAaVfMBLIfPfvPHNPzpw5M3Nm
 nufJev7X9X9n5pz73P+zzZkzZ553ZlBERM+wi0OFG65xvjCFe2wChgiHpWRfE7I/XDgi3b5KOFjo
 tZ8xY8aRssVms4+pU6c+JxGJ8KdTpkx5rwSOEw6T8NMk7Enipk+f/vDkyZPPlfCx06ZNe95nP2nS
@@ -2613,7 +2613,7 @@ AxQXhDv6qoSwAAAAAElFTkSuQmCC</bitmap>
       <bitmap_item guid="ed30e0dd-4a41-4603-85f8-bdf172c1b7fe" index="95" />
       <bitmap_item guid="ff90abe6-2138-4d94-a2be-39b9d496d59d" index="96" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAACAAAAwgCAYAAAC02hCAAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOvwAADr8BOAVTJAAAeetJREFUeF7tnQd4FcXXxkNLAoSEGkroTaogCCqIiL0rihV7QQUUVEQU
+AAAOvQAADr0BR/uQrQAAeetJREFUeF7tnQd4FcXXxkNLAoSEGkroTaogCCqIiL0rihV7QQUUVEQU
 pElVwYbYC/aKvQGCYkPFjgX1L/aCFAsg/Xznt7lz2bvZe+/elqDfvM/zZndnZ855d9rOzp3dZFlY
 WFhsLygXhQZ+5yDwC4d+8A0nsIIyR1k5RPYJM8b8zldUllfGSmtgbJAm8lz9+vXFsF69eh/Xrl37
 eA2uq8xXZkMNH63nvw3F+6Nu3br31KhRo5GeyzVpIenr1KlztIZXU1ZSOheg52rruTt0v0BZRblN

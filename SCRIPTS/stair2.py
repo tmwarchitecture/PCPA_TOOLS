@@ -5,6 +5,7 @@ import math
 import System.Drawing as drawing
 from System.Collections.Generic import List
 
+import utils
 
 ###############################################################################
 #Utils
@@ -139,8 +140,8 @@ def OffsetBothDir(segments, width):
     
     return [offsetSegmentsLeft, offsetSegmentsRight]
 
-
-#Main - GetRunsAndLandings
+###############################################################################
+#GetRunsAndLandings
 def GetRunsAndLandings(path, width):
     rhobj = rs.coercecurve(path)
     
@@ -155,6 +156,7 @@ def GetRunsAndLandings(path, width):
         t=result[1]
         cornerParams.append(t)    
     segments = rhobj.Split(cornerParams)
+    print ""
     
     #Offset both directions
     offsetSegmentsLeft, offsetSegmentsRight = OffsetBothDir(segments, width)
@@ -162,6 +164,7 @@ def GetRunsAndLandings(path, width):
     #Trim intersecting offset segments
     trimmedSegmentsLeft, elbowsLeft, pitPtsLeft = TrimOffsets(offsetSegmentsLeft)
     trimmedSegmentsRight, elbowsRight, pitPtsRight = TrimOffsets(offsetSegmentsRight)
+    print ""
     
     #Get ovelaping segments
     centerSegments = []
@@ -179,33 +182,26 @@ def GetRunsAndLandings(path, width):
     
     #Offset both directions AGAIN
     runSegmentsLeft, runSegmentsRight = OffsetBothDir(centerSegments, width)
-    
+    print""
     #Create landings
     landings = CreateLandings(runSegmentsLeft, elbowsLeft, pitPtsLeft, runSegmentsRight, elbowsRight, pitPtsRight)
     
-    
-    leftSegments = []
-    rightSegments = []
-    #Polycurves to segments
-    for i in range(len(runSegmentsLeft)):
-        if rs.IsPolyCurve(runSegmentsLeft[i]):
-            leftSegments += runSegmentsLeft[i].DuplicateSegments()
-        else:
-            leftSegments.append(runSegmentsLeft[i])
-        if rs.IsPolyCurve(runSegmentsRight[i]):
-            rightSegments += runSegmentsRight[i].DuplicateSegments()
-        else:
-            rightSegments.append(runSegmentsRight[i])
+    #Testing if this works
+    leftSegments = runSegmentsLeft
+    rightSegments = runSegmentsRight
     
     return leftSegments, rightSegments, landings
 
 ###############################################################################
 
-
 def Make2DTreads(leftSegments, rightSegments, width, height):
     if rs.UnitSystem() == 8:
-        minTreadLength = 11
+        minTreadDepth = 11
+        maxTreadDepth = 0
+        minRiserHeight = 4
         maxRiserHeight = 7
+        numExtraTreads = 2
+        extraTreadLength = 12
     else:
         print "Only inches supported"
         return None
@@ -221,24 +217,34 @@ def Make2DTreads(leftSegments, rightSegments, width, height):
             shortEdges.append(leftSegments[i])
             longEdges.append(rightSegments[i])
     
-    
-    maxTotalRisers = 0
-    #Max num treads per run
-    allRiserLines = []
+    #Check global
+    numRisersFromHeight = int(math.floor((height/maxRiserHeight)))
+    totalLength = 0
     for i in range(len(shortEdges)):
         length = shortEdges[i].GetLength()
-        maxTotalRisers += math.floor(length/minTreadLength) + 1
+        totalLength += (length - extraTreadLength)
     
-    #Min number of risers
-    minNumRisers = math.floor(height/maxRiserHeight)
-    print "Minimum number of risers: {}".format(minNumRisers)
-    print "Maximum number of risers: {}".format(maxTotalRisers)
+    maxNumRisers = int(math.floor(totalLength/minTreadDepth))
+    minNumRisers = int(math.floor(height/maxRiserHeight))
     
-    #Max num treads per run
-    allRiserLines = []
+    if numRisersFromHeight > maxNumRisers :
+        print "Path not long enough to reach full height"
+    if numRisersFromHeight < minNumRisers:
+        print "Not enough risers to reach full height"
+    
+    #Get num risers
+    numRisers = []
     for i in range(len(shortEdges)):
         length = shortEdges[i].GetLength()
-        numTreads = math.floor(length/minTreadLength)
+        usableLength = length - extraTreadLength
+        
+        percentOfLength = usableLength / totalLength
+        numRisers.append(round(percentOfLength*numRisersFromHeight))
+    
+    #Draw riser lines
+    allRiserLines = []
+    for i in range(len(shortEdges)):
+        numTreads = numRisers[i]
         
         if numTreads == 0:
             continue
@@ -251,8 +257,6 @@ def Make2DTreads(leftSegments, rightSegments, width, height):
             longEdgePt = longEdges[i].PointAt(longEdgeParam)
             line = rc.Geometry.LineCurve(shortEdgePt, longEdgePt)
             riserLines.append(line)
-            #sc.doc.Objects.AddLine(line)
-            print ""
         allRiserLines.append(riserLines)
     
     return allRiserLines
@@ -306,7 +310,60 @@ def MakeUnderSurfaces(leftSegments, rightSegments, allTreads, runRiserHeights):
         print ""
     print ""
 
-def MakeStair():
+def ConstructTopGeo(treadSrfs, landingSrfs, height):
+    for i in range(len(treadSrfs)):
+        
+        numRisers = 0
+        for x in treadSrfs[i].Faces:
+            numRisers += 1
+        
+        riserHeight = height/numRisers
+        
+        trans = 0
+        for j in range(numRisers):
+            newFace = treadSrfs[i].Faces[j].DuplicateFace(False)
+            newFace.FacesTranslate(0,0,trans)
+            trans += riserHeight
+            
+            sc.doc.Objects.AddBrep(newFace)
+        sc.doc.Views.Redraw()
+        print ""
+
+###############################################################################
+#MAIN FUNCTION
+def MakeStair(obj, width, height):
+    #Get the 2d run and landings
+    leftSegments, rightSegments, landings  = GetRunsAndLandings(obj, width)
+    
+    #Temp preview
+    if False:
+        for each in leftSegments:
+            sc.doc.Objects.Add(each)
+        for each in rightSegments:
+            sc.doc.Objects.Add(each)
+    
+    #Draw 2d treads
+    allTreads = Make2DTreads(leftSegments, rightSegments, width, height)
+    print ""
+    #Temp Preview
+    if False:
+        for each in allTreads:
+            for eachLine in each:
+                sc.doc.Objects.Add(eachLine)
+    
+    
+    #Make Tread Surfaces
+    treadSrfs, landingSrfs = MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, True)
+    
+    
+    ConstructTopGeo(treadSrfs, landingSrfs, height)
+    
+    #Make UnderSurface
+    #MakeUnderSurfaces(leftSegments, rightSegments, allTreads, runRiserHeights)
+
+###############################################################################
+#RHINO BUTTON INTERFACE
+def MakeStair_Button():
     tol = rs.UnitAbsoluteTolerance()
     objs = rs.GetObjects("Select guide path")
     if objs is None: return
@@ -318,36 +375,7 @@ def MakeStair():
     if width is None: return
     
     for obj in objs:
-        #Get the 2d run and landings
-        leftSegments, rightSegments, landings  = GetRunsAndLandings(obj, width)
-        
-        #Temp preview
-        if False:
-            for each in leftSegments:
-                sc.doc.Objects.Add(each)
-            for each in rightSegments:
-                sc.doc.Objects.Add(each)
-        
-        #Draw 2d treads
-        allTreads = Make2DTreads(leftSegments, rightSegments, width, height)
-        
-        #Temp Preview
-        if False:
-            for each in allTreads:
-                for eachLine in each:
-                    sc.doc.Objects.Add(eachLine)
-        
-        
-        #Make Tread Surfaces
-        treadSrfs, landingSrfs = MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, True)
-        
-        #Fake riser heights
-        runRiserHeights = []
-        for each in leftSegments:
-            runRiserHeights.append(7)
-        
-        #Make UnderSurface
-        MakeUnderSurfaces(leftSegments, rightSegments, allTreads, runRiserHeights)
+        MakeStair(obj, width, height)
 
 if __name__ == "__main__":
-    MakeStair()
+    MakeStair_Button()
