@@ -10,7 +10,7 @@ def GetDict():
     'PCPA Layers' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\CURRENT\PCPA LAYERS_V2.csv',
     'PCPA Layers_V1' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\1.0\PCPA LAYERS_V1.csv',
     'CSV' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\libs\csv.py',
-    'PCPA GH Components' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\GH\PCPA_GH_TOOLBAR',
+    'PCPA GH Components' : r'X:\22_REACH\03 TOOLS\PCPA_GH_TOOLBAR\CURRENT',
     'GH Dependencies' : r'X:\05_RHINO STANDARDS\04 GRASSHOPPER\00_PCPA Standard Set',
     'Material File' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\PCPA Rhino Materials\PCPA_Materials.3dm',
     'Material Folder' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\PCPA Rhino Materials',
@@ -18,7 +18,9 @@ def GetDict():
     'People 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\2D',
     'Vegetation 2D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\02_VEGETATION\2D',
     'Help File' : r'X:\05_RHINO STANDARDS\10 PCPA RHINO MANUAL\CURRENT\PCPA Rhino Tools Manual.pdf',
-    'PCPA Logo' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\ICONS\PCPA_LOGO.png'
+    'PCPA Logo' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\ICONS\PCPA_LOGO.png',
+    'PS Swatch File' : r'X:\08_ADOBE + OTHER SOFTWARE\01_PHOTOSHOP\PCPA Swatch Library\PCPA.aco',
+    'PS Directory' : r'C:\Program Files\Adobe\Adobe Photoshop CS6 (64 Bit)\Presets\Color Swatches'
     }
 
     fileLocationsPCPNH = {

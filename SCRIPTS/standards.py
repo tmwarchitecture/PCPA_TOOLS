@@ -105,6 +105,26 @@ def LoadPCPAMaterials(filepath):
     except:
         print "Failed to load PCPA Materials"
 
+def LoadPSSwatch(PSswatch, PSdir):
+    print PSswatch
+    if os.path.isfile(PSswatch):
+        print "File exists"
+    else:
+        print "Could not find the PCPA Swatch"
+        return None
+    
+    if os.path.isdir(PSdir):
+        print "Photoshop Installation found"
+    else:
+        print "Could not find your photoshop installation"
+        return None
+    
+    #os.chmod(PSdir, stat.S_IWRITE )
+    #shutil.copy2(PSswatch, PSdir)
+    
+    #print PSdir
+    print "Loaded PS Swatch"
+
 def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
@@ -204,6 +224,9 @@ if __name__ == "__main__":
     elif standardsRequested == 5:
         LoadDisplayModes(fileLocations['Display Mode Folder'])
         utils.SaveToAnalytics('standards-Load Display Modes')
+    elif standardsRequested == 6:
+        LoadPSSwatch(fileLocations['PS Swatch File'], fileLocations['PS Directory'])
+        utils.SaveToAnalytics('standards-Load PS Swatch')
     elif standardsRequested == 99:
         LoadPCPAMaterials(fileLocations['Material File'])
         SetTemplateFolder(fileLocations['Template Folder'])
