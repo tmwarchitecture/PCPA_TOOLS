@@ -132,17 +132,34 @@ def Rectify_AngleFirst(obj, angleMultiple, lengthMultiple):
     return id
 
 def Rectify_AngleFirst_Button():
-    objs = rs.GetObjects("Select polylines to rectify", rs.filter.curve, True)
+    objs = rs.GetObjects("Select polylines to rectify", rs.filter.curve, preselect = True)
     if objs is None: return
     
-    angleMultiple = rs.GetReal("Round angle to multiples of", 45)
-    if angleMultiple is None: return
+    if 'geometry-angleMultiple' in sc.sticky:
+        angleDefault = sc.sticky['geometry-angleMultiple']
+    else:
+        angleDefault = 45
     
-    lengthMultiple = rs.GetReal("Round length to multiples of", 1)
+    if 'geometry-lengthMultiple' in sc.sticky:
+        lengthDefault = sc.sticky['geometry-lengthMultiple']
+    else:
+        lengthDefault = 1
+    
+    angleMultiple = rs.GetReal("Round angle to multiples of", angleDefault)
+    if angleMultiple is None: return
+    sc.sticky['geometry-angleMultiple'] = angleMultiple
+    
+    
+    lengthMultiple = rs.GetReal("Round length to multiples of", lengthDefault)
     if lengthMultiple is None: return
+    sc.sticky['geometry-lengthMultiple'] = lengthMultiple
     
     for obj in objs:
-        newLine = Rectify_AngleFirst(obj, angleMultiple, lengthMultiple)
+        try:
+            rs.SimplifyCurve(obj)
+            newLine = Rectify_AngleFirst(obj, angleMultiple, lengthMultiple)
+        except:
+            print "Rectify failed"
 
 if __name__ == "__main__":
-    Rectify_AngleFirst_Button()    
+    Rectify_AngleFirst_Button()
