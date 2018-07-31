@@ -121,9 +121,13 @@ def dimensionPline_Button():
     if sc.doc.DimStyles.FindName('PCPA_12') is None:
         standards.LoadStyles()
     
-    layers.AddLayerByNumber(8101)
-    layerName = layers.GetLayerNameByNumber(8101)
-    rs.CurrentLayer(layerName)
+    try:
+        layers.AddLayerByNumber(8101)
+        layerName = layers.GetLayerNameByNumber(8101)
+        rs.CurrentLayer(layerName)
+    except:
+        pass
+    
     
     rs.EnableRedraw(False)
     for obj in objects:
