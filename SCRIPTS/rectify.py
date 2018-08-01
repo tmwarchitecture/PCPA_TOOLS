@@ -3,6 +3,8 @@ import Rhino as rc
 import scriptcontext as sc
 import math
 
+import utils
+
 def GetAngleBetween2Segments(segment1, segment2, plane, internal = False):
     """
     Compares angle of 2 segments, on a plane.
@@ -158,8 +160,13 @@ def Rectify_AngleFirst_Button():
         try:
             rs.SimplifyCurve(obj)
             newLine = Rectify_AngleFirst(obj, angleMultiple, lengthMultiple)
+            utils.SaveToAnalytics('Geometry-Rectify')
+            result = True
         except:
+            result = False
             print "Rectify failed"
+        utils.SaveFunctionData('Geometry-Rectify', [angleMultiple, lengthMultiple,  str([(pt.X, pt.Y, pt.Z) for pt in rs.CurveEditPoints(obj)]), result])
+        
 
 if __name__ == "__main__":
     Rectify_AngleFirst_Button()

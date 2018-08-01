@@ -7,15 +7,6 @@ import stat
 import config
 import utils
 
-def CheckPaths():
-    print "Checking paths"
-    keys = list(fileLocations.keys())
-    print keys
-    for each in keys:
-        if (os.path.exists(fileLocations[each])):
-            print "Path exists"
-        else:print "Path not found"
-
 def PreloadCheck():
     if rs.ExeVersion() < 6:
         print "***Reload standards only works for Rhino 6***"
@@ -102,9 +93,17 @@ def LoadPCPAMaterials(filepath):
         rs.EnableRedraw(False)
         rs.Command("-_Import " + '"' + filepath + '"  Enter' , echo = False)
         rs.EnableRedraw(True)
+        result = True
+        utils.SaveToAnalytics('standards-Load Materials')
     except:
         print "Failed to load PCPA Materials"
+        result = False
+    utils.SaveFunctionData('Standards-Load Materials', [result])
 
+def LoadPCPAMaterials2(filepath):
+    print ""
+
+#NOT WORKING - Folder set to read-only
 def LoadPSSwatch(PSswatch, PSdir):
     print PSswatch
     if os.path.isfile(PSswatch):
@@ -125,10 +124,13 @@ def LoadPSSwatch(PSswatch, PSdir):
     #print PSdir
     print "Loaded PS Swatch"
 
+################################################################################
+
 def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
     targetMain = os.path.join(targetRoot, PCPAroot)
+    
     #Ensure targetMain exists
     if os.path.isdir(targetMain):
         os.chmod(targetMain, stat.S_IWRITE)
@@ -149,9 +151,18 @@ def UpdateFolders(sourceMain, targetRoot):
                 targetSub = os.path.join(targetMain, targetSubShort)
                 os.makedirs(targetSub)
                 distutils.dir_util.copy_tree(sourceSub, targetSub)
-                print "\tLoaded PCPA {} GH Components".format(targetSubShort)
+                print "\tLoaded {} GH Components".format(targetSubShort)
             except:
                 print "\tFailed to load PCPA {} GH Components".format(targetSubShort)
+        else:
+            extension = os.path.splitext(sourceSub)[1]
+            if extension == '.ghuser' or extension == '.ghpy':
+                try:
+                    shutil.copy2(sourceSub, targetMain)
+                    print "\tUpdated PCPA {}".format(os.path.splitext(os.path.basename(sourceSub))[0])
+                except:
+                    print "\tFailed to load PCPA {} GH Component".format(targetSubShort)
+    return len(targetSubsShort)
 
 def LoadPCPAComponents(sourceFolder):
     """
@@ -159,22 +170,21 @@ def LoadPCPAComponents(sourceFolder):
     """
     if os.path.isdir(sourceFolder) is False:
         print "FAIL-----PCPA Components folder not found"
-        return None
-    else:
-        allFiles = os.listdir(sourceFolder)
-    
+        result = False
     try:
         appData = os.getenv('APPDATA')
         targetFolder = appData + r"\Grasshopper\UserObjects"
     except:
         print "FAIL-----UserObjects folder not found"
-        return None
-    
+        result = False
+    numberOfObjects = 0
     try:
-        UpdateFolders(sourceFolder, targetFolder)
+        numberOfObjects = UpdateFolders(sourceFolder, targetFolder)
+        result = True
     except:
-        print "FAIL-----Could not copy files"
-        return None
+        print "FAIL-----Could not copy files. Ensure that folder is not open"
+        result = False
+    utils.SaveFunctionData('Standards-PCPA GH Components', [numberOfObjects, result])
 
 def LoadGHDependencies(sourceFolder):
     """
@@ -182,22 +192,25 @@ def LoadGHDependencies(sourceFolder):
     """
     if os.path.isdir(sourceFolder) is False:
         print "FAIL-----GH Dependecies folder not found"
-        return None
-    else:
-        allFiles = os.listdir(sourceFolder)
+        result = False
     
     try:
         appData = os.getenv('APPDATA')
         targetFolder = appData + r"\Grasshopper\Libraries"
+        result = True
     except:
         print "FAIL-----GH Library folder not found"
-        return None
-    
+        result = False
+    numberOfObjects = 0
     try:
-        UpdateFolders(sourceFolder, targetFolder)
+        numberOfObjects = UpdateFolders(sourceFolder, targetFolder)
+        result = True
     except:
         print "FAIL-----Could not copy dependencies. You must have grasshopper open. Close and reopen Rhino, then run this again."
-        return None
+        result = False
+    
+    utils.SaveFunctionData('Standards-PCPA GH Dependencies', [numberOfObjects, result])
+
 
 if __name__ == "__main__":
     PreloadCheck()
@@ -206,7 +219,7 @@ if __name__ == "__main__":
     fileLocations = config.GetDict()
     if standardsRequested == 0:
         LoadPCPAMaterials(fileLocations['Material File'])
-        utils.SaveToAnalytics('standards-Load Materials')
+        #LoadPCPAMaterials2(fileLocations['Material Folder'])
     elif standardsRequested == 1:
         SetTemplateFolder(fileLocations['Template Folder'])
         SetTemplateFile(fileLocations['Template File'])
@@ -236,6 +249,6 @@ if __name__ == "__main__":
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
         LoadPCPAComponents(fileLocations['PCPA GH Components'])
         LoadGHDependencies(fileLocations['GH Dependencies'])
-        utils.SaveToAnalytics('standards-All')
+        utils.SaveToAnalytics('Standards-All')
     else:
         pass

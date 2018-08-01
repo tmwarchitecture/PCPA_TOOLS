@@ -363,19 +363,19 @@ def main():
     if 'ramp-slopeDefault' in sc.sticky:
         slopeDefault = sc.sticky['ramp-slopeDefault']
     else:
-        slopeDefault = .0833
+        slopeDefault = 8.333
     
     
     width = rs.GetReal("Ramp Clear Width", widthDefault, minimum = 36)
     if width is None: return
-    slope = rs.GetReal("Ramp slope (e.g. 8.33%(1:12) is .0833)", slopeDefault)
+    slope = rs.GetReal("Ramp slope (e.g. 8.33%(1:12) is 8.33)", slopeDefault)
     if slope is None: return
     
     sc.sticky['ramp-widthDefault'] = width
     sc.sticky['ramp-slopeDefault'] = slope
     
     rs.EnableRedraw(False)
-    rampGeoList = Ramp_HeightSlope(path, width, slope)
+    rampGeoList = Ramp_HeightSlope(path, width, slope/100)
     try:
         layers.AddLayerByNumber(402, False)
         layerName = layers.GetLayerNameByNumber(402)
