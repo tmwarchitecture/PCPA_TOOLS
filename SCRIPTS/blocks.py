@@ -59,13 +59,15 @@ def ReplicateBlock(blockObj):
 
     #Copy block
     copiedBlock = rs.CopyObject(blockObj)
-
+    
     #Get new block name
     defaultName = utils.UpdateString(rs.BlockInstanceName(blockObj))
     looping = True
     while looping:
         newBlockName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Iterate Design Option')
-        if newBlockName is None: return
+        if newBlockName is None: 
+            rs.DeleteObject(copiedBlock)
+            return
         if rs.IsBlock(newBlockName):
             print "Block name already exists"
         elif len(newBlockName) == 0:
@@ -133,10 +135,12 @@ def MakeBlockUniqueButton():
         return False
 
 def Iterate():
+    block = rs.GetObject("Select Design Option Block to iterate", rs.filter.instance, True)
+    if block is None: return
+    
     try:
-        block = rs.GetObject("Select Design Option Block to iterate", rs.filter.instance, True)
-        if block is None: return
         newBlock = ReplicateBlock(block)
+        newBlockName = rs.BlockInstanceName(newBlockName)
         optionLayers = layers.AddLayerByNumber(3000, False)
         
         try:
@@ -159,9 +163,12 @@ def Iterate():
                 rs.LayerVisible(prevBlockLayer, False)
         except:
             pass
-        return True
+        result = True
     except:
-        return False
+        result = False
+        newBlockName = ''
+    utils.SaveFunctionData('Blocks-Iterate', [rs.BlockInstanceName(block), newBlockName, result])
+    return result
 
 def ResetBlockScale():
     try:

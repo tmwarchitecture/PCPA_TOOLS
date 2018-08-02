@@ -6,7 +6,7 @@ returns: 1 Solid Brep
 """
 
 __author__ = 'Tim Williams'
-__version__ = '0.2.0'
+__version__ = '2.0'
 
 import Rhino
 import scriptcontext as sc
@@ -371,7 +371,11 @@ def main():
     sc.sticky['stair-widthDefault'] = width
     sc.sticky['stair-heightDefault'] = height
     
-    stairGeo = stairHeight(route, width, height)
+    try:
+        stairGeo = stairHeight(route, width, height)
+        result = True
+    except:
+        result = False
     
     try:
         layers.AddLayerByNumber(401, False)
@@ -381,7 +385,9 @@ def main():
     except:
         pass
     
-    utils.SaveToAnalytics('architecture-stair')
+    utils.SaveFunctionData('Architecture-Stair', [width, height, str([(pt.X, pt.Y, pt.Z) for pt in rs.CurveEditPoints(route)]), result])
+    
+    utils.SaveToAnalytics('Architecture-Stair')
 
 if __name__ == "__main__":
     main()

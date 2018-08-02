@@ -22,11 +22,18 @@ def AreaTag(obj, decPlaces):
                 #add text tag
                 dimStyle = sc.doc.DimStyles.FindName('PCPA_12')
                 
+                #Get center of polyline
+                #Two methods, uses CurveAreaCentroid if rectangle because multiple points are furthest from rectangle 
+                if utils.IsRectangle(obj)[0]:
+                    centerPoint = rs.CurveAreaCentroid(obj)[0]
+                else:
+                    centerPoint = utils.FindMostDistantPoint(obj, 100)
+                
                 if dimStyle is not None:
                     textHeight = dimStyle.TextHeight
-                    areaTag = rs.AddText(areaText, rs.CurveAreaCentroid(obj)[0], height = textHeight, justification = 131074)
+                    areaTag = rs.AddText(areaText, centerPoint, height = textHeight, justification = 131074)
                 else:
-                    areaTag = rs.AddText(areaText, rs.CurveAreaCentroid(obj)[0], height = 1, justification = 131074)
+                    areaTag = rs.AddText(areaText, centerPoint, height = 1, justification = 131074)
                 
                 #Change layers
                 hostLayer = layers.AddLayerByNumber(8103, False)
@@ -114,6 +121,7 @@ def dimensionPline_Button():
         distDefault = 60
     
     offsetDist = rs.GetInteger('Dimension offset distance (in.)', distDefault)
+    if offsetDist is None: return
     
     sc.sticky['dimPline-dist'] = offsetDist
     

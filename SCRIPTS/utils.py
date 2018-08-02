@@ -1,9 +1,17 @@
+import rhinoscriptsyntax as rs
+import Rhino as rc
+import scriptcontext as sc
+
 import datetime
 import os
 from libs import csv
 from libs import encrypt
 import getpass
+import config
+import random
 
+#############################################################################
+#DATE/LOCATION
 def GetDatePrefix():
     year = int(datetime.datetime.today().strftime('%Y'))-2000
     md = datetime.datetime.today().strftime('%m%d')
@@ -25,6 +33,8 @@ def GetNetworkLocation():
         return 
     return "You are connected to the {} network.".format(location)
 
+#############################################################################
+#ANALYTICS
 def SaveToAnalytics(funcName):
     try:
         filepath = 'data\Analytics.csv'
@@ -82,31 +92,39 @@ def SaveFunctionData(funcName, funcData):
         now=datetime.datetime.now()
         monthString=('%02d%02d'%(now.year, now.month))[2:]
         
-        filepath = 'data\\' + monthString + '_' + funcName + '.csv'
+        fileLocations = config.GetDict()
+        filepath = fileLocations['Data Folder']
+        
+        fileName = monthString + '_' + funcName + '.csv'
+        
+        fullName = os.path.join(filepath, fileName)
+        
         userName = encrypt.encrypt(getpass.getuser())
         now=datetime.datetime.now()
         timeString=('%02d-%02d-%02d_%02d:%02d:%02d.%d'%(now.year, now.month, now.day, now.hour, now.minute,now.second,now.microsecond))[:-4]
         
-        if not os.path.isfile(filepath):
+        if not os.path.isfile(fullName):
             data = [[funcName],['Date', 'User']]
-            myFile = open(filepath, 'wb')
+            myFile = open(fullName, 'wb')
             with myFile:
                 csvwriter = csv.writer(myFile)
                 csvwriter.writerows(data)    
         
-        with open(filepath, 'rb') as File:
+        with open(fullName, 'rb') as File:
             reader = csv.reader(File)
             data = list(reader)
         row = [timeString] + [userName]  + funcData
         data.append(row)
         
-        myFile = open(filepath, 'wb')
+        myFile = open(fullName, 'wb')
         with myFile:
             csvwriter = csv.writer(myFile)
             csvwriter.writerows(data)
     except:
         print "SaveFunctionData failed"
 
+#############################################################################
+#NUMBERS
 def RoundNumber(number, decPlaces):
     """Rounds numbers and adds ',' thousand seperator. Returns string. -1 rounds to 10, 0 leaves no decimals, 1 has one decimal place"""
     if decPlaces < 0:
@@ -126,6 +144,162 @@ def RemapList(values, newMin, newMax):
         newValues.append((((value - origMin  ) * NewRange) / OldRange) + newMin)
     return newValues
 
+#############################################################################
+#GEOMETRY
+def FindMostDistantPoint(obj, resolution = 20):
+    """
+    Returns the approximately most distant point within a closed curve
+    inputs:
+        obj (curve): closed planar curves
+        resolution (int)[optional]: numbers of sample points in a resolutionXresolution grid
+    returns:
+        point (point): point furthest from curve
+    """
+    if rs.IsCurvePlanar(obj) == False:
+        print "Curve not planar"
+        return None
+    if rs.IsCurveClosed(obj) == False:
+        print "Curve not closed"
+        return None
+    
+    rhobj = rs.coercecurve(obj)
+    bbox = rhobj.GetBoundingBox(rs.WorldXYPlane())
+    
+    minX = bbox.Min[0]
+    minY = bbox.Min[1]
+    minZ = bbox.Min[2]
+    
+    maxX = bbox.Max[0]
+    maxY = bbox.Max[1]
+    maxZ = bbox.Max[2]
+    
+    xVals = []
+    yVals = []
+    
+    for i in range(resolution):
+        xVals.append(i)
+        yVals.append(i)
+    
+    newXvals = RemapList(xVals, minX, maxX)
+    newYvals = RemapList(yVals, minY, maxY)
+    
+    furthestPt = None
+    furthestDist = 0
+    maxDist = 99999
+    for xVal in newXvals:
+        for yVal in newYvals:
+            newPt = rc.Geometry.Point3d(xVal, yVal, minZ)
+            result =  rhobj.Contains(newPt, rs.WorldXYPlane())
+            if result == rc.Geometry.PointContainment.Inside:
+                param = rhobj.ClosestPoint(newPt, maxDist)
+                crvPt = rhobj.PointAt(param[1])
+                dist = rs.Distance(crvPt, newPt)
+                if dist > furthestDist:
+                    furthestPt = newPt
+                    furthestDist = dist
+    if furthestDist == 0:
+        return None
+    return furthestPt
+
+def FindMostDistantPointRand(obj, resolution = 20):
+    """
+    Returns the approximately most distant point within a closed curve
+    inputs:
+        obj (curve): closed planar curves
+        resolution (int)[optional]: numbers of sample points in a resolutionXresolution grid
+    returns:
+        point (point): point furthest from curve
+    """
+    if rs.IsCurvePlanar(obj) == False:
+        print "Curve not planar"
+        return None
+    if rs.IsCurveClosed(obj) == False:
+        print "Curve not closed"
+        return None
+    
+    rhobj = rs.coercecurve(obj)
+    bbox = rhobj.GetBoundingBox(rs.WorldXYPlane())
+    
+    minX = bbox.Min[0]
+    minY = bbox.Min[1]
+    minZ = bbox.Min[2]
+    
+    maxX = bbox.Max[0]
+    maxY = bbox.Max[1]
+    maxZ = bbox.Max[2]
+    
+    #########################
+    xVals = []
+    yVals = []
+    
+    random.seed(1)
+    for i in range(resolution):
+        xVals.append(random.uniform(0,1))
+        yVals.append(random.uniform(0,1))
+    
+    newXvals = RemapList(xVals, minX, maxX)
+    newYvals = RemapList(yVals, minY, maxY)
+    
+    furthestPt = None
+    furthestDist = 0
+    maxDist = 99999
+    for xVal in newXvals:
+        for yVal in newYvals:
+            newPt = rc.Geometry.Point3d(xVal, yVal, minZ)
+            result =  rhobj.Contains(newPt, rs.WorldXYPlane())
+            if result == rc.Geometry.PointContainment.Inside:
+                param = rhobj.ClosestPoint(newPt, maxDist)
+                crvPt = rhobj.PointAt(param[1])
+                dist = rs.Distance(crvPt, newPt)
+                if dist > furthestDist:
+                    furthestPt = newPt
+                    furthestDist = dist
+    if furthestDist == 0:
+        return None
+    return furthestPt
+
+def IsRectangle(obj):
+    """
+    Checks if a curve is a rectangle. Must be closed, planar, 4 line segments, all 90 degrees
+    inputs:
+        obj (curve): curve to evaluate
+    returns (list):
+        [0] (Boolean): If rectangle
+        [1] (String): explaination of why it failed
+    """
+    explaination = ''
+    rhobj = rs.coercecurve(obj)
+    if rs.IsCurveClosed(obj):
+        if rs.IsCurvePlanar(obj):
+            segments = rhobj.DuplicateSegments()
+            if len(segments) == 4:
+                for segment in segments:
+                    if segment.Degree != 1:
+                        explaination = "Not all segments are lines"
+                        return [False, explaination]
+                for i in range(3):
+                    angle = rs.Angle2(segments[i], segments[i+1])
+                    if angle[0] != 90 and angle[1] != 90:
+                        explaination = "Angle not 90"
+                        return [False, explaination]
+                angle = rs.Angle2(segments[-1], segments[0])
+                if angle[0] != 90 and angle[1] != 90:
+                    explaination = "Final angle not 90"
+                    return [False, explaination]
+                explaination = "ITS A RECTANGLE"
+                return [True, explaination]
+            else:
+                explaination = "Curve does not have 4 sides"
+                return [False, explaination]
+        else:
+            explaination = "Curve not planar"
+            return [False, explaination]
+    else:
+        explaination = "Curve not closed"
+        return [False, explaination]
+
+#############################################################################
+#STRINGS
 def StringPlusOne(word):
     """Adds one to the last numbers in a string.
     Parameters:
@@ -166,11 +340,4 @@ def UpdateString(word):
         return StringPlusOne(word)
 
 if __name__ == "__main__":
-    print '180723-option1 > ' + UpdateString('180723-option1')
-    print '180724-option1 > ' + UpdateString('180724-option1')
-    print 'option1 > ' + UpdateString('option1')
     pass
-    #SaveFunctionData('geometry-Test', ['Area', 'Geometry', 42, 'Result', 'Failed'])
-    #print GetNetworkLocation()
-    #SaveToAnalytics('Count')
-    #pass

@@ -388,9 +388,12 @@ def main():
                 
                 rs.ObjectLayer(rampGeoList[2], layerName)
         except:
-            pass        
+            pass   
+        result = True
     except:
-        pass
+        result = False
+    
+    utils.SaveFunctionData('Architecture-ramp', [width, slope, str([(pt.X, pt.Y, pt.Z) for pt in rs.CurveEditPoints(path)]), result])
     
     rs.EnableRedraw(True)
     
