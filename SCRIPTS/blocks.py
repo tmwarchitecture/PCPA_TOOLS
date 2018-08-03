@@ -48,15 +48,6 @@ def RenameBlockCmd():
         return None
 
 def ReplicateBlock(blockObj):
-    #Check if a block
-    try:
-        if rs.IsBlockInstance(blockObj):
-            pass
-        else:
-            return
-    except:
-        return
-
     #Copy block
     copiedBlock = rs.CopyObject(blockObj)
     
@@ -88,9 +79,9 @@ def ReplicateBlock(blockObj):
     objsInside = rs.ExplodeBlockInstance(copiedBlock)
 
     rs.AddBlock(objsInside, basePoint, newBlockName, True)
-
     #Create new block
-    return rs.InsertBlock2(newBlockName, xform)
+    instance = rs.InsertBlock2(newBlockName, xform)
+    return instance
 
 def MakeBlockUnique(block, newName):
     """
@@ -140,9 +131,8 @@ def Iterate():
     
     try:
         newBlock = ReplicateBlock(block)
-        newBlockName = rs.BlockInstanceName(newBlockName)
+        newBlockName = rs.BlockInstanceName(newBlock)
         optionLayers = layers.AddLayerByNumber(3000, False)
-        
         try:
             rootLayer = optionLayers[0]
         except:
@@ -211,7 +201,8 @@ def ExportAndLinkBlock():
     try:
         name = rs.ListBox(rs.BlockNames(True), 'Select Block to Export and Link', 'Export and Link')
         if name is None: return
-        path = rs.SaveFileName('Export and Link', "Rhino 6 3D Models|.3dm||")
+        
+        path = rs.SaveFileName('Export and Link', "Rhino 6 3D Models|.3dm||", filename = name)
         if path is None: return
         
         try:

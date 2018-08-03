@@ -37,7 +37,11 @@ def GetNetworkLocation():
 #ANALYTICS
 def SaveToAnalytics(funcName):
     try:
-        filepath = 'data\Analytics.csv'
+        fileLocations = config.GetDict()
+        filepath = fileLocations['Analytics']
+        
+        
+        #filepath = 'data\Analytics.csv'
         
         with open(filepath, 'rb') as File:
             reader = csv.reader(File)
