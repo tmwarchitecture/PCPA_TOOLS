@@ -106,6 +106,14 @@ def ChangeVertexAngles(obj, fixedAngles, fixedLengths):
     
     return rc.Geometry.Polyline(newPts)
 
+def ChangeLineLength(obj, fixedLengths):
+    rhobj = rs.coerceline(obj)
+    stPt = rhobj.PointAt(0)
+    vec = rs.VectorCreate(rhobj.PointAt(1), stPt)
+    vec.Unitize()
+    newEndPt = stPt.Add(stPt, vec*fixedLengths[0])
+    return rc.Geometry.Line(stPt, newEndPt)
+
 def Rectify_AngleFirst(obj, angleMultiple, lengthMultiple):
     """
     Rebuilds a polyline with exact angles and lengths. Angles have priority
@@ -122,14 +130,23 @@ def Rectify_AngleFirst(obj, angleMultiple, lengthMultiple):
     else:
         fixedAngles = angles
     
-    lengths = GetSegmentLengths(obj)
+    if rs.IsLine(obj):
+        lengths = [rs.CurveLength(obj)]
+        fixedAngles = 0
+    else:
+        lengths = GetSegmentLengths(obj)
+    
     if lengthMultiple != 0:
         fixedLengths = ForceToMultipleOf(lengths, lengthMultiple)
     else:
         fixedLengths = lengths
     
-    newPline = ChangeVertexAngles(obj, fixedAngles, fixedLengths)
-    id = sc.doc.Objects.AddPolyline(newPline)
+    if rs.IsLine(obj):
+        line = ChangeLineLength(obj, fixedLengths)
+        id = sc.doc.Objects.AddLine(line)
+    else:
+        newPline = ChangeVertexAngles(obj, fixedAngles, fixedLengths)
+        id = sc.doc.Objects.AddPolyline(newPline)
     sc.doc.Views.Redraw()
     return id
 
@@ -160,13 +177,15 @@ def Rectify_AngleFirst_Button():
         try:
             rs.SimplifyCurve(obj)
             newLine = Rectify_AngleFirst(obj, angleMultiple, lengthMultiple)
+            rs.MatchObjectAttributes(newLine, obj)
             utils.SaveToAnalytics('Geometry-Rectify')
             result = True
         except:
             result = False
             print "Rectify failed"
         utils.SaveFunctionData('Geometry-Rectify', [angleMultiple, lengthMultiple,  str([(pt.X, pt.Y, pt.Z) for pt in rs.CurveEditPoints(obj)]), result])
-        
+        if result:
+            rs.DeleteObject(obj)
 
 if __name__ == "__main__":
     Rectify_AngleFirst_Button()

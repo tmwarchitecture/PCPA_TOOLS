@@ -246,7 +246,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="0a2c9e56-0c46-4dad-9d45-8b832c11ab49" active_tool_bar_group="49948567-cf6d-48cb-b72b-c7945970dce2" single_file="False" hide_single_tab="False" point_floating="514,285">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="3e2fd986-965e-4114-b4a8-4b3807ac3d5e" active_tool_bar_group="ee615e8a-0722-4fd3-b842-c754c89fbafc" single_file="False" hide_single_tab="False" point_floating="514,285">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -292,7 +292,7 @@
         </text>
         <tool_bar_id>158790ef-99ea-4ce9-a2df-4b70b5da3eda</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59473" mru_width="868" point_pos="0,283" float_point="514,285" rect_mru_dock_pos="0,283,1600,344" dock_location_u="59419" dock_location="top" float_size="363,118" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59474" mru_width="868" point_pos="0,283" float_point="514,285" rect_mru_dock_pos="0,283,1600,344" dock_location_u="59419" dock_location="top" float_size="363,118" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars>
@@ -551,7 +551,7 @@
       <menu_text>
         <locale_1033>Version 2.0</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\test\test.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\test\test.py)</script>
     </macro_item>
     <macro_item guid="4f6124ea-720e-4326-8906-74936e80e023">
       <text>
@@ -569,7 +569,7 @@
       <menu_text>
         <locale_1033>Add All Layers (version 1.0)</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers_v1.py) 10000</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers_v1.py) 10000</script>
     </macro_item>
     <macro_item guid="c0a1c8db-7283-4eab-af8e-866975ecd24b" bitmap_id="16f04bdc-f8d7-467a-b589-32f49261e97c">
       <text>
@@ -587,7 +587,7 @@
       <menu_text>
         <locale_1033>11x17 Landscape</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 11 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layout.py) 11 </script>
     </macro_item>
     <macro_item guid="0c048159-f75e-45e1-bc5b-a1668f2aa79b" bitmap_id="bddbcf8e-5ea7-43b8-8918-e24869d2f944">
       <text>
@@ -605,7 +605,7 @@
       <menu_text>
         <locale_1033>8.5x11 Landscape</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 8 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layout.py) 8 </script>
     </macro_item>
     <macro_item guid="c8c8a617-3da8-4123-b614-5054bda70e75" bitmap_id="9e3253ed-6ca0-491c-bd25-b1908ca2039d">
       <text>
@@ -623,7 +623,7 @@
       <menu_text>
         <locale_1033>18x24 Landscape</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 18 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layout.py) 18 </script>
     </macro_item>
     <macro_item guid="6107277e-2dc8-4281-b927-e6583118085c" bitmap_id="1b2e914b-1f3d-4095-94ea-3033d317643f">
       <text>
@@ -641,7 +641,7 @@
       <menu_text>
         <locale_1033>Batch Print</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 90</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layout.py) 90</script>
     </macro_item>
     <macro_item guid="527f2c21-f9f5-4cc4-8c7e-4408b2374869">
       <text>
@@ -659,7 +659,7 @@
       <menu_text>
         <locale_1033>Add All Layers</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 10000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 10000 </script>
     </macro_item>
     <macro_item guid="06e196d8-4e52-4d51-b87c-789c81c37ac6">
       <text>
@@ -677,7 +677,7 @@
       <menu_text>
         <locale_1033>Project Info</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\project_info.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\project_info.py)</script>
     </macro_item>
     <macro_item guid="4f60c793-b88e-417b-a294-fc97a166bb4d" bitmap_id="ff90abe6-2138-4d94-a2be-39b9d496d59d">
       <text>
@@ -695,7 +695,7 @@
       <menu_text>
         <locale_1033>Project Levels</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\project_levels.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\project_levels.py)</script>
     </macro_item>
     <macro_item guid="81fbaffb-a184-414a-8b85-6160b574bf18" bitmap_id="33b21c21-24e4-439e-a036-79c27406edf2">
       <text>
@@ -713,7 +713,7 @@
       <menu_text>
         <locale_1033>Stair</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\stair.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\stair.py)</script>
     </macro_item>
     <macro_item guid="ab939101-0cee-41f5-bff8-9e134d2192ec" bitmap_id="3e18f5db-227a-4234-9851-71780f02043f">
       <text>
@@ -731,7 +731,7 @@
       <menu_text>
         <locale_1033>Random Unselect</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\unselect_random.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\unselect_random.py)</script>
     </macro_item>
     <macro_item guid="5f248489-c572-4572-a375-9dbb3cab21d1" bitmap_id="cdf30c7e-9bea-4f53-b543-9952d8c74bc1">
       <text>
@@ -1039,7 +1039,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Iterate Design Option</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\blocks.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\blocks.py) 0 </script>
     </macro_item>
     <macro_item guid="34036a88-63ff-485a-a52e-e5844accb6f9" bitmap_id="614a403c-9a47-427f-ab1c-662b9c76b551">
       <text>
@@ -1057,7 +1057,7 @@ _enter </script>
       <menu_text>
         <locale_1033>0_ARCHITECTURE</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 0 </script>
     </macro_item>
     <macro_item guid="f78a681e-274f-4b88-9038-c305b58c9358" bitmap_id="9a33f9ed-46d5-4c7a-b8ba-1d8b031cf667">
       <text>
@@ -1075,7 +1075,7 @@ _enter </script>
       <menu_text>
         <locale_1033>1_SITE</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 1000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 1000 </script>
     </macro_item>
     <macro_item guid="2d000182-4336-42ac-bd98-c38b6a92d5c7" bitmap_id="d3ab38cb-599f-49d7-b495-4cfc6fd0e5f5">
       <text>
@@ -1093,7 +1093,7 @@ _enter </script>
       <menu_text>
         <locale_1033>2_ENTOURAGE</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 2000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 2000 </script>
     </macro_item>
     <macro_item guid="763e5c84-3f93-4b5a-bba6-95eb80dd2920" bitmap_id="248d1fad-3db6-4403-b3cd-da7cc7c62152">
       <text>
@@ -1111,7 +1111,7 @@ _enter </script>
       <menu_text>
         <locale_1033>3_DESIGN OPTIONS</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 3000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 3000 </script>
     </macro_item>
     <macro_item guid="0b62a391-18e8-463f-86f6-f3c55a1bc964" bitmap_id="0bcc3893-d337-4a50-84e7-26f6dc3a1032">
       <text>
@@ -1129,7 +1129,7 @@ _enter </script>
       <menu_text>
         <locale_1033>4_BLOCKS</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 4000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 4000 </script>
     </macro_item>
     <macro_item guid="a4c7f090-8d94-485e-9d96-4ac78fe1b3f1" bitmap_id="9aeee754-b4e4-4faf-853c-7e8c796a4feb">
       <text>
@@ -1147,7 +1147,7 @@ _enter </script>
       <menu_text>
         <locale_1033>5_ZONING</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 5000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 5000 </script>
     </macro_item>
     <macro_item guid="ff338fba-b66c-484b-9553-336d219e727d" bitmap_id="67c5f1a3-d227-461e-8c50-0dbb14e7021f">
       <text>
@@ -1165,7 +1165,7 @@ _enter </script>
       <menu_text>
         <locale_1033>6_CAD IMPORT</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 6000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 6000 </script>
     </macro_item>
     <macro_item guid="01b2e89e-8222-4d35-aca7-cceb77830b26" bitmap_id="3f3c3989-3326-49aa-9050-2d7a0fd9131f">
       <text>
@@ -1183,7 +1183,7 @@ _enter </script>
       <menu_text>
         <locale_1033>7_PROGRAM</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 7000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 7000 </script>
     </macro_item>
     <macro_item guid="9e81aa5c-58eb-4519-a741-4ce48fe0ef93" bitmap_id="ad203f42-7dc2-4d70-b2a3-4e10d6b017ab">
       <text>
@@ -1201,7 +1201,7 @@ _enter </script>
       <menu_text>
         <locale_1033>8_DRAWING</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 8000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 8000 </script>
     </macro_item>
     <macro_item guid="edfa042b-3a58-4ecd-8bab-6fd56d87290e" bitmap_id="b1547757-f721-428a-b592-d05566121ab0">
       <text>
@@ -1219,7 +1219,7 @@ _enter </script>
       <menu_text>
         <locale_1033>9_RENDER</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layers.py) 9000 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layers.py) 9000 </script>
     </macro_item>
     <macro_item guid="ad07787e-a86f-4cf1-aeaf-4ff1c080ff41">
       <text>
@@ -1237,7 +1237,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Load GH Components</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 2 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 2 </script>
     </macro_item>
     <macro_item guid="dfea4cb8-87b1-427c-8a26-f7c11f417938">
       <text>
@@ -1255,7 +1255,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Load PCPA Materials</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 0 </script>
     </macro_item>
     <macro_item guid="14519d58-6a8f-4c99-b24e-54c48b0881cb">
       <text>
@@ -1273,7 +1273,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Set Template</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 1 </script>
     </macro_item>
     <macro_item guid="c6a2220a-eea6-4b89-a0c0-0d29a37f5af0">
       <text>
@@ -1291,7 +1291,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Load ACAD Schemes</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 3 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 3 </script>
     </macro_item>
     <macro_item guid="1531b4f9-003a-4329-bfd4-103444f80013">
       <text>
@@ -1309,7 +1309,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Load Annotation Styles</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 4 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 4 </script>
     </macro_item>
     <macro_item guid="7526be50-b363-4555-8206-b8d4dbc0b745">
       <text>
@@ -1327,7 +1327,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Load Display Modes</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 5 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 5 </script>
     </macro_item>
     <macro_item guid="ded2a87b-93c3-44cd-9fe0-1ee0a13e4424">
       <text>
@@ -1345,7 +1345,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Apply All Standards</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\standards.py) 99 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 99 </script>
     </macro_item>
     <macro_item guid="707d11f3-948c-4202-b0bb-cdf080d82c0f" bitmap_id="b20872ae-45c9-4c35-a569-e8a95a6fbb05">
       <text>
@@ -1363,7 +1363,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Make Block Unique</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\blocks.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\blocks.py) 1 </script>
     </macro_item>
     <macro_item guid="0da0911e-d15e-4a0f-9f8e-9b9f390d3a94" bitmap_id="def2b967-240d-4781-a329-0feeaf9c0c67">
       <text>
@@ -1381,7 +1381,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Super Explode</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\blocks.py) 2 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\blocks.py) 2 </script>
     </macro_item>
     <macro_item guid="9a65ec1b-bb94-4d9c-8c24-91e8aad9b936" bitmap_id="ef5dad68-28e1-415c-a45f-d1bb2c7a1f65">
       <text>
@@ -1399,7 +1399,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Populate</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\populate.py) </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\populate.py) </script>
     </macro_item>
     <macro_item guid="1f42cf1d-ab1f-4d27-b8bd-d2b6028a4de8" bitmap_id="47a2c798-0550-44d8-be26-049e37e4096f">
       <text>
@@ -1417,7 +1417,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Help</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\help.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\help.py)</script>
     </macro_item>
     <macro_item guid="d9e88590-61ad-4c6b-b13b-b3d89488f3b3" bitmap_id="8aafd682-9ad9-44d0-877d-15546de576ba">
       <text>
@@ -1435,7 +1435,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Reset Block Scale</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\blocks.py) 4 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\blocks.py) 4 </script>
     </macro_item>
     <macro_item guid="768d53fa-f460-45db-af68-4d63f96fac53" bitmap_id="39d7d56e-a65c-48c6-93aa-9937678fd91f">
       <text>
@@ -1453,7 +1453,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Export and Link</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\blocks.py) 5 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\blocks.py) 5 </script>
     </macro_item>
     <macro_item guid="b94091be-a506-486e-bad1-d9ed4bfba723" bitmap_id="aa46f155-12b3-4574-8e53-136f96f3d0ab">
       <text>
@@ -1471,7 +1471,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Ramp-By Slope</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\ramp.py)</script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\ramp.py)</script>
     </macro_item>
     <macro_item guid="21afdada-a923-4d52-83f7-432f3cf94e9a" bitmap_id="3255b5a8-fb7e-4d17-88f4-0d5a3cdc91b3">
       <text>
@@ -1489,7 +1489,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Color-Random Range</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\colors.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\colors.py) 1 </script>
     </macro_item>
     <macro_item guid="c68a8b51-d436-487d-84f3-e13ba1cdb598" bitmap_id="8491b0e7-a16f-4fac-8761-d773e2ca55d4">
       <text>
@@ -1507,7 +1507,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Color-Gradient</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\colors.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\colors.py) 0 </script>
     </macro_item>
     <macro_item guid="24d5ccf8-9cef-4479-bc1b-e3c01d3d40fc" bitmap_id="829cc199-b34f-4010-b055-b77a889cda38">
       <text>
@@ -1525,7 +1525,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Color-To Material</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\colors.py) 2 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\colors.py) 2 </script>
     </macro_item>
     <macro_item guid="0dbe27bb-f77f-4322-b212-0e1f21298901" bitmap_id="78858c85-4c7c-40a7-825c-a292a31729fa">
       <text>
@@ -1543,7 +1543,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Capture Display Modes</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\file_IO.py) 3 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\file_IO.py) 3 </script>
     </macro_item>
     <macro_item guid="c601ac80-e3d4-4a46-9965-95bba9739aaf" bitmap_id="2326db0e-1b95-44be-96aa-6a4aacdad70e">
       <text>
@@ -1561,7 +1561,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Export to Render [DWG]</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\file_IO.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\file_IO.py) 1 </script>
     </macro_item>
     <macro_item guid="9c2dd94b-a407-4e28-8240-0f5f55005bb6" bitmap_id="70281ffd-15e4-4bbb-a41c-bd18f25ca3e1">
       <text>
@@ -1579,7 +1579,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Import CAD</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\file_IO.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\file_IO.py) 0 </script>
     </macro_item>
     <macro_item guid="ceedb030-1064-480c-9c69-19efb62b2a18" bitmap_id="4db8c020-caf7-440e-bc41-bb65df5193ae">
       <text>
@@ -1597,7 +1597,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Export to Render [SKP]</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\file_IO.py) 2 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\file_IO.py) 2 </script>
     </macro_item>
     <macro_item guid="ef3d3bcf-9607-4d5a-84bb-1ab3ec8bc5e1" bitmap_id="83574c99-c1b2-4fa7-ba96-52520ab41fb4">
       <text>
@@ -1615,7 +1615,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Area Tag</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\drawing.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\drawing.py) 0 </script>
     </macro_item>
     <macro_item guid="2103458f-b7fd-4958-bf9f-83f136b28ed7" bitmap_id="e8e0e085-a0ed-4a36-9b84-a7000458f487">
       <text>
@@ -1633,7 +1633,7 @@ _enter </script>
       <menu_text>
         <locale_1033>PCPA GH Components</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\specialFolders.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\specialFolders.py) 0 </script>
     </macro_item>
     <macro_item guid="70737bd5-e57b-4627-bd81-35d340c60771" bitmap_id="c1305f99-aea6-4632-9796-c5e1ada209e6">
       <text>
@@ -1651,7 +1651,7 @@ _enter </script>
       <menu_text>
         <locale_1033>GH Standard Set</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\specialFolders.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\specialFolders.py) 1 </script>
     </macro_item>
     <macro_item guid="f38f7cb0-1b33-486d-aeb1-8bbabf55ae2a" bitmap_id="bb4abe4f-f1d8-48c1-9c92-ddd40f1d2822">
       <text>
@@ -1669,7 +1669,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Template Folder</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\specialFolders.py) 2 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\specialFolders.py) 2 </script>
     </macro_item>
     <macro_item guid="5835fb73-c5c1-4e22-b025-ccf62eb9e202" bitmap_id="60745e38-fe0c-48a0-8cbc-0d142404a4c5">
       <text>
@@ -1687,7 +1687,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Display Mode Folder</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\specialFolders.py) 3 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\specialFolders.py) 3 </script>
     </macro_item>
     <macro_item guid="cbd613d7-0fab-4649-9300-0145aca6f951" bitmap_id="5ef4dc55-771c-49fb-96bb-129fd28709bb">
       <text>
@@ -1705,7 +1705,7 @@ _enter </script>
       <menu_text>
         <locale_1033>ACAD Scheme Folder</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\specialFolders.py) 4 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\specialFolders.py) 4 </script>
     </macro_item>
     <macro_item guid="64687f4f-f8a2-47bc-ac3a-6a634361813d" bitmap_id="313006a7-331a-4267-b1ba-9868d3bafe03">
       <text>
@@ -1723,7 +1723,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Dim Pline</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\drawing.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\drawing.py) 1 </script>
     </macro_item>
     <macro_item guid="6fcb74d4-0343-4ef4-a0ee-5c1cb30adaa2" bitmap_id="c84ab3f8-e5dd-4b86-8ba2-2df24aad478f">
       <text>
@@ -1741,7 +1741,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Color-By Size</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\colors.py) 3 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\colors.py) 3 </script>
     </macro_item>
     <macro_item guid="641eb9c5-3c4a-49fe-b28f-d8e5c7ab284a" bitmap_id="35817f97-6c0b-4e6f-b809-d164c17d84e5">
       <text>
@@ -1759,7 +1759,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Contour At Pt</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\geometry.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\geometry.py) 0 </script>
     </macro_item>
     <macro_item guid="e2be39d0-d621-4cd3-9bf4-8c94fc108f25" bitmap_id="c1c90f84-14e9-4ebd-a4e0-016944fa762e">
       <text>
@@ -1795,7 +1795,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Layout</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\layout.py) 0 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\layout.py) 0 </script>
     </macro_item>
     <macro_item guid="1b2292d3-d658-4975-ac9a-17373370b0b6" bitmap_id="ed30e0dd-4a41-4603-85f8-bdf172c1b7fe">
       <text>
@@ -1813,7 +1813,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Unfillet</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\geometry.py) 1 </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\geometry.py) 1 </script>
     </macro_item>
     <macro_item guid="a14f05a8-1744-461b-9741-e30000769db2" bitmap_id="ba02e856-f26c-4ddb-9570-a194b3ea9a9d">
       <text>
@@ -1831,7 +1831,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Rectify</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\rectify.py) </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\rectify.py) </script>
     </macro_item>
     <macro_item guid="d25842b1-df58-418d-b31c-36b586e5b8c5" bitmap_id="78722525-f80a-4ee2-8efe-fc7199ba7b4c">
       <text>
@@ -1849,7 +1849,7 @@ _enter </script>
       <menu_text>
         <locale_1033>Cut Model</locale_1033>
       </menu_text>
-      <script>_NoEcho -_RunPythonScript (X:\05_RHINO STANDARDS\01 PCPA TOOLS\SCRIPTS\cut_model.py)  </script>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\cut_model.py)  </script>
     </macro_item>
   </macros>
   <bitmaps>
