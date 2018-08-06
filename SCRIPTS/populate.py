@@ -1,30 +1,35 @@
 import rhinoscriptsyntax as rs
+import scriptcontext as sc
 import random
-import config
+import Rhino as rc
 import os
 
+import config
 import utils
 
 __author__ = 'Tim Williams'
 __version__ = "2.0.1"
 
-def congregate(objs, threshold, loops):
+def Congregate(pts, threshold, loops):
     scaleFactOrig = .1
     for j in range(loops):
         scaleF = ((loops-j)/loops) * scaleFactOrig
-        for i, pt1 in enumerate(objs):
-            tempList = list(objs)
-            del tempList[i]
-            pt2 = rs.PointClosestObject(pt1, tempList)[1]
-            vec = rs.VectorCreate(pt2, pt1)
-            dist = rs.Distance(pt2, pt1)
-            if dist < threshold:
+        for i, pt in enumerate(pts):
+            #PTS TO COMPARE AGAINST
+            closest = None
+            for comparePt in pts:
+                distance = pt.DistanceTo(comparePt)
+                if distance == 0: continue
+                if closest is None or distance<closest[0]:
+                    closest = distance, comparePt
+            
+            vec = rs.VectorCreate(closest[1], pt)
+            if closest[0] < threshold:
                 vec = rs.VectorReverse(vec)
-            vec2 = rs.VectorScale(vec, scaleF)
-            rs.MoveObject(pt1, vec2)
-            line = rs.AddLine(pt1, pt2)
-            rs.DeleteObject(line)
-    return objs
+            
+            vec = rs.VectorScale(vec, scaleF)
+            pts[i] = pt.Add(pt, vec)
+    return pts
 
 def RandomPtsOnSrf(srf, numPts):
     pts = []
@@ -58,10 +63,17 @@ def RandomPtOnSrf(srf):
             counter+=1
 
 def TryLoadBlock(type, name):
+    if type == '3D People':
+        typeFolder = 'People 3D Folder'
+    elif type == '2D People':
+        typeFolder = 'People 2D Folder'
+    elif type == '2D Trees':
+        typeFolder = 'Vegetation 2D Folder'    
+    
     if rs.IsBlock(name):
         return True
     else:
-        folderpath = fileLocations[type]
+        folderpath = fileLocations[typeFolder]
         files = os.listdir(folderpath)
         for file in files:
             if os.path.splitext(file)[1] == '.3dm':
@@ -76,91 +88,126 @@ def TryLoadBlock(type, name):
                             rs.DeleteObject(obj)
                         return True
 
-def RandomBlock(type):
-    if type == 'Custom Block':
-        block = rs.BlockNames(True)
-        if len(block) < 1:
-            return None
-        obj = rs.GetObject('Select block to populate', rs.filter.instance, True)
-        if obj is None: return
-        name = rs.BlockInstanceName(obj)
-        return name
+def GetBlockNames(type):
+    if type == '3D People':
+        typeFolder = 'People 3D Folder'
+    elif type == '2D People':
+        typeFolder = 'People 2D Folder'
+    elif type == '2D Trees':
+        typeFolder = 'Vegetation 2D Folder'    
+    
+    blocks = []
+    files = os.listdir(fileLocations[typeFolder])
+    for file in files:
+        if os.path.splitext(file)[1] == '.3dm':
+            blocks.append(os.path.splitext(file)[0])
+    return blocks
+
+def GetCustomBlockNames():
+    block = rs.BlockNames(True)
+    if len(block) < 1:
+        print  "There are no blocks in the file"
+        return None
+    objs = rs.GetObjects('Select block(s) to populate', rs.filter.instance, True)
+    if objs is None: return None
+    blockNames = []
+    for obj in objs:
+        if rs.BlockInstanceName(obj) not in blockNames:
+            blockNames.append(rs.BlockInstanceName(obj))
+    return blockNames
+
+def MoveAwayFromEdges(pts, srf, spacing):
+    spacing = spacing/2
+    rhsrf = rs.coercebrep(srf)
+    edges = rhsrf.DuplicateNakedEdgeCurves(True, False)
+    boundary = rc.Geometry.Curve.JoinCurves(edges)[0]
+    for i, pt in enumerate(pts):
+        sc.doc.Objects.AddPoint(pt)
+        closestPt = boundary.ClosestPoint(pt, spacing)
+        if closestPt[0]:
+            vec = rs.VectorCreate(pt, boundary.PointAt(closestPt[1]))
+            vec.Unitize()
+            newDist = (spacing)-vec.Length
+            pts[i] = pt.Add(pt, vec*newDist)
+    return pts
+
+def Populate_Button():
+    #try:
+    spacing = 36
+    ###########################################################################
+    #GET FUNCTIONS
+    
+    #GET INPUT SURFACE
+    srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
+    if srf is None: return
+    
+    #GET NUMBER OF OBJECTS
+    if 'populate-numObjects' in sc.sticky:
+        numObjectsDefault = sc.sticky['populate-numObjects']
     else:
-        blocks = []
+        numObjectsDefault = 30
+    numObjects = rs.GetInteger('Number of objects to populate', numObjectsDefault, 1, 500)
+    if numObjects is None: return
+    sc.sticky['populate-numObjects'] = numObjects
+    
+    #GET POPULATION TYPE
+    if 'populate-type' in sc.sticky:
+        typeDefault = sc.sticky['populate-type']
+    else:
+        typeDefault = '3D People'
+    types = ['3D People', '2D People', '2D Trees', 'Custom Block']
+    type = rs.ListBox(types, "Select block type to populate", "Population Type", typeDefault)
+    if type is None: return
+    sc.sticky['populate-type'] = type
+    
+    #GET BLOCK NAMES
+    if type == 'Custom Block':
+        blockNames = GetCustomBlockNames()
+    else:
+        blockNames = GetBlockNames(type)
+    if blockNames is None: return
+    
+    ###########################################################################
+    #DRAW FUNCTIONS
+    rs.EnableRedraw(False)
+    
+    #RANDOM PTS ON SURFACE
+    pts = RandomPtsOnSrf(srf, numObjects)
+    
+    #CONGREGATE THE POINTS
+    pts = Congregate(pts, spacing, 5)
+    
+    #MOVE AWAY FROM SURFACE EDGES
+    pts = MoveAwayFromEdges(pts, srf, spacing)
+    
+    #ORIENT ANGLES TOGETHER
+    
+    for pt in pts:
+        #Choose random angle
+        angle = random.uniform(0,360)
+        
+        blockName = blockNames[random.randint(0, len(blockNames)-1)]
+        
+        if TryLoadBlock(type, blockName):
+            eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
+            try:
+                if type == '2D People' or type == '3D People':
+                    layerName = '2_ENTOURAGE::' + 'People'
+                elif type == '2D Trees':
+                    layerName = '2_ENTOURAGE::' + 'Vegetation'
+                else:
+                    layerName = '2_ENTOURAGE'
+                rs.ObjectLayer(eachBlock, layerName)
+            except:
+                pass
 
-        files = os.listdir(fileLocations[type])
-        for file in files:
-            if os.path.splitext(file)[1] == '.3dm':
-                blocks.append(os.path.splitext(file)[0])
-
-    index = random.randint(0, len(blocks)-1)
-    return blocks[index]
-
-def main():
-    try:
-        srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
-        #srf = rs.GetSurfaceObject('Select surface to populate', True)
-        if srf is None: return
-        #srf = srf[0]
-
-        numObjects = rs.GetInteger('Number of objects to populate', 30, 1, 500)
-        if numObjects is None: return
-
-        types = ['3D People', '2D People', '2D Trees', 'Custom Block']
-        type = rs.ListBox(types, "Select block type to populate", "Population Type", types[0])
-        if type is None: return
-
-        if type == '3D People':
-            type = 'People 3D Folder'
-        elif type == '2D People':
-            type = 'People 2D Folder'
-        elif type == '2D Trees':
-            type = 'Vegetation 2D Folder'
-
-        rs.EnableRedraw(False)
-
-        pts = RandomPtsOnSrf(srf, numObjects)
-
-        realPts = rs.AddPoints(pts)
-        congregate(realPts, 36, 5)
-
-        blockName = RandomBlock(type)
-
-        for pt in realPts:
-            angle = random.uniform(0,360)
-
-
-            if type != 'Custom Block':
-                blockName = RandomBlock(type)
-            if blockName is None:
-                print "No blocks in document"
-                return
-
-            if TryLoadBlock(type, blockName):
-                eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
-                try:
-                    if type == 'People 2D Folder' or type == 'People 3D Folder':
-                        layerName = '2_ENTOURAGE::' + 'People'
-                    elif type == 'Vegetation 2D Folder':
-                        layerName = '2_ENTOURAGE::' + 'Vegetation'
-                    else:
-                        layerName = '2_ENTOURAGE'
-                    rs.ObjectLayer(eachBlock, layerName)
-                except:
-                    pass
-
-        try:
-            rs.DeleteObjects(realPts)
-        except:
-            pass
-
-        rs.EnableRedraw(True)
-        return True
-    except:
-        return False
+    rs.EnableRedraw(True)
+    return True
+    #except:
+    #    return False
 
 if __name__ == "__main__":
     fileLocations = config.GetDict()
-    result = main()
+    result = Populate_Button()
     if result:
         utils.SaveToAnalytics('blocks-Populate')
