@@ -5,6 +5,8 @@ import rhinoscriptsyntax as rs
 import os
 import database_tools as dt
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
 
 def ConvertImperialLength(numberString, ToInches = True):
     """
@@ -49,21 +51,21 @@ class GetNumberOfFloors(forms.Dialog):
         self.Title = "Insert Many Floors"
         #self.Size = drawing.Size(100,100)
         self.Padding = drawing.Padding(5)
-        
+
         self.ApplyBoo = False
         self.NumFloors = 3
-        
+
         self.numericButton = forms.NumericUpDown()
         self.numericButton.DecimalPlaces = 0
         self.numericButton.MinValue = 2.0
         self.numericButton.Value = self.NumFloors
-        
+
         self.DefaultButton = forms.Button(Text = 'OK')
         self.DefaultButton.Click += self.OnOKButtonClick
-        
+
         self.AbortButton = forms.Button(Text = 'Cancel')
         self.AbortButton.Click += self.OnCancelButtonClick
-        
+
         layout = forms.DynamicLayout()
         layout.AddRow(self.numericButton, None)
         layout.AddSeparateRow(None, self.DefaultButton, self.AbortButton)
@@ -83,44 +85,44 @@ class LevelsDialog(forms.Dialog):
         self.Initialize()
         self.CreateControls()
         self.CreateLayouts()
-    
+
     def Initialize(self):
         #Setup the dialog
         self.Title = "Project Levels"
         self.Size = drawing.Size(550,565)
         self.Padding = drawing.Padding(5, 5)
-        
+
         self.databasePath = r'C:\Users\twilliams\Desktop\TEMP\Database'
         self.versionName = r'Project_Info.yaml'
-        
+
         try:
             self.databaseFile = rs.GetDocumentData('PCPA', 'Project_Database')
         except:
             self.databaseFile = ''
-    
+
     def CreateControls(self):
         def labels():
             self.tboxFileName = forms.TextBox()
             self.tboxFileName.ReadOnly = True
         def contextMenu():
             ctxtMnu = forms.ContextMenu()
-            
+
             ctxtInsertManyRows = forms.ButtonMenuItem(Text = "Insert Many Floors")
             ctxtInsertManyRows.Click += self.OnInsertManyRowsAbove
-            
+
             ctxtInsertRow = forms.ButtonMenuItem(Text = "Insert Floor")
             ctxtInsertRow.Click += self.OnInsertRowAbove
-            
+
             ctxtDeleteRow = forms.ButtonMenuItem(Text = "Remove Floor")
             ctxtDeleteRow.Click += self.OnDeleteRow
-            
+
             self.seperator1 = forms.SeparatorMenuItem()
-            
+
             ctxtMnu.Items.Add(ctxtInsertManyRows)
             ctxtMnu.Items.Add(ctxtInsertRow)
             ctxtMnu.Items.Add(self.seperator1)
             ctxtMnu.Items.Add(ctxtDeleteRow)
-            
+
             self.grid.ContextMenu = ctxtMnu
         def menuBar():
             mnuFile = forms.ButtonMenuItem(Text = "File")
@@ -135,12 +137,12 @@ class LevelsDialog(forms.Dialog):
             mnuOpen.Click += self.OnFileOpenClick
             mnuClose = forms.ButtonMenuItem(Text = "Close")
             mnuClose.Click += self.OnFileCloseClick
-            
+
             mnuEdit = forms.ButtonMenuItem(Text = "Edit")
             mnuCopy = forms.ButtonMenuItem(Text = "Copy")
             mnuCopy.Click += self.copyToClipboard
             mnuEdit.Items.Add(mnuCopy)
-            
+
             mnuFile.Items.Add(mnuNew)
             mnuFile.Items.Add(mnuOpen)
             #mnuFile.Items.Add(mnuSave)
@@ -149,7 +151,7 @@ class LevelsDialog(forms.Dialog):
             mnuBar = forms.MenuBar(mnuFile, mnuEdit)
             #self.Menu.Spacing = drawing.Size(2,2)
             #mnuBar.Padding = 5
-            
+
             self.Menu = mnuBar
         def combobox():
             #Combobox
@@ -161,7 +163,7 @@ class LevelsDialog(forms.Dialog):
                     bldgNames.append(str(i) + " - " + bldgData[key]['name'])
             except:
                 bldgNames = ['Sheet 1','--Create New--']
-            
+
             self.comboBuildingNum = forms.ComboBox()
             self.comboBuildingNum.DataStore = bldgNames
             self.comboBuildingNum.SelectedIndex = 0
@@ -171,11 +173,11 @@ class LevelsDialog(forms.Dialog):
             self.btnApply = forms.Button()
             self.btnApply.Text = "OK"
             self.btnApply.Click += self.OnFileSaveClick
-            
+
             self.btnCancel = forms.Button()
             self.btnCancel.Text = "Cancel"
             self.btnCancel.Click += self.OnCancelPressed
-            
+
             self.DefaultButton = self.btnApply
             self.AbortButton = self.btnCancel
         def grid():
@@ -186,56 +188,56 @@ class LevelsDialog(forms.Dialog):
             self.grid.AllowMultipleSelection = True
             self.grid.CellEdited += self.OnCellEdited
             self.grid.CellFormatting += self.OnCellFormatting
-            
+
             #COLUMNS
             numberColumn = forms.GridColumn()
             numberColumn.HeaderText = "#"
             numberColumn.DataCell = forms.TextBoxCell(0)
             numberColumn.DataCell.TextAlignment = forms.TextAlignment.Right
-            
+
             nameColumn = forms.GridColumn()
             nameColumn.HeaderText = "Floor\t"
             nameColumn.Editable = True
             nameColumn.DataCell = forms.TextBoxCell(1)
-            
+
             funcColumn = forms.GridColumn()
             funcColumn.HeaderText = "Program\t\t"
             funcColumn.DataCell = forms.TextBoxCell(2)
             funcColumn.Editable = True
             funcColumn.DataCell.TextAlignment = forms.TextAlignment.Center
-            
+
             ftfColumn = forms.GridColumn()
             ftfColumn.HeaderText = "FTF\t"
             ftfColumn.DataCell = forms.TextBoxCell(3)
             ftfColumn.Editable = True
             ftfColumn.DataCell.TextAlignment = forms.TextAlignment.Right
-            
+
             levelColumn = forms.GridColumn()
             levelColumn.HeaderText = "Height\t"
             levelColumn.Editable = True
             levelColumn.DataCell = forms.TextBoxCell(4)
             levelColumn.DataCell.TextAlignment = forms.TextAlignment.Right
-            
+
             areaColumn = forms.GridColumn()
             areaColumn.HeaderText = "GFA\t"
             areaColumn.Editable = True
             areaColumn.DataCell = forms.TextBoxCell(5)
             areaColumn.DataCell.TextAlignment = forms.TextAlignment.Right
-            
+
             commentColumn = forms.GridColumn()
             commentColumn.HeaderText = "Comments\t\t"
             commentColumn.Editable = True
             commentColumn.DataCell = forms.TextBoxCell(6)
             commentColumn.DataCell.TextAlignment = forms.TextAlignment.Left
-            
+
             self.grid.Columns.Add(numberColumn)
             self.grid.Columns.Add(nameColumn)
             self.grid.Columns.Add(funcColumn)
             self.grid.Columns.Add(ftfColumn)
             self.grid.Columns.Add(levelColumn)
             self.grid.Columns.Add(areaColumn)
-            self.grid.Columns.Add(commentColumn)        
-        
+            self.grid.Columns.Add(commentColumn)
+
         labels()
         combobox()
         buttons()
@@ -244,7 +246,7 @@ class LevelsDialog(forms.Dialog):
         contextMenu()
         self.GenData()
         self.UpdateFileLabel(self.databaseFile)
-    
+
     def CreateLayouts(self):
         layoutButtons = forms.DynamicLayout()
         #layoutButtons.AddRow(self.tboxFileName)
@@ -255,34 +257,34 @@ class LevelsDialog(forms.Dialog):
         layout = forms.DynamicLayout()
         #layout.AddSeparateRow(layoutFolder)
         layout.AddSeparateRow(layoutButtons)
-        
+
         #5 - add the layout to the dialog
         self.Content = layout
-    
+
     #Cancel
     def OnCancelPressed(self, sender, e):
         self.Close()
-    
+
     #New File
     def OnNewFileClick(self, sender, e):
         self.grid.DataStore = []
         print "New File"
-    
+
     #Open File
     def OnFileOpenClick(self, sender, e):
         print "Begin"
         self.databaseFile = rs.OpenFileName("Open file", "Rhino 3DM Models (*.3dm)|*.3dm||")
         if self.databaseFile is None: return
-        
+
         data = dt.GetLevelsFromAnotherRhinoDoc(self.databaseFile)
         if data is None: return
-        
+
         self.grid.DataStore = data[::-1]
-        
+
         self.RegenData()
-        
+
         print "End"
-    
+
     #Save
     def OnFileSaveAsClick(self, sender, e):
         newFile = rs.SaveFileName("Save", "YAML Files (*.yaml)|*.yaml||")
@@ -290,13 +292,13 @@ class LevelsDialog(forms.Dialog):
         self.databaseFile = newFile
         rs.SetDocumentData('PCPA', 'Project_Database', self.databaseFile)
         self.UpdateFileLabel(newFile)
-    
+
     def OnFileSaveClick(self, sender, e):
         data = self.grid.DataStore
         reversed(data)
         rs.SetDocumentData('PCPA', 'Levels', str(data))
         self.Close()
-    
+
     #Close
     def OnFileCloseClick(self, sender, e):
         self.grid.DataStore = []
@@ -304,7 +306,7 @@ class LevelsDialog(forms.Dialog):
         self.databaseFile = None
         self.UpdateFileLabel()
         rs.SetDocumentData('PCPA', 'Project_Database', "")
-    
+
     #Building Num
     def OnBldgNumChanged(self, sender, e):
         try:
@@ -312,7 +314,7 @@ class LevelsDialog(forms.Dialog):
             if self.comboBuildingNum.SelectedIndex == 1:
                 print "Creating new!"
                 print self.comboBuildingNum.DataStore
-                
+
                 data = self.comboBuildingNum.DataStore
                 data.append('New Layout')
                 self.comboBuildingNum.DataStore = data
@@ -321,7 +323,7 @@ class LevelsDialog(forms.Dialog):
                 self.comboBuildingNum.SelectedIndex = 0
         except:
             print "Error reading the database"
-    
+
     #Grid editing
     def OnInsertManyRowsAbove(self, sender, e):
         numFloorsDialog = GetNumberOfFloors()
@@ -329,24 +331,24 @@ class LevelsDialog(forms.Dialog):
         applyBoo = numFloorsDialog.ApplyBoo
         numFloorsDialog.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
         numberOfFloors = int(numFloorsDialog.NumFloors)
-        
+
         for i in range(numberOfFloors):
             self.OnInsertRowAbove(sender, e)
         #print "Inserting many rows"
-    
+
     def OnInsertRowAbove(self, sender, e):
         data = self.grid.DataStore
         selectedRow = self.grid.SelectedRow
         if len(data) == 0:
             self.grid.DataStore = [[1,'L1','',10.0,0.0, '', '']]
             return
-        
+
         try:
             newRowNameRaw = int(data[selectedRow][1][1:]) + 1
             newRowName = "L" + str(newRowNameRaw)
         except:
             newRowName = data[selectedRow][1]
-        
+
         try:
             newRowFunc = data[selectedRow][2]
             newRowFTF = float(data[selectedRow][3])
@@ -361,61 +363,61 @@ class LevelsDialog(forms.Dialog):
             newRowComment = ''
         blankRow = ['', newRowName, newRowFunc, newRowFTF, newRowHeight, newRowArea, newRowComment]
         data.insert(selectedRow, blankRow)
-        
+
         self.grid.DataStore = data
-        
+
         self.grid.SelectedRow = selectedRow
         self.RegenData()
-    
+
     def OnDeleteRow(self, sender, e):
         data = self.grid.DataStore
-        
+
         for row in self.grid.SelectedRows:
             del data[row]
-        
+
         self.grid.DataStore = data
         self.RegenData()
-        
+
     def OnCellEdited(self, sender, e):
         if e.Column == 4 or e.Column == 3:
             self.grid.DataStore[e.Row][e.Column] = ConvertImperialLength(self.grid.DataStore[e.Row][e.Column], False)
             self.CheckIfNumber(e.Row, e.Column)
-            
+
             self.RegenData()
-    
+
     def OnCellFormatting(self, sender, e):
         if e.Column.HeaderText == '#':
             e.ForegroundColor = drawing.Colors.DarkGray
-    
+
     #Util functions
     def RenumberRows(self):
         data = list(self.grid.DataStore[::-1])
         for i, row in enumerate(data):
             row[0] = i+1
         self.grid.DataStore = list(data[::-1])
-    
+
     def GenData(self):
         try:
             data = dt.GetLevelsFromRhinoDoc()
             self.grid.DataStore = data
         except:
             self.grid.DataStore = []
-    
+
     def RegenData(self):
         self.RenumberRows()
         self.UpdateHeights()
         #self.ShowTotalsRow()
-    
+
     def UpdateFileLabel(self, name = "--No File Selected--"):
         self.tboxFileName.Text = name
-    
+
     def CheckIfNumber(self, row, col):
         try:
             float(self.grid.DataStore[row][col])
         except:
             print "Cell accepts numbers only"
             self.grid.DataStore[row][col] = 0
-    
+
     def UpdateHeights(self):
         data = list(self.grid.DataStore)
         data.reverse()
@@ -427,14 +429,14 @@ class LevelsDialog(forms.Dialog):
         #
         data.reverse()
         self.grid.DataStore = data
-    
+
     def InchesToFeet(self):
         print "A"
-    
+
     def ShowTotalsRow(self):
         try:
             data = self.grid.DataStore
-            
+
             print data
             emptyRow =  len(data[0]) * [' ']
             data.insert(-1, emptyRow)
@@ -443,7 +445,7 @@ class LevelsDialog(forms.Dialog):
         except:
             print "ShowTotalsRow Failed"
             return
-    
+
     #I/O Functions
     def copyToClipboard(self, sender, e):
         try:
@@ -477,23 +479,23 @@ class LevelsDialog(forms.Dialog):
                 string = self.DataStoreToHTML()
             if extension == "csv":
                 global commaSep
-                
+
                 prevCommaSep = commaSep
                 prevColorFormat = self.colorFormat
-                
+
                 if self.colorFormat == 2:
                     self.colorFormat = 1
-                
+
                 if commaSep:
                     commaSep = False
-                
+
                 self.Regen()
-                
+
                 string = self.DataStoreToCSV()
-                
+
                 self.colorFormat = prevColorFormat
                 commaSep = prevCommaSep
-                
+
                 self.Regen()
             if extension == "txt":
                 string = self.DataStoreToTXT()
@@ -560,7 +562,7 @@ class LevelsDialog(forms.Dialog):
             string += "body {color: dimgray;}"
             #string += "table, th, td{border-collapse: collapse; border: 1px solid black;padding: 10px;}"
             string += "</style></head><body><table>"
-            
+
             allHeadings = []
             for i in range(self.grid.Columns.Count):
                 allHeadings.append(self.grid.Columns.Item[i].HeaderText)
@@ -568,7 +570,7 @@ class LevelsDialog(forms.Dialog):
             for heading in allHeadings:
                 string += "<th>" + str(heading) + "</th>"
             string += "</tr>"
-            
+
             #If *args specified, format them
             if len(args) > 0:
                 tempItems = []
@@ -586,7 +588,7 @@ class LevelsDialog(forms.Dialog):
                 allData = finalItems
             else:
                 allData = self.grid.DataStore
-            
+
             for row in allData:
                 string += "<tr>"
                 for item in row:

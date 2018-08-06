@@ -4,31 +4,34 @@ import scriptcontext as sc
 import math
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def IntersectBrepPlane(obj, plane):
     tolerance = rs.UnitAbsoluteTolerance()
     #BREP
     brep = rs.coercebrep(obj)
     intersectionCrvs = []
     if brep is None: return None
-    
+
     x = rc.Geometry.Intersect.Intersection.BrepPlane(brep, plane, tolerance)
     if x is None: return
-    
+
     xCurves = x[1]
     if xCurves is None: return None
-    
+
     try:
         newCurves = rc.Geometry.Curve.JoinCurves(xCurves)
     except:
         newCurves = xCurves
-    
+
     finalCurves = []
-    
+
     for curve in newCurves:
         finalCurve = sc.doc.Objects.AddCurve(curve)
         rs.MatchObjectAttributes(finalCurve, obj)
         finalCurves.append(finalCurve)
-    
+
     return finalCurves
 
 def IntersectGeo(obj, level):
@@ -42,13 +45,13 @@ def IntersectGeo(obj, level):
         for eachBlockObj in blockObjs:
             newCopy = rs.CopyObject(eachBlockObj)
             xformedObj = rs.TransformObject(newCopy, matrix)
-            
+
             #EXTRUSIONS
             if isinstance(xformedObj, rc.Geometry.Extrusion):
                 temp = sc.doc.Objects.AddBrep(xformedObj.ToBrep(False))
                 xformedObj = rs.coercebrep(temp)
                 rs.DeleteObject(temp)
-            
+
             #BREPS IN BLOCK
             result = IntersectBrepPlane(xformedObj, plane)
             if result is None: continue
@@ -69,10 +72,10 @@ def IntersectGeoAtPt():
     try:
         objs = rs.GetObjects("Select objects to contour",1073745980, preselect = True)
         if objs is None: return
-        
+
         pt = rs.GetPoint("Select point to contour at")
         if pt is None: return
-        
+
         rs.EnableRedraw(False)
         geos = []
         for obj in objs:
@@ -82,7 +85,7 @@ def IntersectGeoAtPt():
                 if each is not None:
                     geos.append(each)
         rs.EnableRedraw(True)
-        
+
         rs.SelectObjects(geos)
         return True
     except:
@@ -93,7 +96,7 @@ def IntersectGeoAtPt():
 def unfilletObj(obj):
     try:
         rhobj = rs.coercecurve(obj)
-        
+
         segments = rhobj.DuplicateSegments()
         newSegments = []
         for i, segment, in enumerate(segments):
@@ -116,7 +119,7 @@ def unfilletObj(obj):
                 endPt = segment.PointAtEnd
                 lineSeg = rc.Geometry.Line(stPt, endPt)
                 newSegments.append(sc.doc.Objects.AddLine(lineSeg))
-        
+
         joinedSegs = rs.JoinCurves(newSegments, True)
         rs.SimplifyCurve(joinedSegs)
         rs.MatchObjectAttributes(joinedSegs, obj)
@@ -131,7 +134,7 @@ def unfillet():
     #Will remove entire pline when angle > 180 degrees
     objs = rs.GetObjects("Select curves to unfillet", rs.filter.curve, True, True)
     if objs is None: return
-    
+
     bool = False
     for obj in objs:
         result = unfilletObj(obj)

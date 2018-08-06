@@ -3,6 +3,9 @@ import utils
 import subprocess
 import config
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def launchHelp():
     try:
         fileLocations = config.GetDict()

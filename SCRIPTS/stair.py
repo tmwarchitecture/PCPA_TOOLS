@@ -5,9 +5,6 @@ input: route(pline), width (num), height(num)
 returns: 1 Solid Brep
 """
 
-__author__ = 'Tim Williams'
-__version__ = '2.0'
-
 import Rhino
 import scriptcontext as sc
 import rhinoscriptsyntax as rs
@@ -15,6 +12,8 @@ import math
 import utils
 import layers
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
 
 def makeFace(srfs):
     srfsJoined=rs.JoinSurfaces(srfs, True)
@@ -39,7 +38,7 @@ def getTotalRun(landingEdges):
 def mergeCoincidentLines(segments):
     """
     removes coincident, consecutive segments
-    
+
     input: List of GUIDs
     returns: List of GUIDs
     """
@@ -81,7 +80,7 @@ def rampIntersection(route1, route2, width):
     test1 = rs.CurveCurveIntersection(offSeg1, offSeg2)
     if (test1==None):
         side1 = False
-    else:   
+    else:
         side1 = True
     offSeg3 = offsetLine(route1, -width/2)
     offSeg4 = offsetLine(route2, -width/2)
@@ -114,18 +113,18 @@ def rampIntersection(route1, route2, width):
 def stairHeight(route, width = 48, height = 120):
     """
     Makes a stair to specified height.
-    
+
     input: route(pline), width (num), height(num)
     returns: Geo
     """
     try:
         rs.EnableRedraw(False)
         rs.SimplifyCurve(route)
-        
-        if route is None: 
+
+        if route is None:
             print("ERROR: No path selected")
             return
-        
+
         if (rs.UnitSystem()==2): #if mm
             maxRiserHeight = 180
             thickness = 200
@@ -135,10 +134,10 @@ def stairHeight(route, width = 48, height = 120):
         if (rs.UnitSystem()==8): #if in"
             maxRiserHeight = 7
             thickness = 9
-        
+
         negativeBoo = False
-        if (height<0): 
-            #if the stair 
+        if (height<0):
+            #if the stair
             negativeBoo = True
         landingEdges = []
         landings = []
@@ -147,35 +146,35 @@ def stairHeight(route, width = 48, height = 120):
             segments = [rs.CopyObject(route)]
         landingHeight = []
         geometry = []
-        
+
         #Check that all segments are lines
         for i in range(0, len(segments)):
             if not (rs.IsLine(segments[i])):
                 print("ERROR: This function only accepts lines. No arcs or nurb curves.")
                 rs.DeleteObjects(segments)
                 return
-        
+
         #first landing edge
         norm = rs.VectorRotate(rs.CurveTangent(segments[0], 0), 90, [0,0,1])
         norm = rs.VectorScale(rs.VectorUnitize(norm),width/2)
         side1Pt = rs.VectorAdd(rs.CurveStartPoint(segments[0]),norm)
         side2Pt = rs.VectorAdd(rs.CurveStartPoint(segments[0]),-norm)
         landingEdges.append(rs.AddLine(side1Pt, side2Pt))
-        
+
         #middle landing edges
         for i in range(0, len(segments)-1):
             edgeList, landing = rampIntersection(segments[i],segments[i+1], width)
             landingEdges.append(edgeList[0])
             landingEdges.append(edgeList[1])
             landings.append(landing)
-        
+
         #last landing edge
         norm = rs.VectorRotate(rs.CurveTangent(segments[-1], rs.CurveParameter(segments[-1],1)), 90, [0,0,1])
         norm = rs.VectorScale(rs.VectorUnitize(norm),width/2)
         side1Pt = rs.VectorAdd(rs.CurveEndPoint(segments[-1]),norm)
         side2Pt = rs.VectorAdd(rs.CurveEndPoint(segments[-1]),-norm)
         landingEdges.append(rs.AddLine(side1Pt, side2Pt))
-        
+
         #Add risers
         riserCrvs = []
         treadVecs = []
@@ -183,7 +182,7 @@ def stairHeight(route, width = 48, height = 120):
         numRisers = abs(int(math.ceil(height/maxRiserHeight)))
         risersSoFar = 0
         totalRun = getTotalRun(landingEdges)
-        optTreadDepth = totalRun/(numRisers-1) 
+        optTreadDepth = totalRun/(numRisers-1)
         #2R+T = 635
         riserHeight = height/numRisers
         if (negativeBoo):
@@ -202,7 +201,7 @@ def stairHeight(route, width = 48, height = 120):
             else:
                 risersSoFar = risersSoFar + numRisersThisRun
             numRisersPerRun.append(numRisersThisRun)
-        
+
         #Create Risers on Plan
         for i in range(0, len(landingEdges), 2):
             run = []
@@ -262,7 +261,7 @@ def stairHeight(route, width = 48, height = 120):
                     rs.DeleteObject(stPt)
                     rs.DeleteObject(pt1)
                     rs.DeleteObject(pt2)
-            
+
             #Make Stringer
             if (negativeBoo):
                 firstStartPt = rs.AddPoint(rs.CurveStartPoint(riserCrvs[i][0]))
@@ -284,13 +283,13 @@ def stairHeight(route, width = 48, height = 120):
             geometry.append(rs.MoveObject(underside, [0,0,-thickness]))
             geometry.append(rs.CopyObject(stringer, stringerVec))
             geometry.append(stringer)
-            
+
             #cleanup
             rs.DeleteObject(firstStartPt)
             rs.DeleteObject(lastStartPt)
             rs.DeleteObject(stringerCrv)
             rs.DeleteObject(stringerSrf)
-        
+
         #Move Landings
         lastLandingHeight = 0
         for i in range(0, len(segments)-1):
@@ -305,7 +304,7 @@ def stairHeight(route, width = 48, height = 120):
             geometry.append(rs.ExtrudeCurveStraight(landingEdgesToEx[1], [0,0,0], [0,0,-thickness]))
             geometry.append(rs.ExtrudeCurveStraight(landingEdgesToEx[2], [0,0,0], [0,0,-thickness]))
             rs.DeleteObjects(landingEdgesToEx)
-        
+
         #Create final geometry
         joinedGeo = rs.JoinSurfaces(geometry, True)
         holes = rs.DuplicateSurfaceBorder(joinedGeo)
@@ -314,7 +313,7 @@ def stairHeight(route, width = 48, height = 120):
         for i in cap:
             newGeo.append(i)
         FinalGeo = rs.JoinSurfaces(newGeo, True)
-        
+
         #cleanup
         try:
             rs.DeleteObjects(segments)
@@ -325,7 +324,7 @@ def stairHeight(route, width = 48, height = 120):
         rs.DeleteObjects(landingEdges)
         for i in riserCrvs:
             rs.DeleteObjects(i)
-        
+
         rs.EnableRedraw(True)
         return FinalGeo
     except:
@@ -354,39 +353,39 @@ def main():
     else:
         print "Change your units to inches"
         return
-    
+
     route = rs.GetObject("Select Stair Guide Curve", rs.filter.curve, True)
     if route is None: return
-    
+
     if 'stair-widthDefault' in sc.sticky:
         widthDefault = sc.sticky['stair-widthDefault']
     if 'stair-heightDefault' in sc.sticky:
         heightDefault = sc.sticky['stair-heightDefault']
-    
+
     width = rs.GetReal("Stair Width", number = widthDefault, minimum = widthMin, maximum = widthMax)
     if width is None: return
     height = rs.GetReal("Stair Height", number = heightDefault, minimum = heightMin)
     if height is None: return
-    
+
     sc.sticky['stair-widthDefault'] = width
     sc.sticky['stair-heightDefault'] = height
-    
+
     try:
         stairGeo = stairHeight(route, width, height)
         result = True
     except:
         result = False
-    
+
     try:
         layers.AddLayerByNumber(401, False)
         layerName = layers.GetLayerNameByNumber(401)
-        
+
         rs.ObjectLayer(stairGeo, layerName)
     except:
         pass
-    
+
     utils.SaveFunctionData('Architecture-Stair', [width, height, str([(pt.X, pt.Y, pt.Z) for pt in rs.CurveEditPoints(route)]), result])
-    
+
     utils.SaveToAnalytics('Architecture-Stair')
 
 if __name__ == "__main__":

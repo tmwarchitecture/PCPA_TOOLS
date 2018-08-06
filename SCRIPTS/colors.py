@@ -3,6 +3,9 @@ import scriptcontext as sc
 from random import shuffle
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def ColorObjsWithGradient2Pt():
     result = True
     try:
@@ -16,11 +19,11 @@ def ColorObjsWithGradient2Pt():
         if pt2 is None: return
         secondColor = rs.GetColor(firstColor)
         if secondColor is None: return
-        
+
         rs.EnableRedraw(False)
         origLine = rs.AddLine(pt1, pt2)
         colorLine = rs.AddLine(firstColor, secondColor)
-        
+
         try:
             for obj in objs:
                 bboxpts = rs.BoundingBox(obj)
@@ -30,7 +33,7 @@ def ColorObjsWithGradient2Pt():
                 colorParam = rs.CurveParameter(colorLine, normParam)
                 finalPt = rs.EvaluateCurve(colorLine, colorParam)
                 color = (finalPt.X, finalPt.Y, finalPt.Z)
-                rs.ObjectColor(obj, color)    
+                rs.ObjectColor(obj, color)
         except:
             result = False
         rs.DeleteObject(colorLine)
@@ -51,17 +54,17 @@ def ColorObjsRandomRange():
         print "Select Second Color"
         secondColor = rs.GetColor(firstColor)
         if secondColor is None: return
-        
+
         rs.EnableRedraw(False)
         colorLine = rs.AddLine(firstColor, secondColor)
-        
+
         try:
             colors = rs.DivideCurve(colorLine, len(objs)-1)
-            
+
             shuffle(colors)
-            
+
             for i, obj in enumerate(objs):
-                rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))    
+                rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))
         except:
             pass
         rs.DeleteObject(colorLine)
@@ -80,11 +83,11 @@ def ColorBySize():
         print "Select Second Color"
         secondColor = rs.GetColor(firstColor)
         if secondColor is None: return
-        
+
         rs.EnableRedraw(False)
-        
+
         colorLine = rs.AddLine(firstColor, secondColor)
-        
+
         areas = []
         for obj in objs:
             if rs.IsCurve(obj):
@@ -102,23 +105,23 @@ def ColorBySize():
             else:
                 print "Only curves, hatches, and surfaces supported"
                 return
-        
+
         newAreas = list(areas)
         objAreas = zip(newAreas, objs)
         objAreas.sort()
         objSorted = [objs for newAreas, objs in objAreas]
-        
+
         areas.sort()
         normalParams = utils.RemapList(areas, 0, 1)
-        
+
         colors = []
         for t in normalParams:
             param = rs.CurveParameter(colorLine, t)
             colors.append(rs.EvaluateCurve(colorLine, param))
-        
+
         for i, obj in enumerate(objSorted):
-            rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))    
-        
+            rs.ObjectColor(obj, (colors[i].X, colors[i].Y, colors[i].Z))
+
         rs.DeleteObject(colorLine)
         rs.EnableRedraw(True)
         return True

@@ -6,6 +6,9 @@ import layers
 import config
 from utils import GetDatePrefix
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def AddTitleBlock(size):
     filelocations = config.GetDict()
     rs.EnableRedraw(False)
@@ -18,7 +21,7 @@ def AddTitleBlock(size):
         leftEdge = offset
         middle = 17/2
         rightEdge = 17-offset
-        
+
         pt1 = [leftEdge, row4]
         pt2 = [rightEdge, 11-row1]
         txtBase1 = [middle,row2]
@@ -26,17 +29,17 @@ def AddTitleBlock(size):
         txtBase3 = [rightEdge,row2]
         txtBase4 = [leftEdge,row1]
         txtBase5 = [rightEdge,row1]
-        
+
         lineSt = [leftEdge, row3]
         lineEnd = [rightEdge, row3]
-        
+
         txtSizeL = .125
         txtSizeM = .094
-    
+
         logoPlane = [13.834,.247,0]
         logoWidth = 2.823
         logoHeight = .116
-    
+
     elif size == 8:
         offset = .229
         row1 = offset
@@ -46,7 +49,7 @@ def AddTitleBlock(size):
         leftEdge = offset
         middle = 11/2
         rightEdge = 11-offset
-        
+
         pt1 = [leftEdge, row4]
         pt2 = [rightEdge, 8.5-row1]
         txtBase1 = [middle,row2]
@@ -54,17 +57,17 @@ def AddTitleBlock(size):
         txtBase3 = [rightEdge,row2]
         txtBase4 = [leftEdge,row1]
         txtBase5 = [rightEdge,row1]
-        
+
         lineSt = [leftEdge, row3]
         lineEnd = [rightEdge, row3]
-        
+
         txtSizeL = .125
         txtSizeM = .063
-        
+
         logoPlane = [8.347,.157,0]
         logoWidth = 2.434
         logoHeight = .100
-        
+
     elif size == 18:
         offset = .5
         row1 = offset
@@ -74,7 +77,7 @@ def AddTitleBlock(size):
         leftEdge = offset
         middle = 24/2
         rightEdge = 24-offset
-        
+
         pt1 = [leftEdge, row4]
         pt2 = [rightEdge, 18-row1]
         txtBase1 = [middle,row2]
@@ -82,41 +85,41 @@ def AddTitleBlock(size):
         txtBase3 = [rightEdge,row2]
         txtBase4 = [leftEdge,row1]
         txtBase5 = [rightEdge,row1]
-        
+
         lineSt = [leftEdge, row3]
         lineEnd = [rightEdge, row3]
-        
+
         txtSizeL = .250
         txtSizeM = .125
-        
+
         logoPlane = [19.627,.367,0]
         logoWidth = 3.885
         logoHeight = .160
 
-    
-    
+
+
     layout = sc.doc.Views.GetPageViews()[-1]
     if layout is None:  return
-    
+
     sc.doc.Views.ActiveView = layout
-    
+
     if rs.GetDocumentData(section = "PCPA", entry = "Project_Name") is None:
         rs.SetDocumentData(section = "PCPA", entry = "Project_Name", value = "PROJECT TITLE")
     projectTitle = '%<DocumentText("PCPA\Project_Name")>%'
-    
+
     if rs.GetDocumentData(section = "PCPA", entry = "Client_Name") is None:
         rs.SetDocumentData(section = "PCPA", entry = "Client_Name", value = "Client Name")
     clientName = '%<DocumentText("PCPA\Client_Name")>%'
-    
+
     #Add text
     textList = []
     textList.append(rs.AddText("Title", txtBase1, txtSizeL, justification = 2))
     textList.append(rs.AddText(projectTitle, txtBase2, txtSizeL, justification = 1))
     textList.append(rs.AddText('%<Date("MMMM d, yyyy")>%', txtBase3, txtSizeM, justification = 4))
-    
+
     textList.append(rs.AddText(clientName, txtBase4, txtSizeM, justification = 1))
-    
-    
+
+
     #ADD PCPA LOGO
     PCPAlogo = filelocations['PCPA Logo']
     if os.path.isfile(PCPAlogo):
@@ -124,12 +127,12 @@ def AddTitleBlock(size):
         rs.ObjectLayer(pictureframe, layers.GetLayerNameByNumber(8105))
     else:
         textList.append(rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4))
-    
+
     line = rs.AddLine(lineSt, lineEnd)
-    
+
     #Add detail
     detail = rs.AddDetail(layout.ActiveViewportID, pt1, pt2, "PCPA " + str(layout.PageName), 7)
-    
+
     #Change layers AddLayerByNumber
     try:
         rs.ObjectLayer(line, layers.GetLayerNameByNumber(8202))
@@ -160,7 +163,7 @@ def AddLayout(size):
         width = '24 '
         height = '18 '
     result = rs.Command('-_Layout ' + name + width + height + '0 ', False)
-    
+
     if result:
         layers.AddLayerByNumber(8000)
         AddTitleBlock(size)
@@ -184,20 +187,20 @@ def BatchPrintLayouts():
         if pages is None or len(pages) < 1:
             print "No layouts in file"
             return
-        
+
         defaultPath = rs.DocumentPath()
-        
+
         defaultName = GetDatePrefix() + "_Rhino"
-        
+
         filename = rs.SaveFileName("Save", "PDF (*.pdf)|*.pdf||", folder = defaultPath, filename = defaultName)
         if filename is None: return
-        
+
         names = []
         for page in pages:
             names.append([page.PageName, False])
         selectedLayouts = rs.CheckListBox(names, "Select Layouts to print", "Batch Print")
         if selectedLayouts is None: return
-        
+
         stop = False
         for layout in selectedLayouts:
             if layout[1]==True:
@@ -225,12 +228,12 @@ def BatchPrintLayouts():
 def main():
     func = rs.GetInteger()
     if func is None: return
-    
+
     if func == 0:
         AddLayoutButton()
     elif func > 0:
         AddLayout(func)
-    
+
     #elif func == 90:
     #    BatchPrintLayouts()
 

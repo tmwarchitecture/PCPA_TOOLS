@@ -4,11 +4,14 @@ import scriptcontext as sc
 
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 ###############################################################################
 #This function not used
 def SplitBREPwithCurve(brep, plane):
     interCrvs = rc.Geometry.Intersect.Intersection.BrepPlane(brep, plane, rs.UnitAbsoluteTolerance())[1]
-    
+
     if interCrvs is None:
         testPt = brep.Vertices[0].Location
         dist =  plane.DistanceTo(testPt)
@@ -18,10 +21,10 @@ def SplitBREPwithCurve(brep, plane):
             #sc.doc.Objects.AddBrep(brep)
         else:
             print "Side B"
-    
+
     for numFaces, each in enumerate(brep.Faces): pass
     numFaces += 1
-    
+
     for i in range(0, numFaces):
         brep = brep.Faces[i].Split(interCrvs, rs.UnitAbsoluteTolerance())
         print ""
@@ -62,13 +65,13 @@ def CutObjectWithPlane(obj, plane):
     visibleOjects = []
     hiddenObjs = []
     cutSurfaces = []
-    
+
     #EXTRUSIONS
     if isinstance(obj, rc.Geometry.Extrusion):
         temp = sc.doc.Objects.AddBrep(obj.ToBrep(False))
         obj = rs.coercebrep(temp)
         rs.DeleteObject(temp)
-    
+
     #BREPS
     if isinstance(obj, rc.Geometry.Brep):
         if IsObjIntersectingPlane(obj, plane):
@@ -77,13 +80,13 @@ def CutObjectWithPlane(obj, plane):
             splitObjects = obj.Trim(plane, rs.UnitAbsoluteTolerance())
             for eachSplitObj in splitObjects:
                 trimmedObjs.append(sc.doc.Objects.AddBrep(eachSplitObj))
-            if obj.IsSolid: 
+            if obj.IsSolid:
                 #OBJECT INTERSECTS AND SOLID
                 interCrvs = rc.Geometry.Intersect.Intersection.BrepPlane(obj, plane, rs.UnitAbsoluteTolerance())[1]
                 sectionSrfs = rc.Geometry.Brep.CreatePlanarBreps(interCrvs)
                 for eachSection in sectionSrfs:
                     cutSurfaces.append(sc.doc.Objects.AddBrep(eachSection))
-        else: 
+        else:
             #OBJECT DOES NOT INTERSECT PLANE
             if IsObjAbovePlane(obj, plane):
                 #OBJECT IS ABOVE THE PLANE
@@ -91,7 +94,7 @@ def CutObjectWithPlane(obj, plane):
             else:
                 #OBJECT IS BELOW THE PLANE (HIDDEN)
                 hiddenObjs.append(obj)
-    
+
     #CURVES
     if isinstance(obj, rc.Geometry.Curve):
         if IsObjIntersectingPlane(obj, plane): #curve intersecting plane
@@ -103,13 +106,13 @@ def CutObjectWithPlane(obj, plane):
             for eachCrv in splitCrvs:
                 if IsObjAbovePlane(eachCrv, plane):
                     trimmedObjs.append(sc.doc.Objects.AddCurve(eachCrv))
-        
+
         else:#object above the plane
             if IsObjAbovePlane(obj, plane):
                 visibleOjects.append(sc.doc.Objects.AddCurve(obj))
             else:
                 hiddenObjs.append(obj)
-    
+
     return [trimmedObjs, visibleOjects, hiddenObjs, cutSurfaces]
 
 ###############################################################################
@@ -121,9 +124,9 @@ def CutModel(objs, srf):
         groupMain = rs.AddGroup('MainObjects')
         groupCut = rs.AddGroup('SectionSurfaces')
         groupVisible = rs.AddGroup('VisibleObjects')
-        
+
         rs.HideObject(objs)
-        
+
         for obj in objs:
             #BLOCKS
             if rs.IsBlockInstance(obj):
@@ -146,7 +149,7 @@ def CutModel(objs, srf):
                         for eachObj in splitResults[3]:
                             rs.AddObjectToGroup(eachObj, groupCut)
                     rs.DeleteObject(xformedObj)
-            
+
             #GEOMETRY
             else:
                 rhobj = rs.coercegeometry(obj)
@@ -171,10 +174,10 @@ def CutModel(objs, srf):
 def CutModel_Button():
     objs = rs.GetObjects("Select objects to cut", preselect = True)
     if objs is None: return
-    
+
     srf = rs.GetObject("Select split surface", rs.filter.surface)
     if srf is None: return
-    
+
     rs.EnableRedraw(False)
     result = CutModel(objs, srf)
     if result:

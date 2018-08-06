@@ -8,6 +8,8 @@ import layers
 import utils
 import standards
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
 
 def AddCoordinateTag(obj):
     dots = []
@@ -32,7 +34,7 @@ def AddCoordinateTag(obj):
 def AddCoordinateTag_Button():
     objs = rs.GetObjects("Select objects to add coordinates to", 1073741853 ,preselect = True)
     if objs is None: return
-    
+
     dotGroup = rs.AddGroup('DotGroup')
     rs.EnableRedraw(False)
     for obj in objs:
@@ -73,7 +75,7 @@ def AreaTag(obj, decPlaces):
                 return [0, False]
             if rs.IsCurveClosed(obj) == False:
                 return [0, False]
-        
+
         #get area
         if rs.UnitSystem() == 8:
             if rs.IsCurve(obj):
@@ -85,10 +87,10 @@ def AreaTag(obj, decPlaces):
             print "WARNING: Your units are not in inches"
             area = rs.CurveArea(obj)[0]
             areaText = area + ' ' + rs.UnitSystemName(False, True, True)
-        
+
         #add annotation style
         dimStyle = sc.doc.DimStyles.FindName('PCPA_12')
-        
+
         ###########################################################################
         #CURVES
         if rs.IsCurve(obj):
@@ -119,20 +121,20 @@ def AreaTag(obj, decPlaces):
         #SURFACES
         elif rs.IsSurface(obj):
             plane = HorizPlaneFromSurface(obj)
-        
+
         ###########################################################################
         #OTHER/ERROR
         else:
             pts = rs.BoundingBox(obj)
             centerPoint = (pts[0] + pts[6]) / 2
-        
-        
+
+
         if dimStyle is not None:
             textHeight = dimStyle.TextHeight
             areaTag = rs.AddText(areaText, plane, height = textHeight, justification = 131074)
         else:
             areaTag = rs.AddText(areaText, plane, height = 1, justification = 131074)
-        
+
         #Change layers
         hostLayer = layers.AddLayerByNumber(8103, False)
         rs.ObjectLayer(areaTag, layers.GetLayerNameByNumber(8103))
@@ -143,14 +145,14 @@ def AreaTag(obj, decPlaces):
 def AddAreaTag():
     objs = rs.GetObjects("Select curves, hatches, or surfaces to add area tag", 65548, preselect = True)
     if objs is None: return
-    
+
     decPlaces = rs.GetInteger("Number of decimal places", 0, maximum = 8)
     if decPlaces is None: return
-    
+
     #Load Anno style if it doesnt exist already
     if sc.doc.DimStyles.FindName('PCPA_12') is None:
         standards.LoadStyles()
-    
+
     rs.EnableRedraw(False)
     total = 0
     for obj in objs:
@@ -161,7 +163,7 @@ def AddAreaTag():
         except:
             pass
     print 'Cumulative Area = ' + str(total)
-    
+
     rs.EnableRedraw(True)
 
 ###############################################################################
@@ -171,17 +173,17 @@ def dimensionPline(pline, offsetDist):
             pass
         else:
             print "Curve must be planar"
-            return 
-        
+            return
+
         segments = []
         dimGroup = rs.AddGroup("Pline Dims")
-        
+
         dir = rs.ClosedCurveOrientation(pline)
         if dir == -1:
             rs.ReverseCurve(pline)
-        
+
         normal = rs.CurvePlane(pline).ZAxis
-        
+
         segments = rs.ExplodeCurves(pline)
         if len(segments)<1:
             segments = [rs.CopyObject(pline)]
@@ -205,29 +207,29 @@ def dimensionPline(pline, offsetDist):
 def dimensionPline_Button():
     objects = rs.GetObjects("Select Curves to Dimension", filter = 4, preselect = True)
     if objects is None:return
-    
+
     if 'dimPline-dist' in sc.sticky:
         distDefault = sc.sticky['dimPline-dist']
     else:
         distDefault = 60
-    
+
     offsetDist = rs.GetInteger('Dimension offset distance (in.)', distDefault)
     if offsetDist is None: return
-    
+
     sc.sticky['dimPline-dist'] = offsetDist
-    
+
     #Load Anno style if it doesnt exist already
     if sc.doc.DimStyles.FindName('PCPA_12') is None:
         standards.LoadStyles()
-    
+
     try:
         layers.AddLayerByNumber(8101)
         layerName = layers.GetLayerNameByNumber(8101)
         rs.CurrentLayer(layerName)
     except:
         pass
-    
-    
+
+
     rs.EnableRedraw(False)
     for obj in objects:
         if rs.IsCurve(obj):

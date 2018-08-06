@@ -7,6 +7,9 @@ import stat
 import config
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def PreloadCheck():
     if rs.ExeVersion() < 6:
         print "***Reload standards only works for Rhino 6***"
@@ -33,7 +36,7 @@ def LoadStyles(filepath = None):
         filepath = '"' + fileLocations['Template File'] + '"'
     else:
         filepath = '"' + filepath + '"'
-    
+
     try:
         rs.Command('-_ImportAnnotationStyles ' + filepath + ' Enter Enter Enter', echo=False)
         print "\tAnnotation Styles Updated"
@@ -46,21 +49,21 @@ def LoadAcadSchemes(filepath):
         return None
     else:
         allFilesRaw = os.listdir(filepath)
-    
+
     allFiles = []
     for file in allFilesRaw:
         if file.endswith(".ini"):
             allFiles.append(file)
-    
+
     if len(allFiles)==0:
         print "\tACAD Schemes not updated. No ACAD Schemes in standards folder"
         return
-    
+
     for file in allFiles:
         fullFilePath = '"' + filepath + '\\' + file + '"'
         shortName = file.split('.')[0]
         rs.Command('-_AcadSchemes i ' + fullFilePath + ' Enter c ' + shortName + ' Enter ', echo=False)
-    
+
     if len(allFiles)==1:
         print "\t{} ACAD Scheme updated".format(len(allFiles))
     else:
@@ -76,11 +79,11 @@ def LoadDisplayModes(filepath):
     for file in allFilesRaw:
         if file.endswith(".ini"):
             allFiles.append(file)
-    
+
     for file in allFiles:
         fullFilePath = '"' + filepath + '\\' + file + '"'
         rs.Command('-_Options v d i ' + fullFilePath + ' Enter Enter Enter', echo=False)
-    
+
     if len(allFiles)==0:
         print "\tNo display modes updated"
     elif len(allFiles)==1:
@@ -111,16 +114,16 @@ def LoadPSSwatch(PSswatch, PSdir):
     else:
         print "Could not find the PCPA Swatch"
         return None
-    
+
     if os.path.isdir(PSdir):
         print "Photoshop Installation found"
     else:
         print "Could not find your photoshop installation"
         return None
-    
+
     #os.chmod(PSdir, stat.S_IWRITE )
     #shutil.copy2(PSswatch, PSdir)
-    
+
     #print PSdir
     print "Loaded PS Swatch"
 
@@ -130,7 +133,7 @@ def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
     targetMain = os.path.join(targetRoot, PCPAroot)
-    
+
     #Ensure targetMain exists
     if os.path.isdir(targetMain):
         os.chmod(targetMain, stat.S_IWRITE)
@@ -193,7 +196,7 @@ def LoadGHDependencies(sourceFolder):
     if os.path.isdir(sourceFolder) is False:
         print "FAIL-----GH Dependecies folder not found"
         result = False
-    
+
     try:
         appData = os.getenv('APPDATA')
         targetFolder = appData + r"\Grasshopper\Libraries"
@@ -208,13 +211,13 @@ def LoadGHDependencies(sourceFolder):
     except:
         print "FAIL-----Could not copy dependencies. You must have grasshopper open. Close and reopen Rhino, then run this again."
         result = False
-    
+
     utils.SaveFunctionData('Standards-PCPA GH Dependencies', [numberOfObjects, result])
 
 
 if __name__ == "__main__":
     PreloadCheck()
-    
+
     standardsRequested = rs.GetInteger("Standards to import", number = 0, minimum = 0, maximum = 10000)
     fileLocations = config.GetDict()
     if standardsRequested == 0:

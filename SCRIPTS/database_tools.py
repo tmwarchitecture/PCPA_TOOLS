@@ -4,6 +4,9 @@ import rhinoscriptsyntax as rs
 import ast
 from libs import yaml
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 root = os.path.dirname(os.path.realpath(__file__))
 yamlPath = os.path.join(root, "data\Database_Template.yaml")
 
@@ -38,10 +41,10 @@ def SaveDatabase(data, databaseFile):
 
 def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
     existingData = GetProjectDatabase(oldDatabaseFile)
-    
-    
+
+
     #print existingData
-    
+
     newDict = {}
     for row in data:
         newDict[row[0]] = {'name': row[1], 'functions': row[2], 'ftf': float(row[3]), 'z': float(row[4]),'area': str(row[5]),'comments': str(row[6]) }
@@ -52,9 +55,9 @@ def SaveProjectLevelData(data, oldDatabaseFile, newDatabaseFile, bldgNum):
         existingData = GetDatabaseTemplate()
         existingData['building'][int(bldgNum)]['level'] = newDict
         print "Save failed"
-    
+
     #print newDict
-    
+
     SaveDatabase(existingData, newDatabaseFile)
     print "{} saved".format(newDatabaseFile)
 
@@ -80,9 +83,9 @@ def GetProjectLevelData(databaseFile, bldgNum):
         levelData = data['building'][int(bldgNum)]['level']
     except:
         return None
-    
+
     print 'levelData: ' + str(levelData)
-    
+
     for key in levelData.keys():
         levels.append([key, levelData[key]['name'], levelData[key]['functions'], levelData[key]['ftf'], levelData[key]['z'], levelData[key]['area'], levelData[key]['comments']])
     return levels
@@ -114,12 +117,12 @@ if __name__ == "__main__":
     print GetLevelsFromAnotherRhinoDoc(r'C:\Users\twilliams\Desktop\TEMP\temp3.3dm')
     pass
     #print ""
-    
+
     #data = GetDatabaseTemplate()
     #data['project']['name'] = "TEst"
     #path = r'C:\Users\twilliams\Desktop\TEMP\Database'
     #print SaveDatabase(data, path, 'Project_Info.yaml')
-    
+
     #path = r'C:\Users\twilliams\Desktop\TEMP\Database\MyProject.yaml'
     #GetProjectLevels(path, 'Project_Info.yaml')
     #LoadLevelsToRhinoDoc(path, 0)

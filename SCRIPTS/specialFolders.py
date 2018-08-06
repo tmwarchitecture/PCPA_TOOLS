@@ -3,6 +3,8 @@ import utils
 import subprocess
 import config
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
 
 def OpenFolder(path):
     try:
@@ -14,7 +16,7 @@ def OpenFolder(path):
 if __name__ == "__main__":
     func = rs.GetInteger("Func number")
     fileLocations = config.GetDict()
-    
+
     if func == 0:
         OpenFolder(fileLocations['PCPA GH Components'])
     if func == 1:

@@ -10,18 +10,27 @@ import getpass
 import config
 import random
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 #############################################################################
 #DATE/LOCATION
 def GetDatePrefix():
+    '''Gets todays date and returns it in the format of YYMMDD
+    returns:
+        date(String): YYMMDD, e.g. 180706
+    '''
     year = int(datetime.datetime.today().strftime('%Y'))-2000
     md = datetime.datetime.today().strftime('%m%d')
     return str(year) + str(md)
 
 def GetNetworkLocation():
+    '''Checks the network to see if X: or H: exist. If X:, then returns 0 (for New York). If H: then returns 1 (for New Haven)
+    '''
     NYPath = r'X:'
     NHPath = r'H:'
-    
-    
+
+
     if os.path.isdir(NYPath):
         location = "New York"
         return 0
@@ -30,7 +39,7 @@ def GetNetworkLocation():
         return 1
     else:
         print "Could not find NY or NH network"
-        return 
+        return
     return "You are connected to the {} network.".format(location)
 
 #############################################################################
@@ -39,20 +48,20 @@ def SaveToAnalytics(funcName):
     try:
         fileLocations = config.GetDict()
         filepath = fileLocations['Analytics']
-        
-        
+
+
         #filepath = 'data\Analytics.csv'
-        
+
         with open(filepath, 'rb') as File:
             reader = csv.reader(File)
             data = list(reader)
-        
+
         #Update date
         data[0][1] = 'Last Updated: ' + GetDatePrefix()
-        
+
         #Username
         userName = encrypt.encrypt(getpass.getuser())
-        
+
         #Update Column
         colPos = None
         for i,item in enumerate(data[1]):
@@ -61,24 +70,24 @@ def SaveToAnalytics(funcName):
         if colPos is None:
             colPos = len(data[1])
             data[1].append(funcName)
-        
+
         rowPos = None
         for i,item in enumerate(data):
-            if item[0] == userName: 
+            if item[0] == userName:
                 rowPos = i
         if rowPos is None:
             rowPos = len(data)
             data.append([userName])
-        
+
         newCells = (colPos+1) - len(data[rowPos])
         for i in range(newCells):
             data[rowPos].append('')
-        
+
         try:
             data[rowPos][colPos] = int(data[rowPos][colPos]) + 1
         except:
             data[rowPos][colPos] = 1
-        
+
         myFile = open(filepath, 'wb')
         with myFile:
             csvwriter = csv.writer(myFile)
@@ -95,31 +104,31 @@ def SaveFunctionData(funcName, funcData):
     try:
         now=datetime.datetime.now()
         monthString=('%02d%02d'%(now.year, now.month))[2:]
-        
+
         fileLocations = config.GetDict()
         filepath = fileLocations['Data Folder']
-        
+
         fileName = monthString + '_' + funcName + '.csv'
-        
+
         fullName = os.path.join(filepath, fileName)
-        
+
         userName = encrypt.encrypt(getpass.getuser())
         now=datetime.datetime.now()
         timeString=('%02d-%02d-%02d_%02d:%02d:%02d.%d'%(now.year, now.month, now.day, now.hour, now.minute,now.second,now.microsecond))[:-4]
-        
+
         if not os.path.isfile(fullName):
             data = [[funcName],['Date', 'User']]
             myFile = open(fullName, 'wb')
             with myFile:
                 csvwriter = csv.writer(myFile)
-                csvwriter.writerows(data)    
-        
+                csvwriter.writerows(data)
+
         with open(fullName, 'rb') as File:
             reader = csv.reader(File)
             data = list(reader)
         row = [timeString] + [userName]  + funcData
         data.append(row)
-        
+
         myFile = open(fullName, 'wb')
         with myFile:
             csvwriter = csv.writer(myFile)
@@ -141,7 +150,7 @@ def RoundNumber(number, decPlaces):
 def RemapList(values, newMin, newMax):
     origMin = min(values)
     origMax = max(values)
-    OldRange = (origMax - origMin)  
+    OldRange = (origMax - origMin)
     NewRange = (newMax - newMin)
     newValues = []
     for value in values:
@@ -168,29 +177,29 @@ def FindMostDistantPointInCurve(obj, resolution = 20):
     if rs.IsCurveClosed(obj) == False:
         print "Curve not closed"
         return None
-    
-    
+
+
     rhobj = rs.coercecurve(obj)
     bbox = rhobj.GetBoundingBox(rs.WorldXYPlane())
-    
+
     minX = bbox.Min[0]
     minY = bbox.Min[1]
     minZ = bbox.Min[2]
-    
+
     maxX = bbox.Max[0]
     maxY = bbox.Max[1]
     maxZ = bbox.Max[2]
-    
+
     xVals = []
     yVals = []
-    
+
     for i in range(resolution):
         xVals.append(i)
         yVals.append(i)
-    
+
     newXvals = RemapList(xVals, minX, maxX)
     newYvals = RemapList(yVals, minY, maxY)
-    
+
     furthestPt = None
     furthestDist = 0
     maxDist = 99999
@@ -236,20 +245,20 @@ def FindMostDistantPointOnSrf(obj, resolution = 20):
         brep = rs.coercebrep(obj)
     edges = brep.Edges
     duplEdgs = [edg.DuplicateCurve() for edg in edges]
-    duplEdgs = rc.Geometry.Curve.JoinCurves(duplEdgs)                
-    
+    duplEdgs = rc.Geometry.Curve.JoinCurves(duplEdgs)
+
     uDir = rhobj.Domain(0)
     vDir = rhobj.Domain(1)
-    
+
     uVals = []
     vVals = []
     for i in range(resolution):
         uVals.append(i)
         vVals.append(i)
-    
+
     newUvals = RemapList(uVals, uDir[0], uDir[1])
     newVvals = RemapList(vVals, vDir[0], vDir[1])
-    
+
     furthestPt = None
     furthestDist = 0
     maxDist = 999999
@@ -265,7 +274,7 @@ def FindMostDistantPointOnSrf(obj, resolution = 20):
                     param = eachEdge.ClosestPoint(srf_pt, maxDist)
                     crvPt = eachEdge.PointAt(param[1])
                     thisPtsDistances.append(rs.Distance(crvPt, srf_pt))
-                
+
                 dist = min(thisPtsDistances)
                 if dist > furthestDist:
                     furthestPt = srf_pt
@@ -289,30 +298,30 @@ def FindMostDistantPointRand(obj, resolution = 20):
     if rs.IsCurveClosed(obj) == False:
         print "Curve not closed"
         return None
-    
+
     rhobj = rs.coercecurve(obj)
     bbox = rhobj.GetBoundingBox(rs.WorldXYPlane())
-    
+
     minX = bbox.Min[0]
     minY = bbox.Min[1]
     minZ = bbox.Min[2]
-    
+
     maxX = bbox.Max[0]
     maxY = bbox.Max[1]
     maxZ = bbox.Max[2]
-    
+
     #########################
     xVals = []
     yVals = []
-    
+
     random.seed(1)
     for i in range(resolution):
         xVals.append(random.uniform(0,1))
         yVals.append(random.uniform(0,1))
-    
+
     newXvals = RemapList(xVals, minX, maxX)
     newYvals = RemapList(yVals, minY, maxY)
-    
+
     furthestPt = None
     furthestDist = 0
     maxDist = 99999

@@ -8,13 +8,16 @@ from libs import csv
 import config
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 #Utils
 def setupVariables():
     fileLocations = config.GetDict()
     global csvPath
     csvPath = fileLocations['PCPA Layers_V1']
-    
-    
+
+
     global layNumColumn
     layNumColumn = 0
     global nameColumn
@@ -43,16 +46,16 @@ def MaterialToLayer(layer, matName):
             rc = rdk.ContentLoadFromFile(path)
             return rc
         else: return None
-    
+
     def ApplyMaterialToLayer(material, layer):
         matName = '"' + str(material) + '"'
         layName = '"' + layer + '"'
         rs.Command("-_RenderAssignMaterialToLayer " + str(matName) + " " + str(layName) + " ", False)
-    
+
     def getMaterialNames():
         rdk = rs.GetPlugInObject("Renderer Development Kit")
         rdkALL = rdk.FactoryList()
-        arrMatIDList = rdk.ContentList("material") 
+        arrMatIDList = rdk.ContentList("material")
         arrMatNames = []
         try:
             len(arrMatIDList)
@@ -61,7 +64,7 @@ def MaterialToLayer(layer, matName):
         for i in range(len(arrMatIDList)):
             arrMatNames.append(rdk.ContentInstanceName(arrMatIDList[i]))
         return arrMatNames
-    
+
     def IsMaterial(materialName):
         matNames = getMaterialNames()
         if matNames is None: return False
@@ -69,7 +72,7 @@ def MaterialToLayer(layer, matName):
             if name == materialName:
                 return True
         return False
-    
+
     def ForceMaterialToLayer(materialName, mylayer):
         """
         Applies material by name to layer. If no layer found, it is imported.
@@ -88,7 +91,7 @@ def MaterialToLayer(layer, matName):
                 print "Material {} not found".format(materialName)
             else:
                 ApplyMaterialToLayer(materialName, mylayer)
-    
+
     if len(matName) < 1:
         return
     ForceMaterialToLayer(matName, layer)
@@ -111,7 +114,7 @@ def GetLayerData(fileName):
     with open(fileName, 'rb') as f:
         reader = csv.reader(f)
         layerData = list(reader)
-    
+
     #Delete non-number layers
     newList = []
     for i, row in enumerate(layerData):
@@ -120,7 +123,7 @@ def GetLayerData(fileName):
             newList.append(row)
         except:
             pass
-    
+
     data = {}
     for row in newList:
         try:
@@ -132,11 +135,11 @@ def GetLayerData(fileName):
         except:
             parentcol = row[parentColumn]
         data[int(row[layNumColumn])] = [int(row[layNumColumn]), row[nameColumn],
-        parentcol, translateColor(row[colorColumn]), row[materialColumn], 
+        parentcol, translateColor(row[colorColumn]), row[materialColumn],
         row[linetypeColumn], translateColor(row[printcolorColumn]), printwidth]
-    
+
     data = AddLayerFullName(data)
-    
+
     return data
 
 def AddLayerFullName(data):
@@ -148,7 +151,7 @@ def AddLayerFullName(data):
             if counter > 5:
                 print "Loop detected"
                 return
-            
+
             shortName = data[number][nameColumn]
             try:
                 #Has a parent layer
@@ -160,7 +163,7 @@ def AddLayerFullName(data):
                 #No parent layer
                 fullName.append(shortName)
             return fullName
-        
+
         fullName = getShortName(eachRow, fullName, counter)
         fullName.reverse()
         fullNameString = "".join(fullName)
@@ -181,7 +184,7 @@ def translateColor(dashColor):
 def AddLayers(layerData, layerNumbers):
     counter = 0
     rootLayers = []
-    
+
     def AddThisLayer(thisLayerData, counter):
         ##########################
         isRoot = False
@@ -199,7 +202,7 @@ def AddLayers(layerData, layerNumbers):
         ##########################
         if rs.IsLayer(thisLayerData[fullLayerNameColumn]):
             rootLayers.append(thisLayerData[fullLayerNameColumn])
-            
+
             return thisLayerData[fullLayerNameColumn]
         newLayer = rs.AddLayer(thisLayerData[fullLayerNameColumn], thisLayerData[colorColumn])
         rs.LayerLinetype(newLayer, thisLayerData[linetypeColumn])
@@ -210,16 +213,16 @@ def AddLayers(layerData, layerNumbers):
         except:
             print "Material failed"
             #pass
-        
+
         if isRoot:
             rootLayers.append(newLayer)
         return newLayer
-    
+
     for layerNumber in layerNumbers:
         try:
             thisLayer = layerData[layerNumber]
             AddThisLayer(thisLayer, counter)
-            
+
         except:
             pass
     return list(set(rootLayers))
@@ -242,15 +245,15 @@ def AddSpecificLayer(layerNumRequested, collapse = True):
     setupVariables()
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
-    
+
     global csvPath
     layerData = GetLayerData(csvPath)
-    
+
     layerNums = GetChildNumbers(layerNumRequested, layerData)
     layerNums.sort()
-    
+
     roots = AddLayers(layerData, layerNums)
-    
+
     if collapse:
         CollapseRootLayers(roots)
     rs.EnableRedraw(True)
@@ -263,15 +266,15 @@ def AddLayerByNumber(layerNumRequested, collapse = True):
     setupVariables()
     rs.EnableRedraw(False)
     if layerNumRequested is None: return
-    
+
     global csvPath
     layerData = GetLayerData(csvPath)
-    
+
     layerNums = GetChildNumbers(layerNumRequested, layerData)
     layerNums.sort()
-    
+
     roots = AddLayers(layerData, layerNums)
-    
+
     if collapse:
         CollapseRootLayers(roots)
     rs.EnableRedraw(True)
@@ -298,11 +301,11 @@ def GetLayerFullName(layerData, layerNumbers):
             parentLay = None
         ##########################
         return thisLayersName
-    
+
     counter = 0
     rootLayers = []
     allNames = []
-    
+
     for layerNumber in layerNumbers:
         try:
             thisLayer = layerData[layerNumber]
@@ -314,31 +317,31 @@ def GetLayerFullName(layerData, layerNumbers):
 
 def GetLayerNameByNumber(layerNumRequested):
     if layerNumRequested is None: return
-    
+
     setupVariables()
-    
+
     layerData = GetLayerData(csvPath)
-    
+
     try:
         layers = GetLayerFullName(layerData, [layerNumRequested])[0]
     except:
         layers = GetLayerFullName(layerData, [layerNumRequested])
-    
+
     return layers
 
 def GetAllLayerNames():
     allLayerNames = []
     layerNums = []
-    
+
     setupVariables()
-    
+
     global csvPath
     layerData = GetLayerData(csvPath)
     for i in range(0,10000,1000):
         layerNumsSet = GetChildNumbers(i, layerData)
         layerNumsSet.sort()
         layerNums = layerNums + layerNumsSet
-    
+
     for each in layerNums:
         allLayerNames.append(GetLayerNameByNumber(each))
     return allLayerNames

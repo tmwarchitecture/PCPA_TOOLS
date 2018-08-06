@@ -3,10 +3,8 @@ import Rhino
 import scriptcontext as sc
 import database_tools as dt
 
-"""
-To-do:
-
-"""
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
 
 def GetLevels():
     try:
@@ -39,9 +37,9 @@ def IntersectGeos(objs, plane):
             rs.SetUserText(finalCurve, 'PCPA_floorplan', 'intersect')
             intersectionCrvs.append(finalCurve)
             finalGeo.append(intersectionCrvs)
-        
+
         rs.MatchObjectAttributes(intersectionCrvs, obj)
-        
+
     return finalGeo
 
 def SplitGeometry(objs, plane, dir = 1):
@@ -50,9 +48,9 @@ def SplitGeometry(objs, plane, dir = 1):
     negShape = Rhino.Geometry.Cylinder(circle, diffRadius*dir)
     negShapeBrep = negShape.ToBrep(True, True)
     negShapeGeo = sc.doc.Objects.AddBrep(negShapeBrep)
-    
+
     visibleGeometry = []
-    
+
     for obj in objs:
         if rs.IsBrep(obj):
             if rs.IsPolysurfaceClosed(obj):
@@ -82,7 +80,7 @@ def SplitGeometry(objs, plane, dir = 1):
                                 visibleGeometry.append(each)
                             else:
                                 rs.DeleteObject(each)
-    
+
     rs.DeleteObject(negShapeGeo)
     return visibleGeometry
 
@@ -119,14 +117,14 @@ def ProjectPlan(objs, plane):
         rs.SelectObjects(objs)
     except:
         rs.SelectObject(objs)
-    
+
     rs.AddNamedCPlane('c_prev')
     rs.AddNamedCPlane('c_temp')
     rs.ViewCPlane(plane = plane)
     rs.Command('-_Make2d l c p f _Enter', False)
-    
+
     projLines = rs.SelectedObjects()
-    
+
     rs.DeleteNamedCPlane('c_temp')
     rs.RestoreNamedCPlane('c_prev')
     rs.DeleteNamedCPlane('c_prev')
@@ -137,34 +135,34 @@ def ProjectPlan(objs, plane):
 def MakePlan(elevation, viewDepthZ, geos):
     objs = rs.CopyObjects(geos)
     rs.HideObjects(geos)
-    
+
     ############################################################################
     print "Cutting Plan"
     allCrvs = []
-    
+
     #Make plane
     plane = Rhino.Geometry.Plane(rs.coerce3dpoint((0,0,elevation)), rs.coerce3dvector((0,0,1)))
     planeNeg = Rhino.Geometry.Plane(rs.coerce3dpoint((0,0,viewDepthZ)), rs.coerce3dvector((0,0,1)))
-    
+
     ############################################################################
     #Partition the geometry
-    
+
     partitionedObjs = PartitionGeometry(objs, elevation, viewDepthZ)
-    
+
     ############################################################################
     #Intersection Curves
-    
+
     #interCrvs = IntersectGeos(partitionedObjs[1], plane)
-    
+
     ############################################################################
     #Split Geometry
     #Get the bottom half of intersecting objs
     belowObjs = SplitGeometry(partitionedObjs[1], plane)
     print "A"
-    
+
     #Get the top half of that previous geometry
     visibleObjs = SplitGeometry(partitionedObjs[0] + belowObjs, planeNeg, -1)
-    
+
     rs.SelectObjects(visibleObjs)
     objs2del = rs.InvertSelectedObjects()
     rs.DeleteObjects(objs2del)
@@ -172,9 +170,9 @@ def MakePlan(elevation, viewDepthZ, geos):
     ############################################################################
     #Make 2D
     allCrvs += ProjectPlan(visibleObjs, plane)
-    
+
     rs.DeleteObjects(visibleObjs)
-    
+
     print "Plan Cut"
     rs.ShowObjects(geos)
     rs.HideObjects(allCrvs)
@@ -182,17 +180,17 @@ def MakePlan(elevation, viewDepthZ, geos):
 
 def main():
     rs.EnableRedraw(False)
-    
+
     global diffRadius
     diffRadius = 9999
     viewOffset = 12
-    
+
     #lvls = GetLevels()
     lvls = [0, 195]
-    
+
     #geos = rs.ObjectsByLayer('test')
     geos = rs.VisibleObjects()
-    
+
     make2Dlines = []
     for i, lvl in enumerate(lvls):
         if i == 0:

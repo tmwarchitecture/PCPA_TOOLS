@@ -4,6 +4,9 @@ from utils import GetDatePrefix
 import layers
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def SuperExplodeBlock():
     try:
         blocks = rs.GetObjects("Select blocks to explode", rs.filter.instance, preselect = True)
@@ -18,7 +21,7 @@ def SuperExplodeBlock():
 def RenameBlockCmd():
     try:
         block = rs.GetObject("Select block to rename", filter = 4096, preselect = True)
-        
+
         #Default Name
         try:
             number = int(rs.BlockInstanceName(block).split('_')[-1])
@@ -30,7 +33,7 @@ def RenameBlockCmd():
         except:
             numString = '01A'
         defaultName = GetDatePrefix() + "_OPTION_" + numString
-    
+
         looping = True
         while looping:
             newName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Rename Block')
@@ -42,7 +45,7 @@ def RenameBlockCmd():
                 pass
             else:
                 looping = False
-        
+
         return rs.RenameBlock(rs.BlockInstanceName(block), newName)
     except:
         return None
@@ -50,13 +53,13 @@ def RenameBlockCmd():
 def ReplicateBlock(blockObj):
     #Copy block
     copiedBlock = rs.CopyObject(blockObj)
-    
+
     #Get new block name
     defaultName = utils.UpdateString(rs.BlockInstanceName(blockObj))
     looping = True
     while looping:
         newBlockName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Iterate Design Option')
-        if newBlockName is None: 
+        if newBlockName is None:
             rs.DeleteObject(copiedBlock)
             return
         if rs.IsBlock(newBlockName):
@@ -65,8 +68,8 @@ def ReplicateBlock(blockObj):
             print "Must specify a name"
         else:
             looping = False
-    
-    
+
+
     if newBlockName is None:
         rs.DeleteObject(copiedBlock)
         return
@@ -101,9 +104,9 @@ def MakeBlockUniqueButton():
     try:
         block = rs.GetObject("Select block to make unique", rs.filter.instance, preselect = True)
         if block is None: return
-        
+
         defaultName = utils.UpdateString(rs.BlockInstanceName(block))
-        
+
         looping = True
         while looping:
             newName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'MakeUnique')
@@ -114,9 +117,9 @@ def MakeBlockUniqueButton():
                 print "Must specify a name"
             else:
                 looping = False
-        
+
         if newName is None: return
-        
+
         rs.EnableRedraw(False)
         newBlock = MakeBlockUnique(block, newName)
         rs.EnableRedraw(True)
@@ -128,7 +131,7 @@ def MakeBlockUniqueButton():
 def Iterate():
     block = rs.GetObject("Select Design Option Block to iterate", rs.filter.instance, True)
     if block is None: return
-    
+
     try:
         newBlock = ReplicateBlock(block)
         newBlockName = rs.BlockInstanceName(newBlock)
@@ -137,13 +140,13 @@ def Iterate():
             rootLayer = optionLayers[0]
         except:
             rootLayer = optionLayers
-        
-        
+
+
         color = rs.LayerColor(rootLayer)
         layerName = rs.BlockInstanceName(newBlock)
-        
+
         newBlockLayer = rs.AddLayer(layerName,color = color , parent = rootLayer)
-        
+
         rs.ObjectLayer(newBlock, newBlockLayer)
         rs.CurrentLayer(newBlockLayer)
         prevBlockLayer = rs.ObjectLayer(block)
@@ -164,33 +167,33 @@ def ResetBlockScale():
     try:
         blocks = rs.GetObjects("Select blocks to reset", rs.filter.instance, preselect = True)
         if blocks is None: return
-    
+
         points = [
          rg.Point3d(0,0,0),
          rg.Point3d(1,0,0),
          rg.Point3d(0,1,0),
          rg.Point3d(0,0,1)
         ]
-    
+
         for block in blocks:
             xform = rs.BlockInstanceXform(block)
             namne = rs.BlockInstanceName(block)
-    
+
             pts = rg.Polyline(points)
-    
+
             pts.Transform(xform)
-    
+
             finalOrigin = pts[1]
             finalXaxis = rs.VectorSubtract( pts[1], pts[0] )
             finalYaxis = rs.VectorSubtract( pts[2], pts[0] )
             finalPlane = rg.Plane(finalOrigin, finalXaxis, finalYaxis)
-    
-    
+
+
             xFac = 1 / rs.Distance(pts[1],pts[0])
             yFac = 1 / rs.Distance(pts[2],pts[0])
             zFac = 1 / rs.Distance(pts[3],pts[0])
-    
-    
+
+
             newXForm = rg.Transform.Scale(finalPlane, xFac, yFac, zFac)
             rs.TransformObject(block,newXForm)
         return True
@@ -201,10 +204,10 @@ def ExportAndLinkBlock():
     try:
         name = rs.ListBox(rs.BlockNames(True), 'Select Block to Export and Link', 'Export and Link')
         if name is None: return
-        
+
         path = rs.SaveFileName('Export and Link', "Rhino 6 3D Models|.3dm||", filename = name)
         if path is None: return
-        
+
         try:
             rs.Command("_-BlockManager e " + '"' + name + '" ' + path + ' Enter', False)
             rs.Command("_-BlockManager _Properties " + '"' + name + '"' + " _UpdateType i " + path + " _UpdateType _Linked _Enter _Enter", False)

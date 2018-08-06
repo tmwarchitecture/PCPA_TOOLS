@@ -5,6 +5,9 @@ import math
 
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def GetAngleBetween2Segments(segment1, segment2, plane, internal = False):
     """
     Compares angle of 2 segments, on a plane.
@@ -34,7 +37,7 @@ def GetCornerAngles(obj):
         internalCornerAngles.append(GetAngleBetween2Segments(segments[i-1], segments[i], plane))
     if rhobj.IsClosed:
         internalCornerAngles.append(GetAngleBetween2Segments(segments[-1], segments[0], plane))
-    
+
     return internalCornerAngles
 
 def GetSegmentLengths(obj):
@@ -65,7 +68,7 @@ def RotatePoint(distance, centerPt, refPt, angle, axis):
     prevSegment = rs.VectorCreate(refPt, centerPt)
     prevSegment.Rotate(math.radians(angle), axis)
     prevSegment.Unitize()
-    
+
     finalPt = rc.Geometry.Point3d.Add(centerPt, prevSegment * distance)
     return finalPt
 
@@ -78,21 +81,21 @@ def ChangeVertexAngles(obj, fixedAngles, fixedLengths):
     ctrlPts = []
     for segment in segments:
         ctrlPts.append(segment.PointAtStart)
-    
+
     newPts = []
     axis = rc.Geometry.Vector3d(0,0,1)
-    
-    
+
+
     newPts.append(ctrlPts[0])
     firstSegVec = rc.Geometry.Vector3d(ctrlPts[1] - ctrlPts[0])
     firstSegVec.Unitize()
     secondPt = ctrlPts[0].Add(ctrlPts[0], firstSegVec * fixedLengths[0])
     #secondPt = rc.Geometry.Point3d.Add(ctrlPts[0], firstSegVec * fixedLengths[0])
     newPts.append(secondPt)
-    
+
     for i in range(1, len(ctrlPts)-1):
         newPts.append(RotatePoint(fixedLengths[i], newPts[-1], newPts[-2], fixedAngles[i-1], axis))
-    
+
     if rhobj.IsClosed:
         newPts.append(RotatePoint(fixedLengths[-1], newPts[-1], newPts[-2], fixedAngles[-2], axis))
         lineLast = rc.Geometry.Line(newPts[-2], newPts[-1])
@@ -103,7 +106,7 @@ def ChangeVertexAngles(obj, fixedAngles, fixedLengths):
         newPts[-1] = pt
     else:
         newPts.append(RotatePoint(fixedLengths[-1], newPts[-1], newPts[-2], fixedAngles[-1], axis))
-    
+
     return rc.Geometry.Polyline(newPts)
 
 def ChangeLineLength(obj, fixedLengths):
@@ -129,18 +132,18 @@ def Rectify_AngleFirst(obj, angleMultiple, lengthMultiple):
         fixedAngles = ForceToMultipleOf(angles, angleMultiple)
     else:
         fixedAngles = angles
-    
+
     if rs.IsLine(obj):
         lengths = [rs.CurveLength(obj)]
         fixedAngles = 0
     else:
         lengths = GetSegmentLengths(obj)
-    
+
     if lengthMultiple != 0:
         fixedLengths = ForceToMultipleOf(lengths, lengthMultiple)
     else:
         fixedLengths = lengths
-    
+
     if rs.IsLine(obj):
         line = ChangeLineLength(obj, fixedLengths)
         id = sc.doc.Objects.AddLine(line)
@@ -153,26 +156,26 @@ def Rectify_AngleFirst(obj, angleMultiple, lengthMultiple):
 def Rectify_AngleFirst_Button():
     objs = rs.GetObjects("Select polylines to rectify", rs.filter.curve, preselect = True)
     if objs is None: return
-    
+
     if 'geometry-angleMultiple' in sc.sticky:
         angleDefault = sc.sticky['geometry-angleMultiple']
     else:
         angleDefault = 45
-    
+
     if 'geometry-lengthMultiple' in sc.sticky:
         lengthDefault = sc.sticky['geometry-lengthMultiple']
     else:
         lengthDefault = 1
-    
+
     angleMultiple = rs.GetReal("Round angle to multiples of", angleDefault)
     if angleMultiple is None: return
     sc.sticky['geometry-angleMultiple'] = angleMultiple
-    
-    
+
+
     lengthMultiple = rs.GetReal("Round length to multiples of", lengthDefault)
     if lengthMultiple is None: return
     sc.sticky['geometry-lengthMultiple'] = lengthMultiple
-    
+
     for obj in objs:
         try:
             rs.SimplifyCurve(obj)

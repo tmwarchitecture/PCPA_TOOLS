@@ -5,6 +5,8 @@ import os
 
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
 
 def congregate(objs, threshold, loops):
     scaleFactOrig = .1
@@ -39,7 +41,7 @@ def RandomPtOnSrf(srf):
         return
     dom_u = rs.SurfaceDomain(srf, 0)
     dom_v = rs.SurfaceDomain(srf, 1)
-    
+
     counter = 0
     while True:
         pt_u = random.uniform(dom_u[0], dom_u[1])
@@ -77,7 +79,7 @@ def TryLoadBlock(type, name):
 def RandomBlock(type):
     if type == 'Custom Block':
         block = rs.BlockNames(True)
-        if len(block) < 1: 
+        if len(block) < 1:
             return None
         obj = rs.GetObject('Select block to populate', rs.filter.instance, True)
         if obj is None: return
@@ -85,7 +87,7 @@ def RandomBlock(type):
         return name
     else:
         blocks = []
-            
+
         files = os.listdir(fileLocations[type])
         for file in files:
             if os.path.splitext(file)[1] == '.3dm':
@@ -100,40 +102,40 @@ def main():
         #srf = rs.GetSurfaceObject('Select surface to populate', True)
         if srf is None: return
         #srf = srf[0]
-        
+
         numObjects = rs.GetInteger('Number of objects to populate', 30, 1, 500)
         if numObjects is None: return
-        
+
         types = ['3D People', '2D People', '2D Trees', 'Custom Block']
         type = rs.ListBox(types, "Select block type to populate", "Population Type", types[0])
         if type is None: return
-        
+
         if type == '3D People':
             type = 'People 3D Folder'
         elif type == '2D People':
             type = 'People 2D Folder'
         elif type == '2D Trees':
             type = 'Vegetation 2D Folder'
-        
+
         rs.EnableRedraw(False)
-        
+
         pts = RandomPtsOnSrf(srf, numObjects)
-        
+
         realPts = rs.AddPoints(pts)
         congregate(realPts, 36, 5)
-        
+
         blockName = RandomBlock(type)
-        
+
         for pt in realPts:
             angle = random.uniform(0,360)
-            
-            
+
+
             if type != 'Custom Block':
                 blockName = RandomBlock(type)
             if blockName is None:
                 print "No blocks in document"
                 return
-            
+
             if TryLoadBlock(type, blockName):
                 eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
                 try:
@@ -146,12 +148,12 @@ def main():
                     rs.ObjectLayer(eachBlock, layerName)
                 except:
                     pass
-        
+
         try:
             rs.DeleteObjects(realPts)
         except:
             pass
-        
+
         rs.EnableRedraw(True)
         return True
     except:

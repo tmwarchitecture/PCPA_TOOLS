@@ -1,5 +1,8 @@
 import utils
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.0"
+
 def GetDict():
     fileLocationsPCPNY = {
     'Template File' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT\PCPA_Template.3dm',
