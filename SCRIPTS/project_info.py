@@ -7,7 +7,7 @@ from layout import GetDatePrefix
 from libs import yaml
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 class SettingsDialog(forms.Dialog):
     def __init__(self):

@@ -5,7 +5,7 @@ import scriptcontext as sc
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 ###############################################################################
 #This function not used

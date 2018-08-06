@@ -5,7 +5,7 @@ import layers
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 def SuperExplodeBlock():
     try:

@@ -1,10 +1,13 @@
 import datetime
 import rhinoscriptsyntax as rs
 
+__author__ = 'Tim Williams'
+__version__ = "2.0.1"
+
 def timeTilHappyHour():
     now     = datetime.datetime.now()
     hour = str(datetime.time(now.hour, now.minute, now.second))
-    
+
     list = hour.split(":")
     if (17-int(list[0])<0):
         rs.MessageBox("ITS HAPPY HOUR!!!!! \nHead to the bar for a drink!")

@@ -8,7 +8,7 @@ from System.Collections.Generic import List
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 ###############################################################################
 #Utils

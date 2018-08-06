@@ -5,7 +5,7 @@ import ast
 from libs import yaml
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 root = os.path.dirname(os.path.realpath(__file__))
 yamlPath = os.path.join(root, "data\Database_Template.yaml")

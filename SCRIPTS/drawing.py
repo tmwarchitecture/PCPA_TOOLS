@@ -9,7 +9,7 @@ import utils
 import standards
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 def AddCoordinateTag(obj):
     dots = []

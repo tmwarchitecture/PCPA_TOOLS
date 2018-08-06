@@ -7,7 +7,7 @@ import config
 from utils import GetDatePrefix
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 def AddTitleBlock(size):
     filelocations = config.GetDict()

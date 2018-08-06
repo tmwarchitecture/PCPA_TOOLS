@@ -5,7 +5,7 @@ import utils
 import layers
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 def MakeRampRuns(path, width):
     topOffset = 12
