@@ -72,7 +72,7 @@ def ColorObjsRandomRange():
 
 def ColorBySize():
     try:
-        objs= rs.GetObjects("Select objects to color", 1073750077, preselect = True)
+        objs= rs.GetObjects("Select objects to color", 1073815613, preselect = True)
         if objs is None: return
         print "Select First Color"
         firstColor = rs.GetColor()
@@ -97,8 +97,10 @@ def ColorBySize():
             elif rs.IsPolysurface(obj):
                 if rs.IsPolysurfaceClosed(obj):
                     areas.append(rs.SurfaceVolume(obj)[0])
+            elif rs.IsHatch(obj):
+                areas.append(rs.Area(obj))
             else:
-                print "Only curves and surfaces supported"
+                print "Only curves, hatches, and surfaces supported"
                 return
         
         newAreas = list(areas)

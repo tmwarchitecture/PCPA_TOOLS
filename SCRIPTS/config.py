@@ -6,7 +6,7 @@ def GetDict():
     'Template Folder' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT',
     'ACAD Scheme Folder' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\ACAD_Schemes',
     'Display Mode Folder' : r'X:\05_RHINO STANDARDS\02 DISPLAY MODES\2018 PCPA Display Modes',
-    'Analytics' : r'X:\05_RHINO STANDARDS\05 SCRIPTS\PYTHON\PCPA\PCPA\data\Analytics.csv',
+    'Analytics' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\data\raw\Analytics.csv',
     'Data Folder' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\data\raw',
     'PCPA Layers' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\CURRENT\PCPA LAYERS_V2.csv',
     'PCPA Layers_V1' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\1.0\PCPA LAYERS_V1.csv',
