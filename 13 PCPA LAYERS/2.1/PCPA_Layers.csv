@@ -12,7 +12,6 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 202,Ceiling,0,85-123-225,INTERIOR_Ceiling_Generic,,0-0-0,,,180716
 203,Door,0,169-55-55,INTERIOR_Doors_Generic,,0-0-0,,,180716
 204,Floor,0,255-88-129,INTERIOR_Floor_Generic,,0-0-0,,,180716
-205,Furniture,0,77-155-255,INTERIOR_Furniture_Generic,,0-0-0,,,180716
 207,Millwork,0,232-172-69,INTERIOR_Millwork_Generic,,0-0-0,,,180716
 208,Wall_Generic,0,81-255-200,INTERIOR_Wall_Generic,,0-0-0,,,180716
 ,,,,,,,,,
@@ -39,9 +38,11 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 ,,,,,,,,,
 2000,2_ENTOURAGE,,224-102-102,,,,,,
 2901,_Hidden,2000,230-230-230,,,0-0-0,-1,,180608
+2100,Furniture,2000,247-165-59,INTERIOR_Furniture_Generic,,,,,180807
 2200,People,2000,113-197-255,,,,,,180702
 2300,Vegetation,2000,105-255-146,,,,,,180702
 2400,Vehicles,2000,176-93-255,,,,,,180702
+,,,,,,,,,
 ,,,,,,,,,
 3000,3_DESIGN OPTIONS,,204-0-0,,,,,,
 3101,180724_OPTION_01,3000,0-0-0,,,,,,180724

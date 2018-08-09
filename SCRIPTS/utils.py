@@ -16,17 +16,17 @@ __version__ = "2.0.1"
 #############################################################################
 #DATE/LOCATION
 def GetDatePrefix():
-    '''Gets todays date and returns it in the format of YYMMDD
+    """Gets todays date and returns it in the format of YYMMDD
     returns:
         date(String): YYMMDD, e.g. 180706
-    '''
+    """
     year = int(datetime.datetime.today().strftime('%Y'))-2000
     md = datetime.datetime.today().strftime('%m%d')
     return str(year) + str(md)
 
 def GetNetworkLocation():
-    '''Checks the network to see if X: or H: exist. If X:, then returns 0 (for New York). If H: then returns 1 (for New Haven)
-    '''
+    """Checks the network to see if X: or H: exist. If X:, then returns 0 (for New York). If H: then returns 1 (for New Haven)
+    """
     NYPath = r'X:'
     NHPath = r'H:'
 
@@ -42,9 +42,22 @@ def GetNetworkLocation():
         return
     return "You are connected to the {} network.".format(location)
 
+def IsSavedInProjectFolder():
+    """Checks if Rhino file is saved in a project folder
+    """
+    fileLocations = config.GetDict()
+    if rs.DocumentPath()[:2] == fileLocations['Project Folders'][:2]: return True
+    else: return False
+
 #############################################################################
 #ANALYTICS
 def SaveToAnalytics(funcName):
+    """SaveToAnalytics(funcName)
+    Inputs:
+        funcName(str): The functions name
+    returns:
+        None
+    """
     try:
         fileLocations = config.GetDict()
         filepath = fileLocations['Analytics']
@@ -104,7 +117,6 @@ def SaveFunctionData(funcName, funcData):
     try:
         now=datetime.datetime.now()
         monthString=('%02d%02d'%(now.year, now.month))[2:]
-
         fileLocations = config.GetDict()
         filepath = fileLocations['Data Folder']
 
@@ -406,6 +418,27 @@ def GetUphillVectorFromPlane(obj, u = 0, v = 0):
         uphillVec = rs.VectorUnitize(vec)
     return uphillVec
 
+def GetAllBlockObjectsInPosition(obj):
+    """Recursively get all objects from a block (and blocks in blocks)
+    inputs:
+        obj (block instance)
+    returns:
+        objs (list guids): Geometry is a copy of the instance geometry
+    """
+    blockObjs = rs.BlockObjects(rs.BlockInstanceName(obj))
+    xform = rs.BlockInstanceXform(obj)
+    objList = []
+    for eachblockObj in blockObjs:
+        if rs.IsBlockInstance(eachblockObj):
+            thisBlockObjects = GetAllBlockObjectsInPosition(eachblockObj)
+            for eachObject in thisBlockObjects:
+                transformedObj = rs.TransformObject(eachObject, xform, False)
+                objList.append(transformedObj)
+        else:
+            transformedObj = rs.TransformObject(eachblockObj, xform, True)
+            objList.append(transformedObj)
+    return objList
+
 #############################################################################
 #STRINGS
 def StringPlusOne(word):
@@ -448,6 +481,7 @@ def UpdateString(word):
         return StringPlusOne(word)
 
 if __name__ == "__main__":
-    obj = rs.GetObject()
-    print GetUphillVectorFromPlane(obj)
+    print IsSavedInProjectFolder()
+    #obj = rs.GetObject()
+    #print GetUphillVectorFromPlane(obj)
     pass

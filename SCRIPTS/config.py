@@ -5,8 +5,10 @@ __version__ = "2.0.1"
 
 def GetDict():
     fileLocationsPCPNY = {
+    'Scripts Folder' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS',
     'Template File' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT\PCPA_Template.3dm',
     'Template Folder' : r'X:\05_RHINO STANDARDS\11 PCPA TEMPLATE\CURRENT',
+    'Project Folders' : r'J:',
     'ACAD Scheme Folder' : r'X:\05_RHINO STANDARDS\00 GENERAL SETTINGS\ACAD_Schemes',
     'Display Mode Folder' : r'X:\05_RHINO STANDARDS\02 DISPLAY MODES\2018 PCPA Display Modes',
     'Analytics' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\data\raw\Analytics.csv',
@@ -54,10 +56,6 @@ def GetDict():
         return fileLocationsPCPNH
     else:
         print "Network Location Error"
-
-def GetValue(key):
-    print "GetValue Function obsolete"
-    return fileLocationsPCPNY [key]
 
 if __name__ == "__main__":
     GetDict()

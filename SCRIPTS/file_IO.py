@@ -1,5 +1,5 @@
 import rhinoscriptsyntax as rs
-import Rhino
+import Rhino as rc
 import scriptcontext as sc
 import random
 import os.path
@@ -11,7 +11,7 @@ import utils
 import standards
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 ################################################################################
 #Utils
@@ -39,7 +39,7 @@ def moveToOrigin(allObjects, CADinMilli):
     rs.MoveObjects(allObjects,moveVec)
     return
 
-def importCAD(savePath0, scaleDWG):
+def importCAD(filePath, scaleDWG = False):
     explodeBlockBoo = True
 
     #setup the layers
@@ -48,10 +48,9 @@ def importCAD(savePath0, scaleDWG):
     importLayerName = layers.GetLayerNameByNumber(importLayerNumber)
 
     #Shorten cad file name
-    fileNameExt = savePath0.split('\\')[-1]
-    fileName = fileNameExt.split('.')[0]
-    savePath1 = '"'+savePath0+'"'
-
+    fileNameExt = os.path.basename(filePath)
+    fileName = os.path.splitext(fileNameExt)[0]
+    
     #create layer name
     time = utils.GetDatePrefix()
     iter = "01"
@@ -72,12 +71,11 @@ def importCAD(savePath0, scaleDWG):
 
     #get intial list of all layers in the file
     currentLayers = rs.LayerNames()
-
-    rs.Command('_-Import '+savePath1+' _Enter', False)
+    
+    rs.Command('_-Import "' + filePath + '" _IgnoreThickness=Yes _ModelUnits=Inches _Enter', False)
 
     #get new layers added
     endLayersNames = rs.LayerNames()
-    #newLayers = [item for item in currentLayers if item not in endLayersNames]
     newLayers = diff(endLayersNames, currentLayers)
 
     for layer in newLayers:
@@ -112,13 +110,9 @@ def importCAD(savePath0, scaleDWG):
         except:
             pass
 
-
     #Scale objects
     if scaleDWG:
         rs.ScaleObjects(finalAllObjects, [0,0,0], [.001, .001, .001])
-
-    #importGroup = rs.AddGroup(str(layerName))
-    #rs.AddObjectsToGroup(finalAllObjects, importGroup)
 
     #Collapse layers
     try:
@@ -126,34 +120,29 @@ def importCAD(savePath0, scaleDWG):
         rootLay.IsExpanded = False
     except:
         pass
-
     print "Import Successful"
     return finalAllObjects
 
-def importDWG():
+def importCAD_Button():
     try:
         #Import CAD
         filePath = rs.OpenFileName("Select CAD to Import", "Autocad (*.dwg)|*.dwg||")
-        if filePath is None: return
-
-        #itemsMM = [ ["Units", "Meters", "Millimeters"] ]
-        #CADinMilli = rs.GetBoolean("Is that CAD file in meters or mm?", itemsMM, [True])[0]
-        scaleDWG = False
-
-        #originItems = ("Use_CAD_Origin", "No", "Yes")
-        #useOrigin = rs.GetBoolean("Use CAD Coordinate?", originItems, (True))[0]
-        useOrigin = False
-
+        if filePath is None: return None
+    
         rs.EnableRedraw(False)
-        allImportedObjects = importCAD(filePath, scaleDWG)
-        #if useOrigin:
-        #    moveToOrigin(allImportedObjects, scaleDWG)
-        rs.ZoomSelected()
+        group = rs.AddGroup('Import CAD Group')
+        allImportedObjects = importCAD(filePath)
+        rs.AddObjectsToGroup(allImportedObjects, group)
         rs.EnableRedraw(True)
-        return True
+        result = True
     except:
         print "Import Failed"
-        return False
+        result = False
+    try:
+        utils.SaveFunctionData('IO-Import CAD',[result])
+    except:
+        print "Failed to save function data"
+    return result
 
 ################################################################################
 #Export Functions
@@ -269,7 +258,20 @@ def exportToRenderSKP():
         seperator = ' > '
 
         defaultFilename = utils.GetDatePrefix() + '_OPTION_01'
-        defaultFolder = rs.DocumentPath()
+        if utils.IsSavedInProjectFolder():
+            origPath = rs.DocumentPath()
+            path = os.path.normpath(origPath)
+            pathParts = path.split(os.sep)
+            projectFolder = os.path.join(pathParts[0],'\\' ,pathParts[1])
+            referenceFolder = os.path.join(projectFolder, r'03 DRAWINGS\02 RENDERING\0_copy 3d  folder structure\Reference')
+            if os.path.isdir(referenceFolder):
+                print "Reference folder exists"
+                defaultFolder = referenceFolder
+            else: 
+                print "Referebce folder not found"
+                defaultFolder = rs.DocumentPath()
+        else:
+            defaultFolder = rs.DocumentPath()
         fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", folder = defaultFolder, filename = defaultFilename)
         if fileName is None: return
 
@@ -321,7 +323,10 @@ def exportToRenderSKP():
         result = True
     except:
         result = False
-    utils.SaveFunctionData('IO-Export to Render[SKP]', [fileName, baseName, os.path.getsize(fileName),len(objs), result])
+    try:
+        utils.SaveFunctionData('IO-Export to Render[SKP]', [fileName, baseName, os.path.getsize(fileName),len(objs), result])
+    except:
+        print "Failed to save function data"
     return result
 
 ################################################################################
@@ -330,7 +335,7 @@ def exportImage(path, name, width, height):
     try:
         shortName = os.path.splitext(path)[0]
         fullName = shortName + '_' + name + '.png'
-        comm=' -_ViewCaptureToFile '  + ' _Width=' + str(width) + ' _Height=' + str(height) + ' _Scale=1 _DrawGrid=_No _DrawWorldAxes=_No _DrawCPlaneAxes=_No _TransparentBackground=_Yes ' + '"' + fullName + '"'+ ' _Enter'
+        comm='-_ViewCaptureToFile u p _Width=' + str(width) + ' _Height=' + str(height) + ' _Scale=1 _LockAspectRatio=No _DrawGrid=No _DrawWorldAxes=No _TransparentBackground=_Yes "' + fullName + '" _Enter'
         rs.Command(comm,False)
     except:
         pass
@@ -340,27 +345,51 @@ def CaptureDisplayModesToFile():
         displayModeNames = []
         displayModeBool = []
         displayModesChecked = []
-
-        for each in Rhino.Display.DisplayModeDescription.GetDisplayModes():
-            displayModeNames.append(each.EnglishName)
-            if each.EnglishName[:4] == 'PCPA':
-                displayModeBool.append(True)
-            else:
+        
+        ########
+        #Get current display mode
+        originalDisplayMode = rc.RhinoDoc.ActiveDoc.Views.ActiveView.ActiveViewport.DisplayMode.LocalName
+        
+        ########
+        #Get default display mode selection
+        if 'CaptureDisplayModes-DisplayModes' in sc.sticky:
+            dict = sc.sticky['CaptureDisplayModes-DisplayModes']
+            for each in rc.Display.DisplayModeDescription.GetDisplayModes():
+                displayModeNames.append(each.EnglishName)
+                if each.EnglishName in dict:
+                    displayModeBool.append(dict[each.EnglishName])
+                else:
+                    displayModeBool.append(False)
+        else:
+            for each in rc.Display.DisplayModeDescription.GetDisplayModes():
+                displayModeNames.append(each.EnglishName)
                 displayModeBool.append(False)
-
+        
         results = rs.CheckListBox(zip(displayModeNames, displayModeBool), 'Select Display Modes', 'Capture Display Modes To File')
         if results is None: return
+        
+        ########
+        #Save display modes to sticky
+        resultDict = {}
+        for each in results:
+            resultDict[each[0]] = each[1]
+        sc.sticky['CaptureDisplayModes-DisplayModes'] = resultDict
+        
         for each in results:
             if each[1]:
                 displayModesChecked.append(each[0])
-
+        
+        ########
+        #Get default filename
         date = utils.GetDatePrefix()
         if date is None: date = 'DATE'
         activeView = sc.doc.Views.ActiveView.ActiveViewport.Name
         if activeView is None: activeView = 'VIEW'
         path = rs.SaveFileName('Export All Display Modes', "PNG (*.png)|*.png||", filename = date+'_'+activeView)
         if path is None: return
-
+        
+        ########
+        #Get sizes from sticky
         if 'catpureDisplays-width' in sc.sticky:
             widthDefault = sc.sticky['catpureDisplays-width']
         else:
@@ -371,35 +400,52 @@ def CaptureDisplayModesToFile():
         else:
             heightDefault = 3300
 
-        width = rs.GetInteger('Image Width', number = widthDefault, minimum = 600, maximum = 20000)
-        height = rs.GetInteger('Image Height', number = heightDefault, minimum = 600, maximum = 20000)
+        width = rs.GetInteger('Image Width', number = widthDefault, minimum = 200, maximum = 20000)
+        height = rs.GetInteger('Image Height', number = heightDefault, minimum = 200, maximum = 20000)
 
+        ########
+        #Save sizes to sticky
         sc.sticky['catpureDisplays-width'] = width
         sc.sticky['catpureDisplays-height'] = height
 
-
+        #######################################################################
+        #Export the images
+        count = 0
         for name in displayModesChecked:
             try:
-                rs.Command('-_SetDisplayMode m ' +  name  + ' Enter', False)
+                rs.ViewDisplayMode(mode = name)
                 exportImage(path, name, width, height)
+                count += 1
             except:
                 pass
-        return True
+        print "{} Images saved to {}".format(count , os.path.abspath(os.path.join(path, os.pardir)))
+        result = True
     except:
-        return False
+        result = False
+    ########
+    #Restore original display mode
+    if originalDisplayMode is not None:
+        rs.ViewDisplayMode(mode = originalDisplayMode)
+    
+    ########
+    #Save analytics
+    try:
+        utils.SaveFunctionData('IO-Capture Display Modes', [__version__, str(displayModesChecked), width, height, result])
+    except: print "Failed to save function data"
+    return result
 
 
 if __name__ == "__main__":
     func = rs.GetInteger("Function to run", number = 0)
     if func == 0:
-        rc = importDWG()
-        if rc: utils.SaveToAnalytics('IO-Import DWG')
+        result = importCAD_Button()
+        if result: utils.SaveToAnalytics('IO-Import CAD')
     elif func == 1:
-        rc = exportToRenderDWG()
-        if rc: utils.SaveToAnalytics('IO-Export To Render DWG')
+        result = exportToRenderDWG()
+        if result: utils.SaveToAnalytics('IO-Export To Render DWG')
     elif func == 2:
-        rc = exportToRenderSKP()
-        if rc: utils.SaveToAnalytics('IO-Export To Render SKP')
+        result = exportToRenderSKP()
+        if result: utils.SaveToAnalytics('IO-Export To Render SKP')
     elif func == 3:
-        rc = CaptureDisplayModesToFile()
-        if rc: utils.SaveToAnalytics('IO-Capture Display Modes')
+        result = CaptureDisplayModesToFile()
+        if result: utils.SaveToAnalytics('IO-Capture Display Modes')

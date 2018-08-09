@@ -179,6 +179,13 @@
           <macro_id>7526be50-b363-4555-8206-b8d4dbc0b745</macro_id>
           <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
         </menu_item>
+        <menu_item guid="69f76c3e-2ff8-4b02-a885-0726ccd6bd3b">
+          <text>
+            <locale_1033>Load PCPA Aliases</locale_1033>
+          </text>
+          <macro_id>3067c5a0-ab49-4061-a3e3-2526638e6c05</macro_id>
+          <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
+        </menu_item>
         <menu_item guid="a0893243-427e-453c-9527-9fab5aa44df5">
           <text>
             <locale_1033>Set Template</locale_1033>
@@ -246,7 +253,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="9e4f5b87-7a31-49f6-a6fa-8b5d9e1778fa" active_tool_bar_group="18b4a9e7-b0f0-4b26-a7e2-ce5650865670" single_file="False" hide_single_tab="False" point_floating="514,285">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="9e4f5b87-7a31-49f6-a6fa-8b5d9e1778fa" active_tool_bar_group="1bee15c7-04a7-49e5-b987-454cf41cd438" single_file="False" hide_single_tab="False" point_floating="514,285">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -1850,6 +1857,24 @@ _enter </script>
         <locale_1033>Cut Model</locale_1033>
       </menu_text>
       <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\cut_model.py)  </script>
+    </macro_item>
+    <macro_item guid="3067c5a0-ab49-4061-a3e3-2526638e6c05">
+      <text>
+        <locale_1033>Standards-Load PCPA Aliases</locale_1033>
+      </text>
+      <tooltip>
+        <locale_1033>Load PCPA Aliases</locale_1033>
+      </tooltip>
+      <help_text>
+        <locale_1033>Load PCPA Aliases</locale_1033>
+      </help_text>
+      <button_text>
+        <locale_1033>Load PCPA Aliases</locale_1033>
+      </button_text>
+      <menu_text>
+        <locale_1033>Load PCPA Aliases</locale_1033>
+      </menu_text>
+      <script>_NoEcho -_RunPythonScript (X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\standards.py) 7 </script>
     </macro_item>
   </macros>
   <bitmaps>

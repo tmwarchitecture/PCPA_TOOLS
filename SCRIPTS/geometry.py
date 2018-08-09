@@ -5,8 +5,10 @@ import math
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
+################################################################################
+#INTERSECT AT POINT
 def IntersectBrepPlane(obj, plane):
     tolerance = rs.UnitAbsoluteTolerance()
     #BREP
@@ -79,20 +81,32 @@ def IntersectGeoAtPt():
         rs.EnableRedraw(False)
         geos = []
         for obj in objs:
-            result = IntersectGeo(obj, pt.Z)
-            if result is None: continue
-            for each in result:
-                if each is not None:
-                    geos.append(each)
+            if rs.IsBlockInstance(obj):
+                blocksObjects = utils.GetAllBlockObjectsInPosition(obj)
+                for eachBlocksObject in blocksObjects:
+                    result = IntersectGeo(eachBlocksObject, pt.Z)
+                    if result is None: continue
+                    for each in result:
+                        if each is not None:
+                            geos.append(each)
+                    rs.DeleteObject(eachBlocksObject)
+            else:
+                result = IntersectGeo(obj, pt.Z)
+                if result is None: continue
+                for each in result:
+                    if each is not None:
+                        geos.append(each)
         rs.EnableRedraw(True)
 
         rs.SelectObjects(geos)
-        return True
+        result = True
     except:
-        return False
+        result = False
+    utils.SaveFunctionData('Geometry-Contour At Pt', [__version__, len(objs), pt.Z, result])
+    return result
 
 ################################################################################
-
+#UNFILLET
 def unfilletObj(obj):
     try:
         rhobj = rs.coercecurve(obj)
@@ -131,23 +145,30 @@ def unfilletObj(obj):
         return None
 
 def unfillet():
-    #Will remove entire pline when angle > 180 degrees
-    objs = rs.GetObjects("Select curves to unfillet", rs.filter.curve, True, True)
-    if objs is None: return
-
-    bool = False
-    for obj in objs:
-        result = unfilletObj(obj)
-        if result is not None: bool = True
-    return bool
+    try:
+        #Will remove entire pline when angle > 180 degrees
+        objs = rs.GetObjects("Select curves to unfillet", rs.filter.curve, True, True)
+        if objs is None: return
+        
+        successList = []
+        for obj in objs:
+            unfilletResult = unfilletObj(obj)
+            if unfilletResult is None: 
+                successList.append(False)
+            else: successList.append(True)
+        result = True
+    except:
+        result = False
+    utils.SaveFunctionData('Geometry-Unfillet', [__version__, len(objs), str(successList), result])
+    return result
 
 if __name__ == "__main__":
     func = rs.GetInteger("func num")
     if func == 0:
         result = IntersectGeoAtPt()
         if result:
-            utils.SaveToAnalytics('geometry-Contour At Pt')
+            utils.SaveToAnalytics('Geometry-Contour At Pt')
     if func == 1:
         result = unfillet()
         if result:
-            utils.SaveToAnalytics('geometry-Unfillet')
+            utils.SaveToAnalytics('Geometry-Unfillet')

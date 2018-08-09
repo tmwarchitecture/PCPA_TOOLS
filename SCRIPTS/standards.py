@@ -1,4 +1,4 @@
-import shutil
+.import shutil
 import distutils.dir_util
 import os
 import rhinoscriptsyntax as rs
@@ -127,6 +127,125 @@ def LoadPSSwatch(PSswatch, PSdir):
     #print PSdir
     print "Loaded PS Swatch"
 
+def ApplyPCPAAliases(scriptFolder):
+    try:
+        ############################################################################
+        #ARCHITECTURE
+        
+        #STAIR
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\stair.py) '
+        rs.AddAlias('pcpStair', str)
+        
+        #RAMP
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\ramp.py) '
+        rs.AddAlias('pcpRamp', str)
+    
+        ############################################################################
+        #BLOCKS
+        
+        #ITERATE DESIGN OPTION
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 0 '
+        rs.AddAlias('pcpIterDesignOpt', str)
+        
+        #MAKE BLOCK UNIQUE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 1 '
+        rs.AddAlias('pcpMakeUnique', str)
+        
+        #SUPER EXPLODE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 2 '
+        rs.AddAlias('pcpSuperExplode', str)
+        
+        #POPULATE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\populate.py) '
+        rs.AddAlias('pcpPopulate', str)
+        
+        #RESET BLOCK SCALE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 4 '
+        rs.AddAlias('pcpResetBlockScale', str)
+        
+        #EXPORT AND LINK
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 5 '
+        rs.AddAlias('pcpExportAndLink', str)
+    
+        ############################################################################
+        #DRAWINGS
+        
+        #AREA TAG
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\drawing.py) 0 '
+        rs.AddAlias('pcpAreaTag', str)
+        
+        #DIM PLINE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\drawing.py) 1 '
+        rs.AddAlias('pcpDimPline', str)
+        
+        #ADD LAYOUT
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\layout.py) 0 '
+        rs.AddAlias('pcpLayout', str)
+        
+        #CUT MODEL
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\cut_model.py)  '
+        rs.AddAlias('pcpCutModel', str)
+    
+        ############################################################################
+        #GEOMETRY
+        
+        #CONTOUR AT POINT
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\geometry.py) 0 ) '
+        rs.AddAlias('pcpContourPt', str)
+    
+        #UNFILLET
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\geometry.py) 1 '
+        rs.AddAlias('pcpUnfillet', str)
+    
+        #RECTIFY
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\rectify.py) '
+        rs.AddAlias('pcpRectify', str)
+    
+        ############################################################################
+        #COLOR
+        
+        #COLOR RANDOM RANGE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 1 '
+        rs.AddAlias('pcpColorRandRange', str)
+    
+        #COLOR GRADIENT
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 0 '
+        rs.AddAlias('pcpColorGradient', str)
+    
+        #COLOR BY SIZE
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 3 '
+        rs.AddAlias('pcpColorBySize', str)
+    
+        #COLOR TO MATERIAL
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 2 '
+        rs.AddAlias('pcpColorToMaterial', str)
+    
+        ############################################################################
+        #I/O
+        
+        #CAPTURE DISPLAY MODES
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 3 '
+        rs.AddAlias('pcpCaptureDisplayModes', str)
+        
+        #EXPORT TO RENDER DWG
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 1 '
+        rs.AddAlias('pcpExportToRenderDWG', str)
+        
+        #EXPORT TO RENDER SKP
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 2 '
+        rs.AddAlias('pcpExportToRenderSKP', str)
+        
+        #IMPORT CAD
+        str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 0 '
+        rs.AddAlias('pcpImportCAD', str)
+        print "\tLoaded PCPA Aliases"
+        result = True
+    except:
+        print "Failed to load PCPA Aliases"
+        result = False
+    utils.SaveFunctionData('Standards-Load PCPA Aliases', [__version__, result])
+    return result
+
 ################################################################################
 
 def UpdateFolders(sourceMain, targetRoot):
@@ -214,7 +333,6 @@ def LoadGHDependencies(sourceFolder):
 
     utils.SaveFunctionData('Standards-PCPA GH Dependencies', [numberOfObjects, result])
 
-
 if __name__ == "__main__":
     PreloadCheck()
 
@@ -243,6 +361,9 @@ if __name__ == "__main__":
     elif standardsRequested == 6:
         LoadPSSwatch(fileLocations['PS Swatch File'], fileLocations['PS Directory'])
         utils.SaveToAnalytics('standards-Load PS Swatch')
+    elif standardsRequested == 7:
+        result = ApplyPCPAAliases(fileLocations['Scripts Folder'])
+        if result: utils.SaveToAnalytics('Standards-Load PCPA Aliases')
     elif standardsRequested == 99:
         LoadPCPAMaterials(fileLocations['Material File'])
         SetTemplateFolder(fileLocations['Template Folder'])
@@ -252,6 +373,7 @@ if __name__ == "__main__":
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
         LoadPCPAComponents(fileLocations['PCPA GH Components'])
         LoadGHDependencies(fileLocations['GH Dependencies'])
+        ApplyPCPAAliases(fileLocations['Scripts Folder'])
         utils.SaveToAnalytics('Standards-All')
     else:
         pass
