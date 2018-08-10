@@ -1,4 +1,4 @@
-.import shutil
+import shutil
 import distutils.dir_util
 import os
 import rhinoscriptsyntax as rs

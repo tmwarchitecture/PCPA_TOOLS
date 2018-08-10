@@ -14,26 +14,34 @@ __version__ = "2.0.1"
 #Utils
 def CreateLandings(segmentsLeft, elbowsLeft, pitsLeft, segmentsRight, elbowsRight, pitsRight):
     allLandings = []
-    for i in range(0,len(pitsLeft)-1):
-        if i == 0:
-            index = 0
+    for i in range(0,len(segmentsLeft)-1):
+        pt0 = segmentsLeft[i].PointAtEnd
+        pt1 = segmentsRight[i].PointAtEnd
+        pt2 = segmentsRight[i+1].PointAtStart
+        pt3 = segmentsLeft[i+1].PointAtStart
+        if pitsLeft[i*2] is None: #Its turning right
+            ptA = pitsRight[i*2]
+            ptB = elbowsLeft[i*2].PointAt(1)
         else:
-            index = i*2
-        try:
-            if pitsLeft[index] is None: #Its turning right
-                pt1 = pitsRight[index]
-                pt3 = elbowsLeft[index].PointAt(1)
-                pt2 = segmentsLeft[i].PointAtEnd
-                pt4 = segmentsLeft[i+1].PointAtStart
-                allLandings.append(rc.Geometry.PolylineCurve([pt1, pt2, pt3, pt4, pt1]))
-            else:
-                pt1 = pitsLeft[index]
-                pt3 = elbowsRight[index].PointAt(1)
-                pt2 = segmentsRight[i].PointAtEnd
-                pt4 = segmentsRight[i+1].PointAtStart
-                allLandings.append(rc.Geometry.PolylineCurve([pt1, pt4, pt3, pt2, pt1]))
-        except:
-            pass
+            ptB = pitsLeft[i*2]
+            ptA = elbowsRight[i*2].PointAt(1)
+        
+        pts = []
+        
+        pts.append(pt0)
+        pts.append(pt1)
+        if rs.Distance(pt1, ptA) > rs.UnitAbsoluteTolerance():
+            pts.append(ptA)
+        #if rs.Distance(pts[-1], pt2) > rs.UnitAbsoluteTolerance():
+        #    pts.append(pt2)
+        pts.append(pt2)
+        pts.append(pt3)
+        if rs.Distance(pt3, ptB) > rs.UnitAbsoluteTolerance():
+            pts.append(ptB)
+        if rs.Distance(pts[-1], pt0) > rs.UnitAbsoluteTolerance():
+            pts.append(pt0)
+        
+        allLandings.append(rc.Geometry.PolylineCurve(pts))
     return allLandings
 
 def ExtendTangents(segment1, segment2, dir = True):
@@ -143,9 +151,29 @@ def OffsetBothDir(segments, width):
 
     return [offsetSegmentsLeft, offsetSegmentsRight]
 
+def RemoveExtensions(centerSegments, topLandingExtension, btmLandingExtension = 0):
+    for i, centerSegment in enumerate(centerSegments):
+        length = centerSegment.GetLength()
+        
+        if length > topLandingExtension+btmLandingExtension:
+            if i == 0:
+                btmParam = 0
+            else: 
+                btmParam = centerSegment.LengthParameter(btmLandingExtension)[1]
+            if i == len(centerSegments)-1:
+                topParam = length
+            else:
+                topParam = centerSegment.LengthParameter(length-topLandingExtension)[1]
+            dom = rc.Geometry.Interval(btmParam, topParam)
+            centerSegments[i] = centerSegment.Trim(dom)
+    return centerSegments
+    
 ###############################################################################
 #GetRunsAndLandings
 def GetRunsAndLandings(path, width):
+    topLandingExtension = 12
+    btmLandingExtension = 12
+    
     rhobj = rs.coercecurve(path)
 
     #Split at when not tangent
@@ -159,7 +187,6 @@ def GetRunsAndLandings(path, width):
         t=result[1]
         cornerParams.append(t)
     segments = rhobj.Split(cornerParams)
-    print ""
 
     #Offset both directions
     offsetSegmentsLeft, offsetSegmentsRight = OffsetBothDir(segments, width)
@@ -167,7 +194,6 @@ def GetRunsAndLandings(path, width):
     #Trim intersecting offset segments
     trimmedSegmentsLeft, elbowsLeft, pitPtsLeft = TrimOffsets(offsetSegmentsLeft)
     trimmedSegmentsRight, elbowsRight, pitPtsRight = TrimOffsets(offsetSegmentsRight)
-    print ""
 
     #Get ovelaping segments
     centerSegments = []
@@ -183,9 +209,12 @@ def GetRunsAndLandings(path, width):
             print "A segment was trimmed out of existence"
         centerSegments.append(segment.Trim(domain))
 
+    #Shorten runs for landing extensions
+    centerSegments = RemoveExtensions(centerSegments, topLandingExtension, btmLandingExtension)
+    
     #Offset both directions AGAIN
     runSegmentsLeft, runSegmentsRight = OffsetBothDir(centerSegments, width)
-    print""
+    
     #Create landings
     landings = CreateLandings(runSegmentsLeft, elbowsLeft, pitPtsLeft, runSegmentsRight, elbowsRight, pitPtsRight)
 
@@ -339,15 +368,17 @@ def MakeStair(obj, width, height):
     leftSegments, rightSegments, landings  = GetRunsAndLandings(obj, width)
 
     #Temp preview
-    if False:
+    if True:
         for each in leftSegments:
             sc.doc.Objects.Add(each)
         for each in rightSegments:
             sc.doc.Objects.Add(each)
+        for each in landings:
+            sc.doc.Objects.Add(each)
 
     #Draw 2d treads
-    allTreads = Make2DTreads(leftSegments, rightSegments, width, height)
-    print ""
+    #allTreads = Make2DTreads(leftSegments, rightSegments, width, height)
+    print
     #Temp Preview
     if False:
         for each in allTreads:
@@ -356,10 +387,10 @@ def MakeStair(obj, width, height):
 
 
     #Make Tread Surfaces
-    treadSrfs, landingSrfs = MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, True)
+    #treadSrfs, landingSrfs = MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, True)
 
 
-    ConstructTopGeo(treadSrfs, landingSrfs, height)
+    #ConstructTopGeo(treadSrfs, landingSrfs, height)
 
     #Make UnderSurface
     #MakeUnderSurfaces(leftSegments, rightSegments, allTreads, runRiserHeights)

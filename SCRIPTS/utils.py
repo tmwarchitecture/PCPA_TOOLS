@@ -129,7 +129,7 @@ def SaveFunctionData(funcName, funcData):
         timeString=('%02d-%02d-%02d_%02d:%02d:%02d.%d'%(now.year, now.month, now.day, now.hour, now.minute,now.second,now.microsecond))[:-4]
 
         if not os.path.isfile(fullName):
-            data = [[funcName],['Date', 'User']]
+            data = [[funcName],['Date', 'User', 'Version']]
             myFile = open(fullName, 'wb')
             with myFile:
                 csvwriter = csv.writer(myFile)
@@ -138,7 +138,7 @@ def SaveFunctionData(funcName, funcData):
         with open(fullName, 'rb') as File:
             reader = csv.reader(File)
             data = list(reader)
-        row = [timeString] + [userName]  + funcData
+        row = [timeString] + [userName] + funcData
         data.append(row)
 
         myFile = open(fullName, 'wb')
