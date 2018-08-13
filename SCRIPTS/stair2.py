@@ -8,11 +8,15 @@ from System.Collections.Generic import List
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 ###############################################################################
 #Utils
 def CreateLandings(segmentsLeft, elbowsLeft, pitsLeft, segmentsRight, elbowsRight, pitsRight):
+    """
+    returns:
+        polyline (list): Closed planar landing curves
+    """
     allLandings = []
     for i in range(0,len(segmentsLeft)-1):
         pt0 = segmentsLeft[i].PointAtEnd
@@ -32,8 +36,8 @@ def CreateLandings(segmentsLeft, elbowsLeft, pitsLeft, segmentsRight, elbowsRigh
         pts.append(pt1)
         if rs.Distance(pt1, ptA) > rs.UnitAbsoluteTolerance():
             pts.append(ptA)
-        #if rs.Distance(pts[-1], pt2) > rs.UnitAbsoluteTolerance():
-        #    pts.append(pt2)
+        if rs.Distance(pts[-1], pt2) <= rs.UnitAbsoluteTolerance():
+            del pts[-1]
         pts.append(pt2)
         pts.append(pt3)
         if rs.Distance(pt3, ptB) > rs.UnitAbsoluteTolerance():
@@ -89,13 +93,16 @@ def TrimOffsets(origLines):
     trimmedCurves = []
     elbowCurves = []
     pitPoints = []
-
+    #for each in origLines:
+    #    sc.doc.Objects.Add(each)
+    
     for i, each in enumerate(origLines):
         if i == 0: #Dont intersect prev segment if first segment
             lowerParam = each.Domain.T0
         else:
             #Intersection with previous segment
             intersections = rc.Geometry.Intersect.Intersection.CurveCurve(origLines[i-1], origLines[i], tol, tol)
+            
             if intersections.Count == 0: #No intersection with prev segment
                 lowerParam = each.Domain.T0 #So, lowerParam = start of this segment
                 #ITS AN ELBOW
@@ -167,7 +174,22 @@ def RemoveExtensions(centerSegments, topLandingExtension, btmLandingExtension = 
             dom = rc.Geometry.Interval(btmParam, topParam)
             centerSegments[i] = centerSegment.Trim(dom)
     return centerSegments
-    
+
+def GetOverlappingSegments(segments, trimmedSegmentsLeft, trimmedSegmentsRight, width):
+    centerSegments = []
+    for i, segment in enumerate(segments):
+        stParamLeft = segment.ClosestPoint(trimmedSegmentsLeft[i].PointAtStart, width)
+        stParamRight = segment.ClosestPoint(trimmedSegmentsRight[i].PointAtStart, width)
+
+        endParamLeft = segment.ClosestPoint(trimmedSegmentsLeft[i].PointAtEnd, width)
+        endParamRight = segment.ClosestPoint(trimmedSegmentsRight[i].PointAtEnd, width)
+
+        domain = rc.Geometry.Interval(max([stParamLeft[1], stParamRight[1]]), min([endParamLeft[1], endParamRight[1]]))
+        if domain[0] >= domain[1]:
+            print "A segment was trimmed out of existence"
+        centerSegments.append(segment.Trim(domain))
+    return centerSegments
+
 ###############################################################################
 #GetRunsAndLandings
 def GetRunsAndLandings(path, width):
@@ -175,7 +197,7 @@ def GetRunsAndLandings(path, width):
     btmLandingExtension = 12
     
     rhobj = rs.coercecurve(path)
-
+    
     #Split at when not tangent
     dom=rhobj.Domain
     cornerParams=[]
@@ -196,19 +218,8 @@ def GetRunsAndLandings(path, width):
     trimmedSegmentsRight, elbowsRight, pitPtsRight = TrimOffsets(offsetSegmentsRight)
 
     #Get ovelaping segments
-    centerSegments = []
-    for i, segment in enumerate(segments):
-        stParamLeft = segment.ClosestPoint(trimmedSegmentsLeft[i].PointAtStart, width)
-        stParamRight = segment.ClosestPoint(trimmedSegmentsRight[i].PointAtStart, width)
-
-        endParamLeft = segment.ClosestPoint(trimmedSegmentsLeft[i].PointAtEnd, width)
-        endParamRight = segment.ClosestPoint(trimmedSegmentsRight[i].PointAtEnd, width)
-
-        domain = rc.Geometry.Interval(max([stParamLeft[1], stParamRight[1]]), min([endParamLeft[1], endParamRight[1]]))
-        if domain[0] >= domain[1]:
-            print "A segment was trimmed out of existence"
-        centerSegments.append(segment.Trim(domain))
-
+    centerSegments = GetOverlappingSegments(segments, trimmedSegmentsLeft, trimmedSegmentsRight, width)
+    
     #Shorten runs for landing extensions
     centerSegments = RemoveExtensions(centerSegments, topLandingExtension, btmLandingExtension)
     
@@ -217,7 +228,7 @@ def GetRunsAndLandings(path, width):
     
     #Create landings
     landings = CreateLandings(runSegmentsLeft, elbowsLeft, pitPtsLeft, runSegmentsRight, elbowsRight, pitPtsRight)
-
+    
     #Testing if this works
     leftSegments = runSegmentsLeft
     rightSegments = runSegmentsRight
@@ -291,7 +302,7 @@ def Make2DTreads(leftSegments, rightSegments, width, height):
             riserLines.append(line)
         allRiserLines.append(riserLines)
 
-    return allRiserLines
+    return allRiserLines, numRisers
 
 def MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, preview = True):
     tol = rs.UnitAbsoluteTolerance()
@@ -303,7 +314,9 @@ def MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, preview 
         edge2 = allTreads[i][-1]
         edge3 = each
         edge4 = rightSegments[i]
-        boundary = rc.Geometry.Curve.JoinCurves([edge1, edge3, edge2, edge4])
+        boundary = rc.Geometry.Curve.JoinCurves([edge1, edge3, edge2, edge4])[0]
+        if boundary.ClosedCurveOrientation() == rc.Geometry.CurveOrientation.Clockwise:
+            boundary.Reverse()
         planarSrf = rc.Geometry.Brep.CreatePlanarBreps(boundary, tol)[0]
         treadSrf = planarSrf.Faces[0].Split(allTreads[i], tol)
         treadSrfs.append(treadSrf)
@@ -313,6 +326,7 @@ def MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, preview 
     #Create Landing Surfaces
     landingSrfs = []
     for each in landings:
+        
         planarSrf = rc.Geometry.Brep.CreatePlanarBreps([each], tol)[0]
         landingSrfs.append(planarSrf)
         if preview:
@@ -342,24 +356,55 @@ def MakeUnderSurfaces(leftSegments, rightSegments, allTreads, runRiserHeights):
         print ""
     print ""
 
-def ConstructTopGeo(treadSrfs, landingSrfs, height):
-    for i in range(len(treadSrfs)):
+def ConstructRisers(allTreads, landingSrfs, riserHeight):
+    currRiserHeight = 0
+    riserSrfs = []
+    for eachRunsTreads in allTreads:
+        thisRunsRisers = []
+        for eachLine in eachRunsTreads:
+            stPt = eachLine.PointAtStart
+            #ADD TEST TO SEE IF POINT ON LEFT OR RIGHT SIDE OF CURVE, THEN FLIP
+            eachLine.Translate(0,0,currRiserHeight)
+            endPt = rc.Geometry.Point3d.Add(stPt, rc.Geometry.Vector3d(0,0,riserHeight))
+            line = rc.Geometry.LineCurve(stPt, endPt)
+            thisRunsRisers.append(rc.Geometry.SumSurface.Create(eachLine, line))
+            #sc.doc.Objects.Add(thisRunsRisers[-1])
+            currRiserHeight += riserHeight
+    #del riserSrfs[-1]
+    return riserSrfs
 
-        numRisers = 0
-        for x in treadSrfs[i].Faces:
-            numRisers += 1
-
-        riserHeight = height/numRisers
-
-        trans = 0
-        for j in range(numRisers):
-            newFace = treadSrfs[i].Faces[j].DuplicateFace(False)
-            newFace.FacesTranslate(0,0,trans)
-            trans += riserHeight
-
-            sc.doc.Objects.AddBrep(newFace)
-        sc.doc.Views.Redraw()
-        print ""
+def ConstructTopGeo(obj, treadSrfs, landingSrfs, riserHeight):
+    rhobj = rs.coercecurve(obj)
+    currRiserHeight = riserHeight
+    
+    #CONSTRUCT BREPS
+    
+    for i, eachRun in enumerate(treadSrfs):
+        #EACH RUN
+        treads = []
+        params = []
+        for eachFace in eachRun.Faces:
+            brep = eachFace.DuplicateFace(False)
+            treads.append(brep)
+            bbox = brep.GetBoundingBox(True)
+            params.append(rhobj.ClosestPoint(bbox.Center)[1])
+        
+        #SORT
+        yx = zip(params, treads)
+        yx.sort()
+        treads = [x for y, x in yx]
+        
+        #MOVE FACES
+        for eachFace in treads:
+            eachFace.Translate(0,0,currRiserHeight)
+            currRiserHeight += riserHeight
+            sc.doc.Objects.Add(eachFace)
+            
+        #DO THE LANDING
+        if i < len(landingSrfs):
+            landingSrfs[i].Translate(0,0,currRiserHeight)
+            sc.doc.Objects.Add(landingSrfs[i]) 
+            currRiserHeight += riserHeight
 
 ###############################################################################
 #MAIN FUNCTION
@@ -368,7 +413,7 @@ def MakeStair(obj, width, height):
     leftSegments, rightSegments, landings  = GetRunsAndLandings(obj, width)
 
     #Temp preview
-    if True:
+    if False:
         for each in leftSegments:
             sc.doc.Objects.Add(each)
         for each in rightSegments:
@@ -377,20 +422,26 @@ def MakeStair(obj, width, height):
             sc.doc.Objects.Add(each)
 
     #Draw 2d treads
-    #allTreads = Make2DTreads(leftSegments, rightSegments, width, height)
-    print
+    allTreads, numRisers = Make2DTreads(leftSegments, rightSegments, width, height)
+    if allTreads is None: return
     #Temp Preview
     if False:
         for each in allTreads:
             for eachLine in each:
                 sc.doc.Objects.Add(eachLine)
 
-
     #Make Tread Surfaces
-    #treadSrfs, landingSrfs = MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, True)
+    treadSrfs, landingSrfs = MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, False)
+
+    #Riser height
+    riserHeight = height/(sum(numRisers) + len(landingSrfs)+1)
 
 
-    #ConstructTopGeo(treadSrfs, landingSrfs, height)
+    #MAKE RISERS
+    riserSrfs = ConstructRisers(allTreads, landingSrfs, riserHeight)
+
+    #MAKE TOP SURFACES
+    treadSrfs = ConstructTopGeo(obj, treadSrfs, landingSrfs, riserHeight)
 
     #Make UnderSurface
     #MakeUnderSurfaces(leftSegments, rightSegments, allTreads, runRiserHeights)
