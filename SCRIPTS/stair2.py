@@ -287,7 +287,7 @@ def CreateOutlines(leftSegments, rightSegments, landingsLeft, landingsRight):
 ###############################################################################
 ####02
 #CALCULATE AND MAKE 2D TREADS
-def Make2DTreads(leftSegments, rightSegments, width, height):
+def Make2DTreads(obj, leftSegments, rightSegments, width, height):
     if rs.UnitSystem() == 8:
         minTreadDepth = 11
         maxTreadDepth = 0
@@ -336,27 +336,44 @@ def Make2DTreads(leftSegments, rightSegments, width, height):
         percentOfLength = usableLength / totalLength
         x = round(percentOfLength*numRisersFromHeight)
         numRisers.append(x)
-        print
 
     #Draw riser lines
     allRiserLines = []
+    treadLengths = []
     for i in range(len(shortEdges)):
+        length = shortEdges[i].GetLength()
         numTreads = numRisers[i]
 
         if numTreads == 0:
             continue
 
         riserStParams = shortEdges[i].DivideByCount(numTreads, True)
+        treadLengths.append(length/numTreads)
         riserLines = []
         for riserStParam in riserStParams:
             shortEdgePt = shortEdges[i].PointAt(riserStParam)
+            result = IsPointOnLeftSide(shortEdgePt, obj)
             longEdgeParam = longEdges[i].ClosestPoint(shortEdges[i].PointAt(riserStParam), width*2)[1]
             longEdgePt = longEdges[i].PointAt(longEdgeParam)
             line = rc.Geometry.LineCurve(shortEdgePt, longEdgePt)
+            if result:
+                line.Reverse()
             riserLines.append(line)
         allRiserLines.append(riserLines)
 
-    return allRiserLines, numRisers
+    return allRiserLines, numRisers, treadLengths
+
+def IsPointOnLeftSide(point, curve):
+    rhcrv = rs.coercecurve(curve)
+    closestPtParam = rhcrv.ClosestPoint(point)[1]
+    closestPt = rhcrv.PointAt(closestPtParam)
+    vec = rs.VectorCreate(closestPt, point)
+    tanVec = rhcrv.TangentAt(closestPtParam)
+    x = tanVec.VectorAngle(tanVec, vec, rs.WorldXYPlane())
+    if math.degrees(x)-180 > 0:
+        return False
+    else:
+        return True
 
 ###############################################################################
 ####03
@@ -393,28 +410,38 @@ def MakeTreadSurfaces(leftSegments, rightSegments, landings, allTreads, preview 
 ###############################################################################
 ####04
 #3D GEO
-def ConstructRisers(allTreads, landingSrfs, riserHeight):
+def ConstructRiserSrfs(allTreads, landingSrfs, riserHeight):
     currRiserHeight = 0
     riserSrfs = []
     for eachRunsTreads in allTreads:
-        thisRunsRisers = []
+        #thisRunsRisers = []
         for eachLine in eachRunsTreads:
             stPt = eachLine.PointAtStart
             #ADD TEST TO SEE IF POINT ON LEFT OR RIGHT SIDE OF CURVE, THEN FLIP
             eachLine.Translate(0,0,currRiserHeight)
             endPt = rc.Geometry.Point3d.Add(stPt, rc.Geometry.Vector3d(0,0,riserHeight))
             line = rc.Geometry.LineCurve(stPt, endPt)
-            thisRunsRisers.append(rc.Geometry.SumSurface.Create(eachLine, line))
-            sc.doc.Objects.Add(thisRunsRisers[-1])
+            sumSrf = rc.Geometry.SumSurface.Create(eachLine, line)
+            brep = sumSrf.ToBrep()
+            riserSrfs.append(brep)
+            
             currRiserHeight += riserHeight
-    #del riserSrfs[-1]
+        #riserSrfs.append(thisRunsRisers)
+    del riserSrfs[-1]
+    #for eachRunsTreads in riserSrfs:
+    #    sc.doc.Objects.Add(eachRunsTreads)
+    
+    print
     return riserSrfs
 
-def ConstructTopGeo(obj, treadSrfs, landingSrfs, riserHeight):
+def ConstructTreadSrfs(obj, treadSrfs, landingSrfs, riserHeight):
     rhobj = rs.coercecurve(obj)
     currRiserHeight = riserHeight
     
     #CONSTRUCT BREPS
+    finalTreadSrfs = []
+    
+    landingHeights = []
     
     for i, eachRun in enumerate(treadSrfs):
         #EACH RUN
@@ -435,18 +462,24 @@ def ConstructTopGeo(obj, treadSrfs, landingSrfs, riserHeight):
         for eachFace in treads:
             eachFace.Translate(0,0,currRiserHeight)
             currRiserHeight += riserHeight
-            sc.doc.Objects.Add(eachFace)
-            
+            #sc.doc.Objects.Add(eachFace)
+            finalTreadSrfs.append(eachFace)
+        
         #DO THE LANDING
         if i < len(landingSrfs):
             landingSrfs[i].Translate(0,0,currRiserHeight)
-            sc.doc.Objects.Add(landingSrfs[i]) 
+            landingHeights.append(currRiserHeight)
+            #sc.doc.Objects.Add(landingSrfs[i]) 
             currRiserHeight += riserHeight
+            finalTreadSrfs.append(landingSrfs[i])
+    
+    return finalTreadSrfs, landingHeights
 
 def CreateUnderSurfaces(treadSrfs, leftSegments, rightSegments, allTreads, riserHeight):
     extensionFactor = 1.1
     extensionLength = 6
     currRiserHeight = riserHeight
+    underSrfs = []
     
     for i in range(len(leftSegments)):
         leftSegment = leftSegments[i]
@@ -463,9 +496,10 @@ def CreateUnderSurfaces(treadSrfs, leftSegments, rightSegments, allTreads, riser
             #sc.doc.Objects.Add(xCrv)
 
         srf = rc.Geometry.Brep.CreateFromLoft(treadList, rc.Geometry.Point3d.Unset, rc.Geometry.Point3d.Unset, rc.Geometry.LoftType.Normal, False)[0]
-        sc.doc.Objects.Add(srf)
-        print
-    print
+        #sc.doc.Objects.Add(srf)
+        underSrfs.append(srf)
+        #print
+    return underSrfs
 
 def CreateSides(leftEdge, rightEdge, height):
     stPtLeft = leftEdge.PointAtStart
@@ -473,15 +507,112 @@ def CreateSides(leftEdge, rightEdge, height):
     vec = rc.Geometry.Vector3d(0,0,height)
     
     line = rc.Geometry.LineCurve(stPtLeft, rc.Geometry.Point3d.Add(stPtLeft, vec))
-    
+    leftEdge.Reverse()
     geoLeft = rc.Geometry.SumSurface.Create(leftEdge, line)
     geoRight = rc.Geometry.SumSurface.Create(rightEdge, line)
     
-    sc.doc.Objects.Add(geoLeft)
-    sc.doc.Objects.Add(geoRight)
-    
-    return geoLeft, geoRight
+    return geoLeft.ToBrep(), geoRight.ToBrep()
 
+def CreateUnderWedge(landings, landingsLeft, landingsRight, landingSrfs, landingHeights, riserHeight, treadLengths, thickness):
+    wedges = []
+    for i, landingLeft in enumerate(landingsLeft):
+        rightStartPt = landingsRight[i].PointAtStart
+        rightVec = landingsRight[i].TangentAtStart
+        leftStartPt = landingsLeft[i].PointAtEnd
+        leftVec = landingsLeft[i].TangentAtEnd
+        leftVec.Reverse()
+        
+        riseRatio = riserHeight/treadLengths[i]
+        rightVec.Z = riseRatio
+        leftVec.Z = riseRatio
+        factor = riserHeight/riseRatio
+        
+        directionEndPtRight = rc.Geometry.Point3d.Add(rightStartPt, rightVec*factor)
+        directionEndPtLeft = rc.Geometry.Point3d.Add(leftStartPt, leftVec*factor)
+        
+        diagonalRight = rc.Geometry.LineCurve(rightStartPt, directionEndPtRight)
+        diagonalLeft = rc.Geometry.LineCurve(leftStartPt, directionEndPtLeft)
+        
+        directionEndPtRight.Z = rightStartPt.Z
+        directionEndPtLeft.Z = rightStartPt.Z
+        
+        horizLineRight = rc.Geometry.LineCurve(rightStartPt, directionEndPtRight)
+        horizLineLeft = rc.Geometry.LineCurve(leftStartPt, directionEndPtLeft)
+        horizLineLeft.Reverse()
+        
+        #VERTICAL LINE
+        riseVec = rc.Geometry.Vector3d(0,0,riserHeight)
+        topPt = rc.Geometry.Point3d.Add(rightStartPt, riseVec)
+        secLine = rc.Geometry.LineCurve(rightStartPt, leftStartPt)
+        vertLine = rc.Geometry.LineCurve(rightStartPt, topPt)
+        
+        treadList = [diagonalRight, diagonalLeft]
+        
+        underSrf = rc.Geometry.Brep.CreateFromLoft(treadList, rc.Geometry.Point3d.Unset, rc.Geometry.Point3d.Unset, rc.Geometry.LoftType.Normal, False)[0]
+        rightSrf = rc.Geometry.SumSurface.Create(horizLineRight, vertLine)
+        rightBrep = rightSrf.ToBrep()
+        leftSrf = rc.Geometry.SumSurface.Create(horizLineLeft, vertLine)
+        leftBrep = leftSrf.ToBrep()
+        
+        rightTriangles = rightBrep.Trim(underSrf, rs.UnitAbsoluteTolerance())
+        leftTriangles = leftBrep.Trim(underSrf, rs.UnitAbsoluteTolerance())
+        print
+        geoList = List[rc.Geometry.Brep]()
+        geoList.Add(underSrf)
+        for rightTriangle in rightTriangles:
+            geoList.Add(rightTriangle)
+        for leftTriangle in leftTriangles:
+            geoList.Add(leftTriangle)
+        brep = rc.Geometry.Brep.JoinBreps(geoList, rs.UnitAbsoluteTolerance())[0]
+        brep.Translate(rc.Geometry.Vector3d(0,0,landingHeights[i]-riserHeight-thickness))
+        underSrf.Translate(rc.Geometry.Vector3d(0,0,landingHeights[i]-riserHeight-thickness))
+        
+        
+        
+        brep.Flip()
+        
+        dupSrf = landingSrfs[i].Duplicate()
+        dupSrf.Translate(rc.Geometry.Vector3d(0,0,-thickness))
+        newSrfs = dupSrf.Trim(brep, rs.UnitAbsoluteTolerance())
+        for newSrf in newSrfs:
+            newSrf.Flip()
+            underSrf.Join(newSrf, rs.UnitAbsoluteTolerance(), True)
+            #sc.doc.Objects.Add(newSrf)
+        
+        sc.doc.Objects.Add(underSrf)
+        wedges.append(brep)
+    return wedges
+
+###############################################################################
+####05
+#TRIM AND JOIN
+def JoinTopSrfs(riserSrfs, treadSrfs, leftSide, rightSide):
+    allGeo = riserSrfs + treadSrfs
+    brep = rc.Geometry.Brep.JoinBreps(allGeo , rs.UnitAbsoluteTolerance())
+    sc.doc.Objects.AddBrep(brep[0])
+    
+    rightSideTrimmed0 = rightSide.Trim(brep[0], rs.UnitAbsoluteTolerance())
+    leftSideTrimmed0 = leftSide.Trim(brep[0], rs.UnitAbsoluteTolerance())
+    sc.doc.Objects.Add(rightSideTrimmed0[0])
+    sc.doc.Objects.Add(leftSideTrimmed0[0])
+    
+    print
+
+def TrimUnderSrfsWithSides(underSrfs, leftSide, rightSide, thickness):
+    for eachUnderSrf in underSrfs:
+        srf1 = eachUnderSrf.Trim(rightSide , rs.UnitAbsoluteTolerance())[0]
+        srf2 = srf1.Trim(leftSide , rs.UnitAbsoluteTolerance())
+        finalSrf = srf2[0]
+        
+        finalSrf.Translate(rc.Geometry.Vector3d(0,0,-thickness))
+        
+        sc.doc.Objects.Add(finalSrf)
+
+    
+    print
+
+###############################################################################
+###############################################################################
 ###############################################################################
 #MAIN FUNCTION
 def MakeStair(obj, width, height):
@@ -509,7 +640,7 @@ def MakeStair(obj, width, height):
 
     ####02
     #Draw 2d treads
-    allTreads, numRisers = Make2DTreads(leftSegments, rightSegments, width, height)
+    allTreads, numRisers, treadLengths = Make2DTreads(obj, leftSegments, rightSegments, width, height)
     if allTreads is None: return
     #Temp Preview
     if False:
@@ -527,17 +658,26 @@ def MakeStair(obj, width, height):
 
 
     ####04
-    #MAKE RISERS
-    riserSrfs = ConstructRisers(allTreads, landingSrfs, riserHeight)
+    #MAKE RISER SURFACES
+    riserSrfs = ConstructRiserSrfs(allTreads, landingSrfs, riserHeight)
 
-    #MAKE TOP SURFACES
-    treadSrfs = ConstructTopGeo(obj, treadSrfs, landingSrfs, riserHeight)
+    #MAKE TREAD SURFACES
+    treadSrfs, landingHeights = ConstructTreadSrfs(obj, treadSrfs, landingSrfs, riserHeight)
 
     #Make UnderSurface
-    CreateUnderSurfaces(treadSrfs, leftSegments, rightSegments, allTreads, riserHeight)
+    underSrfs = CreateUnderSurfaces(treadSrfs, leftSegments, rightSegments, allTreads, riserHeight)
 
-    CreateSides(leftEdge, rightEdge, height)
+    #CREATE SIDES
+    leftSide, rightSide = CreateSides(leftEdge, rightEdge, height)
+    
+    #Create Underwedge
+    wedges = CreateUnderWedge(landings, landingsLeft, landingsRight, landingSrfs, landingHeights, riserHeight, treadLengths, structThickness)
 
+    ####05
+    #JOIN TOP SRFS
+    JoinTopSrfs(riserSrfs, treadSrfs, leftSide, rightSide)
+    TrimUnderSrfsWithSides(underSrfs, leftSide, rightSide, structThickness)
+    
 ###############################################################################
 #RHINO BUTTON INTERFACE
 def MakeStair_Button():

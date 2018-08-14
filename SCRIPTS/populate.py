@@ -73,6 +73,8 @@ def TryLoadBlock(type, name):
         typeFolder = 'People 2D Folder'
     elif type == '2D Trees':
         typeFolder = 'Vegetation 2D Folder'    
+    elif type == '3D Trees':
+        typeFolder = 'Vegetation 3D Folder'    
     
     if rs.IsBlock(name):
         return True
@@ -99,6 +101,8 @@ def GetBlockNames(type):
         typeFolder = 'People 2D Folder'
     elif type == '2D Trees':
         typeFolder = 'Vegetation 2D Folder'    
+    elif type == '3D Trees':
+        typeFolder = 'Vegetation 3D Folder'    
     
     blocks = []
     files = os.listdir(fileLocations[typeFolder])
@@ -206,7 +210,6 @@ def RandomAngles(numObjects):
 
 def Populate_Button():
     try:
-        spacing = 42
         ###########################################################################
         #GET FUNCTIONS
         
@@ -228,7 +231,7 @@ def Populate_Button():
             typeDefault = sc.sticky['populate-type']
         else:
             typeDefault = '3D People'
-        types = ['3D People', '2D People', '2D Trees', 'Custom Block']
+        types = ['3D People', '2D People', '3D Trees', '2D Trees', 'Custom Block']
         type = rs.ListBox(types, "Select block type to populate", "Population Type", typeDefault)
         if type is None: return
         sc.sticky['populate-type'] = type
@@ -241,6 +244,15 @@ def Populate_Button():
         if blockNames is None: return
         
         ###########################################################################
+        if type == '2D People' or type == '3D People':
+            spacing = 42
+        elif type == '2D Trees':
+            spacing = 100
+        elif type == '3D Trees':
+            spacing = 200
+        else:
+            spacing = 50
+        ###########################################################################
         #DRAW FUNCTIONS
         rs.EnableRedraw(False)
         
@@ -251,7 +263,8 @@ def Populate_Button():
         angles = RandomAngles(numObjects)
         
         #ORIENT ANGLES AWAY FROM EDGES
-        angles = OrientAwayFromEdges(pts, angles, srf, spacing)
+        if type == '2D People' or type == '3D People':
+            angles = OrientAwayFromEdges(pts, angles, srf, spacing)
         
         for i in range(0, 5):
             #CONGREGATE THE POINTS
@@ -261,7 +274,8 @@ def Populate_Button():
             pts = MoveAwayFromEdges(pts, srf, spacing)
         
         #ORIENT ANGLES TOGETHER
-        angles = AlignAngles(pts, angles, srf, spacing)
+        if type == '2D People' or type == '3D People':
+            angles = AlignAngles(pts, angles, srf, spacing)
         
         for i, pt in enumerate(pts):
             #Choose random angle
@@ -275,6 +289,8 @@ def Populate_Button():
                     if type == '2D People' or type == '3D People':
                         layerName = '2_ENTOURAGE::' + 'People'
                     elif type == '2D Trees':
+                        layerName = '2_ENTOURAGE::' + 'Vegetation'
+                    elif type == '3D Trees':
                         layerName = '2_ENTOURAGE::' + 'Vegetation'
                     else:
                         layerName = '2_ENTOURAGE'
