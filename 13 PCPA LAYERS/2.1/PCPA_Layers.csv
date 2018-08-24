@@ -22,7 +22,7 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 401,Stair,0,255-164-210,INTERIOR_Floor_Generic,,0-0-0,,,180716
 402,Ramp,0,224-119-146,INTERIOR_Floor_Generic,,0-0-0,,,180716
 ,,,,,,,,,
-901,_Lines,0,0-0-0,,,0-0-0,,,180608
+901,_Lines,0,1-1-1,,,0-0-0,,,180824
 902,_Hidden,0,230-230-230,,,0-0-0,-1,,180608
 ,,,,,,,,,
 1000,1_SITE,,234-153-153,,,0-0-0,,,
@@ -54,8 +54,8 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 4901,_Hidden,4000,230-230-230,,,0-0-0,-1,,180608
 ,,,,,,,,,
 5000,5_ZONING,,182-215-168,,,,,,
-5101,Property Line,5000,255-0-0,,PCPA_DashDot,0-0-0,0.5,,180702
-5102,Setbacks,5000,0-0-255,,PCPA_DashDot,0-0-0,0.35,,180702
+5101,Property Line,5000,255-0-0,,PCPA_DashDot,0-0-0,0.35,,180824
+5102,Setbacks,5000,0-0-255,,PCPA_DashDot,0-0-0,0.18,,180824
 5103,Sky Exposure Plane,5000,255-127-0,,,0-0-0,,,180608
 ,,,,,,,,,
 6000,6_CAD IMPORT,,106-168-79,,,,,,

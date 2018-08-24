@@ -253,7 +253,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="9e4f5b87-7a31-49f6-a6fa-8b5d9e1778fa" active_tool_bar_group="51fe7514-87a9-45b8-9bc2-cbae4bec6eaa" single_file="False" hide_single_tab="False" point_floating="514,285">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="9e4f5b87-7a31-49f6-a6fa-8b5d9e1778fa" active_tool_bar_group="1bee15c7-04a7-49e5-b987-454cf41cd438" single_file="False" hide_single_tab="False" point_floating="514,285">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -299,7 +299,7 @@
         </text>
         <tool_bar_id>158790ef-99ea-4ce9-a2df-4b70b5da3eda</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59474" mru_width="868" point_pos="0,283" float_point="514,285" rect_mru_dock_pos="0,283,1600,344" dock_location_u="59419" dock_location="top" float_size="363,118" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59474" mru_width="868" point_pos="0,121" float_point="514,285" rect_mru_dock_pos="0,121,1600,182" dock_location_u="59419" dock_location="top" float_size="363,118" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars>
