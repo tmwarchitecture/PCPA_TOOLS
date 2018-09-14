@@ -72,3 +72,21 @@ Date,User
 2018-08-22_17:13:09.42,wanrsqjwdptgkljcpwqu,SITE_BOUNDARY.3dm,8_DRAWING::Leaders,hatch,PCPA_14,53260.618640635446,0,True
 2018-08-22_17:13:09.57,wanrsqjwdptgkljcpwqu,SITE_BOUNDARY.3dm,8_DRAWING::Leaders,hatch,PCPA_14,47376.112207203623,0,True
 2018-08-23_12:17:07.36,wanrsqjwdptgkljcpwqu,180823_MASSING.3dm,8_DRAWING::PCP-05,curve,PCPA_10,11722.92152757947,0,True
+2018-08-31_14:37:13.10,wanrsqjwdptgkljcpwqu,Massing_Dual Tower.3dm,7_PROGRAM::Program 01_Medium,hatch,PCPA_10,22783.056464196488,0,True
+2018-08-31_14:37:13.43,wanrsqjwdptgkljcpwqu,Massing_Dual Tower.3dm,7_PROGRAM::Service_Medium,hatch,PCPA_10,17715.907475301359,0,True
+2018-08-31_14:37:13.70,wanrsqjwdptgkljcpwqu,Massing_Dual Tower.3dm,7_PROGRAM::Program 02_Light,hatch,PCPA_10,2944.5654586538899,0,True
+2018-08-31_14:37:13.93,wanrsqjwdptgkljcpwqu,Massing_Dual Tower.3dm,7_PROGRAM::Program 02_Light,hatch,PCPA_10,1025.2740885479827,0,True
+2018-08-31_14:37:14.13,wanrsqjwdptgkljcpwqu,Massing_Dual Tower.3dm,7_PROGRAM::Program 02_Light,hatch,PCPA_10,1025.2740885479836,0,True
+2018-08-31_14:57:29.49,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Service_Medium,hatch,PCPA_Precision,2875.1043966879797,0,True
+2018-08-31_14:57:29.70,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Service_Dark,hatch,PCPA_Precision,16527.881112086343,0,True
+2018-08-31_14:57:29.89,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Public,hatch,PCPA_Precision,3389.5039431991449,0,True
+2018-08-31_14:57:30.7,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Program 02_Light,hatch,PCPA_Precision,6031.7763209546692,0,True
+2018-08-31_14:57:30.25,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Retail_Dark,hatch,PCPA_Precision,6386.3333333342944,0,True
+2018-08-31_14:57:30.48,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Program 03_Light,hatch,PCPA_Precision,18774.590746392772,0,True
+2018-08-31_14:57:52.72,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Program 03_Light,hatch,PCPA_Precision,18774.590746392772,0,True
+2018-08-31_14:58:43.1,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Program 03_Light,hatch,PCPA_14,18774.590746392772,0,True
+2018-08-31_14:58:57.46,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Public,hatch,PCPA_14,3389.5039431991449,0,True
+2018-08-31_14:58:57.65,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Program 02_Light,hatch,PCPA_14,6031.7763209546692,0,True
+2018-08-31_14:58:57.82,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Service_Medium,hatch,PCPA_14,2875.1043966879797,0,True
+2018-08-31_14:58:58.4,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Retail_Dark,hatch,PCPA_14,6386.3333333342944,0,True
+2018-08-31_14:58:58.27,dwygnonunpxefetmowde,Massing_Terrace.3dm,7_PROGRAM::Service_Dark,hatch,PCPA_14,16527.881112086343,0,True
