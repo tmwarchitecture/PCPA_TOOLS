@@ -4,7 +4,7 @@ import subprocess
 import config
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 def OpenFolder(path):
     try:
@@ -27,3 +27,7 @@ if __name__ == "__main__":
         OpenFolder(fileLocations['Display Mode Folder'])
     if func == 4:
         OpenFolder(fileLocations['ACAD Scheme Folder'])
+    if func == 5:
+        OpenFolder(rs.DocumentPath())
+    if func == 6:
+        OpenFolder(fileLocations['3d Blocks'])

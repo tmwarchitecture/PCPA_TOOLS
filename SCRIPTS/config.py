@@ -29,7 +29,8 @@ def GetDict():
     'Help File' : r'X:\05_RHINO STANDARDS\10 PCPA RHINO MANUAL\CURRENT\PCPA Rhino Tools Manual.pdf',
     'PCPA Logo' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\ICONS\PCPA_LOGO.png',
     'PS Swatch File' : r'X:\08_ADOBE + OTHER SOFTWARE\01_PHOTOSHOP\PCPA Swatch Library\PCPA.aco',
-    'PS Directory' : r'C:\Program Files\Adobe\Adobe Photoshop CS6 (64 Bit)\Presets\Color Swatches'
+    'PS Directory' : r'C:\Program Files\Adobe\Adobe Photoshop CS6 (64 Bit)\Presets\Color Swatches',
+    '3d Blocks' : r'X:\13_3D MODELS LIBRARY'
     }
 
     fileLocationsPCPNH = {

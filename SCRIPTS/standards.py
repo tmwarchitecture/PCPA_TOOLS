@@ -103,9 +103,6 @@ def LoadPCPAMaterials(filepath):
         result = False
     utils.SaveFunctionData('Standards-Load Materials', [result])
 
-def LoadPCPAMaterials2(filepath):
-    print ""
-
 #NOT WORKING - Folder set to read-only
 def LoadPSSwatch(PSswatch, PSdir):
     print PSswatch

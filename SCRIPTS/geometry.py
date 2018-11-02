@@ -36,6 +36,25 @@ def IntersectBrepPlane(obj, plane):
 
     return finalCurves
 
+def IntersectMeshPlane(obj, plane):
+    tolerance = rs.UnitAbsoluteTolerance()
+    #BREP
+    mesh = rs.coercemesh(obj)
+    intersectionCrvs = []
+    if mesh is None: return None
+
+    x = rc.Geometry.Intersect.Intersection.MeshPlane(mesh, plane)
+    if x is None: return
+
+    #Match attributes
+    finalCurves = []
+    for curve in x:
+        finalCurve = sc.doc.Objects.AddPolyline(curve)
+        rs.MatchObjectAttributes(finalCurve, obj)
+        finalCurves.append(finalCurve)
+
+    return finalCurves
+
 def IntersectGeo(obj, level):
     tolerance = rs.UnitAbsoluteTolerance()
     plane = rc.Geometry.Plane(rs.coerce3dpoint((0,0,level)), rs.coerce3dvector((0,0,1)))
@@ -61,9 +80,24 @@ def IntersectGeo(obj, level):
                 if each is not None:
                     finalCurves.append(each)
             rs.DeleteObject(xformedObj)
+            
+            #MESHES IN BLOCK <---This code might not be necessary
+            result = IntersectMeshPlane(xformedObj, plane)
+            if result is None: continue
+            for each in result:
+                if each is not None:
+                    finalCurves.append(each)
+            rs.DeleteObject(xformedObj)
     #BREPS
     elif rs.IsBrep(obj):
         result = IntersectBrepPlane(obj, plane)
+        if result is None: return None
+        for each in result:
+            if each is not None:
+                finalCurves.append(each)
+    #MESHES
+    elif rs.IsMesh(obj):
+        result = IntersectMeshPlane(obj, plane)
         if result is None: return None
         for each in result:
             if each is not None:
@@ -75,34 +109,36 @@ def IntersectGeoAtPt():
         objs = rs.GetObjects("Select objects to contour",1073745980, preselect = True)
         if objs is None: return
 
-        pt = rs.GetPoint("Select point to contour at")
-        if pt is None: return
-
-        rs.EnableRedraw(False)
         geos = []
-        for obj in objs:
-            if rs.IsBlockInstance(obj):
-                blocksObjects = utils.GetAllBlockObjectsInPosition(obj)
-                for eachBlocksObject in blocksObjects:
-                    result = IntersectGeo(eachBlocksObject, pt.Z)
+        while True:
+            pt = rs.GetPoint("Select point to contour at")
+            if pt is None: break
+    
+            rs.EnableRedraw(False)
+            
+            for obj in objs:
+                if rs.IsBlockInstance(obj):
+                    blocksObjects = utils.GetAllBlockObjectsInPosition(obj)
+                    for eachBlocksObject in blocksObjects:
+                        result = IntersectGeo(eachBlocksObject, pt.Z)
+                        if result is None: continue
+                        for each in result:
+                            if each is not None:
+                                geos.append(each)
+                        rs.DeleteObject(eachBlocksObject)
+                else:
+                    result = IntersectGeo(obj, pt.Z)
                     if result is None: continue
                     for each in result:
                         if each is not None:
                             geos.append(each)
-                    rs.DeleteObject(eachBlocksObject)
-            else:
-                result = IntersectGeo(obj, pt.Z)
-                if result is None: continue
-                for each in result:
-                    if each is not None:
-                        geos.append(each)
-        rs.EnableRedraw(True)
+            rs.EnableRedraw(True)
 
         rs.SelectObjects(geos)
         result = True
     except:
         result = False
-    utils.SaveFunctionData('Geometry-Contour At Pt', [__version__, len(objs), pt.Z, result])
+    utils.SaveFunctionData('Geometry-Contour At Pt', [__version__, len(objs), result])
     return result
 
 ################################################################################
