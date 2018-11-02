@@ -8,7 +8,7 @@ import config
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 def PreloadCheck():
     if rs.ExeVersion() < 6:
@@ -252,6 +252,13 @@ def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
     targetMain = os.path.join(targetRoot, PCPAroot)
+    
+    #Remove Previous Version
+    oldPath = os.path.join(targetRoot, r'00_PCPA Standard Set')
+    if os.path.isdir(oldPath):
+        print "Contains old version"
+        os.chmod(oldPath, stat.S_IWRITE)
+        shutil.rmtree(oldPath)
 
     #Ensure targetMain exists
     if os.path.isdir(targetMain):
@@ -308,30 +315,39 @@ def LoadPCPAComponents(sourceFolder):
         result = False
     utils.SaveFunctionData('Standards-PCPA GH Components', [numberOfObjects, result])
 
-def LoadGHDependencies(sourceFolder):
+def LoadGHDependencies(fileLocations):
     """
     copies GH Dependencies from source folder to the grasshopper library folder
     """
-    if os.path.isdir(sourceFolder) is False:
-        print "FAIL-----GH Dependecies folder not found"
+    sourceFolderLibraries = fileLocations['GH Dependencies_Libraries']
+    sourceFolderUserObjects = fileLocations['GH Dependencies_User Objects']
+    
+    if os.path.isdir(sourceFolderLibraries) is False:
+        print "FAIL-----'GH Dependecies Libraries' folder not found"
+        result = False
+    if os.path.isdir(sourceFolderUserObjects) is False:
+        print "FAIL-----'GH Dependecies UserObjects' folder not found"
         result = False
 
     try:
         appData = os.getenv('APPDATA')
-        targetFolder = appData + r"\Grasshopper\Libraries"
+        targetFolderLibraries = appData + r"\Grasshopper\Libraries"
+        targetFolderUserObjects = appData + r"\Grasshopper\UserObjects"
         result = True
     except:
-        print "FAIL-----GH Library folder not found"
+        print "FAIL-----GH Library or User Object folder not found"
         result = False
-    numberOfObjects = 0
+    numberOfLibraryObjects = 0
+    numberOfUserObjects = 0
     try:
-        numberOfObjects = UpdateFolders(sourceFolder, targetFolder)
+        numberOfLibraryObjects = UpdateFolders(sourceFolderLibraries, targetFolderLibraries)
+        numberOfUserObjects = UpdateFolders(sourceFolderUserObjects, targetFolderUserObjects)
         result = True
     except:
-        print "FAIL-----Could not copy dependencies. You must have grasshopper open. Close and reopen Rhino, then run this again."
+        print "FAIL-----Could not copy dependencies. You must have Grasshopper open. Close and reopen Rhino, then run this again."
         result = False
 
-    utils.SaveFunctionData('Standards-PCPA GH Dependencies', [numberOfObjects, result])
+    utils.SaveFunctionData('Standards-PCPA GH Dependencies', [numberOfLibraryObjects, numberOfUserObjects, result])
 
 if __name__ == "__main__":
     PreloadCheck()
@@ -347,7 +363,7 @@ if __name__ == "__main__":
         utils.SaveToAnalytics('standards-Set Template')
     elif standardsRequested == 2:
         LoadPCPAComponents(fileLocations['PCPA GH Components'])
-        LoadGHDependencies(fileLocations['GH Dependencies'])
+        LoadGHDependencies(fileLocations)
         utils.SaveToAnalytics('standards-Load GH Components')
     elif standardsRequested == 3:
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
@@ -372,7 +388,7 @@ if __name__ == "__main__":
         LoadStyles(fileLocations['Template File'])
         LoadAcadSchemes(fileLocations['ACAD Scheme Folder'])
         LoadPCPAComponents(fileLocations['PCPA GH Components'])
-        LoadGHDependencies(fileLocations['GH Dependencies'])
+        LoadGHDependencies(fileLocations)
         ApplyPCPAAliases(fileLocations['Scripts Folder'])
         utils.SaveToAnalytics('Standards-All')
     else:

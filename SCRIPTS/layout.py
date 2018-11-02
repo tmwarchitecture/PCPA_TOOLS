@@ -120,14 +120,28 @@ def AddTitleBlock(size):
     textList.append(rs.AddText(clientName, txtBase4, txtSizeM, justification = 1))
 
 
-    #ADD PCPA LOGO
-    PCPAlogo = filelocations['PCPA Logo']
-    if os.path.isfile(PCPAlogo):
-        pictureframe = rs.AddPictureFrame(logoPlane, PCPAlogo, logoWidth, logoHeight, True, True, True)
-        rs.ObjectLayer(pictureframe, layers.GetLayerNameByNumber(8105))
-    else:
-        textList.append(rs.AddText('COPYRIGHT %<Date("yyyy")>% Pelli Clarke Pelli Architects', txtBase5, txtSizeM, justification = 4))
+    #ADD Copyright
+    copyright = 'COPYRIGHT ' + u"\u00a9" + ' %<Date("yyyy")>%'
+    copyrightText = rs.AddText(copyright, txtBase5, txtSizeM, justification = 4)
 
+    #ADD Pelli Clarke Pelli
+    pcp = 'Pelli Clarke Pelli'
+    pcpText = rs.AddText(pcp, txtBase5, txtSizeM, justification = 4)
+    if rs.IsDimStyle('PCPA_10'):
+        dimstyleID = sc.doc.DimStyles.FindName('PCPA_14')
+    
+    ##############
+    #Just trying to change the dim style here
+    #pcpRhobj = rs.coercerhinoobject(pcpText)
+    #test = pcpRhobj.Attributes
+    #pcpRhobj.CommitChanges()
+    ##############
+
+    #ADD Architects
+    architects = 'Architects'
+    architectsText = rs.AddText(architects, txtBase5, txtSizeM, justification = 4)
+
+    #Horizontal line
     line = rs.AddLine(lineSt, lineEnd)
 
     #Add detail
@@ -135,7 +149,7 @@ def AddTitleBlock(size):
 
     #Change layers AddLayerByNumber
     try:
-        rs.ObjectLayer(line, layers.GetLayerNameByNumber(8202))
+        rs.ObjectLayer(line, layers.GetLayerNameByNumber(8204))
     except:
         pass
     try:
@@ -145,6 +159,18 @@ def AddTitleBlock(size):
     try:
         for eachText in textList:
             rs.ObjectLayer(eachText, layers.GetLayerNameByNumber(8105))
+    except:
+        pass
+    try:
+        rs.ObjectLayer(copyrightText, layers.GetLayerNameByNumber(8211))
+    except:
+        pass
+    try:
+        rs.ObjectLayer(pcpText, layers.GetLayerNameByNumber(8210))
+    except:
+        pass
+    try:
+        rs.ObjectLayer(architectsText, layers.GetLayerNameByNumber(8211))
     except:
         pass
     rs.EnableRedraw(True)

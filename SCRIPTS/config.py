@@ -1,7 +1,7 @@
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 def GetDict():
     fileLocationsPCPNY = {
@@ -17,7 +17,9 @@ def GetDict():
     'PCPA Layers_V1' : r'X:\05_RHINO STANDARDS\13 PCPA LAYERS\1.0\PCPA LAYERS_V1.csv',
     'CSV' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\libs\csv.py',
     'PCPA GH Components' : r'X:\22_REACH\03 TOOLS\PCPA_GH_TOOLBAR\CURRENT',
-    'GH Dependencies' : r'X:\05_RHINO STANDARDS\04 GRASSHOPPER\00_PCPA Standard Set',
+    'GH Dependencies' : r'X:\22_REACH\03 TOOLS\PCPA_GH_STANDARD SET',
+    'GH Dependencies_Libraries' : r'X:\22_REACH\03 TOOLS\PCPA_GH_STANDARD SET\PCPA_GH_STANDARD SET_LIBRARIES',
+    'GH Dependencies_User Objects' : r'X:\22_REACH\03 TOOLS\PCPA_GH_STANDARD SET\PCPA_GH_STANDARD SET_USER OBJECTS',
     'Material File' : r'X:\05_RHINO STANDARDS\01 MATERIALS\PCPA_Materials.3dm',
     'Material Folder' : r'X:\05_RHINO STANDARDS\01 MATERIALS',
     'People 3D Folder' : r'X:\05_RHINO STANDARDS\08 BLOCKS\01_PEOPLE\3D',

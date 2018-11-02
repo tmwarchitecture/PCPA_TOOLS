@@ -5,7 +5,7 @@ import layers
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 def SuperExplodeBlock():
     try:
@@ -18,7 +18,7 @@ def SuperExplodeBlock():
     except:
         return None
 
-def RenameBlockCmd():
+def RenameBlockButton():
     try:
         block = rs.GetObject("Select block to rename", filter = 4096, preselect = True)
 
@@ -50,42 +50,8 @@ def RenameBlockCmd():
     except:
         return None
 
-def ReplicateBlock(blockObj):
-    #Copy block
-    copiedBlock = rs.CopyObject(blockObj)
-
-    #Get new block name
-    defaultName = utils.UpdateString(rs.BlockInstanceName(blockObj))
-    looping = True
-    while looping:
-        newBlockName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Iterate Design Option')
-        if newBlockName is None:
-            rs.DeleteObject(copiedBlock)
-            return
-        if rs.IsBlock(newBlockName):
-            print "Block name already exists"
-        elif len(newBlockName) == 0:
-            print "Must specify a name"
-        else:
-            looping = False
-
-
-    if newBlockName is None:
-        rs.DeleteObject(copiedBlock)
-        return
-
-    #Get previous base point
-    xform = rs.BlockInstanceXform(copiedBlock)
-    basePoint = rs.BlockInstanceInsertPoint(copiedBlock)
-
-    #Explode block
-    objsInside = rs.ExplodeBlockInstance(copiedBlock)
-
-    rs.AddBlock(objsInside, basePoint, newBlockName, True)
-    #Create new block
-    instance = rs.InsertBlock2(newBlockName, xform)
-    return instance
-
+##############################################################################
+#Make Block Unique
 def MakeBlockUnique(block, newName):
     """
     Explodes a block and makes a new one with 'newName'
@@ -128,39 +94,90 @@ def MakeBlockUniqueButton():
     except:
         return False
 
+##############################################################################
+#Iterate Design Option
+def ReplicateBlock(blockObj):
+    #Copy block
+    copiedBlock = rs.CopyObject(blockObj)
+
+    #Get new block name
+    origName = rs.BlockInstanceName(blockObj)
+    defaultName = origName
+    for i in range(100):
+        defaultName = utils.UpdateString(defaultName)
+        if origName == defaultName:
+            break
+        if rs.IsBlock(defaultName) == False:
+            break
+    
+    looping = True
+    while looping:
+        newBlockName = rs.StringBox("Enter new block name", default_value = defaultName, title = 'Iterate Design Option')
+        if newBlockName is None:
+            rs.DeleteObject(copiedBlock)
+            return
+        if rs.IsBlock(newBlockName):
+            print "Block name already exists"
+        elif len(newBlockName) == 0:
+            print "Must specify a name"
+        else:
+            looping = False
+
+
+    if newBlockName is None:
+        rs.DeleteObject(copiedBlock)
+        return
+
+    #Get previous base point
+    xform = rs.BlockInstanceXform(copiedBlock)
+    basePoint = rs.BlockInstanceInsertPoint(copiedBlock)
+
+    #Explode block
+    objsInside = rs.ExplodeBlockInstance(copiedBlock)
+
+    rs.AddBlock(objsInside, basePoint, newBlockName, True)
+    #Create new block
+    instance = rs.InsertBlock2(newBlockName, xform)
+    return instance
+
 def Iterate():
     block = rs.GetObject("Select Design Option Block to iterate", rs.filter.instance, True)
     if block is None: return
 
     try:
+        prevBlockName = rs.BlockInstanceName(block)
+        prevBlockLayer = rs.ObjectLayer(block)
+        prevBlockLayerColor = rs.LayerColor(prevBlockLayer)
+        
+        
         newBlock = ReplicateBlock(block)
         newBlockName = rs.BlockInstanceName(newBlock)
-        optionLayers = layers.AddLayerByNumber(3000, False)
-        try:
-            rootLayer = optionLayers[0]
-        except:
-            rootLayer = optionLayers
-
-
-        color = rs.LayerColor(rootLayer)
-        layerName = rs.BlockInstanceName(newBlock)
-
-        newBlockLayer = rs.AddLayer(layerName,color = color , parent = rootLayer)
-
+        
+        #Ensure 3_DESIGN OPTIONS already exists
+        parentLayer = layers.AddLayerByNumber(3000, False)[0]
+        rs.LayerVisible(parentLayer, True)
+        
+        #Create new design option layer
+        #newBlockLayer = rs.AddLayer(parentLayer + "::" + newBlockName, color = utils.StepColor(prevBlockLayerColor))
+        newBlockLayer = rs.AddLayer(parentLayer + "::" + newBlockName, color = utils.GetRandomColor())
         rs.ObjectLayer(newBlock, newBlockLayer)
-        rs.CurrentLayer(newBlockLayer)
-        prevBlockLayer = rs.ObjectLayer(block)
+        
+        #Save user text
         try:
-            prevBlockLayerRoot = prevBlockLayer.split('::')[0]
-            if prevBlockLayerRoot == rootLayer:
-                rs.LayerVisible(prevBlockLayer, False)
+            parentsUserTest = rs.GetUserText(block, 'Design Option History') + "<--"
         except:
-            pass
+            parentsUserTest = ''
+        rs.SetUserText(newBlock, 'Design Option History',parentsUserTest + newBlockName)
+        
+        #Turn off prev blocks layer
+        if rs.CurrentLayer() != prevBlockLayer:
+            rs.LayerVisible(prevBlockLayer, False)
+        
         result = True
     except:
         result = False
         newBlockName = ''
-    utils.SaveFunctionData('Blocks-Iterate', [rs.BlockInstanceName(block), newBlockName, result])
+    utils.SaveFunctionData('Blocks-Iterate', [__version__, rs.BlockInstanceName(block), newBlockName, result])
     return result
 
 def ResetBlockScale():
@@ -200,6 +217,7 @@ def ResetBlockScale():
     except:
         return False
 
+###############################################################################
 def ExportAndLinkBlock():
     try:
         name = rs.ListBox(rs.BlockNames(True), 'Select Block to Export and Link', 'Export and Link')
@@ -217,6 +235,54 @@ def ExportAndLinkBlock():
     except:
         return False
 
+###############################################################################
+#Create Design Option
+def CreateDesignOption():
+    objs = rs.GetObjects("Select objects to create design option with", preselect = True)
+    if objs is None: return None
+    try:
+        date = utils.GetDatePrefix()
+        origName = date + '_OPTION_00'
+        defaultName = origName
+        for i in range(100):
+            defaultName = utils.UpdateString(defaultName)
+            if origName == defaultName:
+                break
+            if rs.IsBlock(defaultName) == False:
+                break
+        
+        
+        
+        looping  = True
+        while looping:
+            designOptionName = rs.StringBox("Design Option Name", defaultName, "Create Design Option")
+            if designOptionName is None: return None
+            if rs.IsBlock(designOptionName):
+                print "Block name already exists"
+            elif len(designOptionName) == 0:
+                print "Must specify a name"
+            else:
+                looping = False
+        block = rs.AddBlock(objs, (0,0,0), designOptionName, True)
+        blockInstance = rs.InsertBlock(designOptionName, (0,0,0))
+        
+        #Add user text
+        rs.SetUserText(blockInstance, 'Design Option History', designOptionName)
+        
+        #Ensure 3_DESIGN OPTIONS already exists
+        layers.AddLayerByNumber(3000, False)
+        
+        #Create new layer
+        parentLayer = layers.GetLayerNameByNumber(3000)
+        designOptionLayer = rs.AddLayer(parentLayer + "::" + designOptionName, color = utils.GetRandomColor())
+        rs.ObjectLayer(blockInstance, designOptionLayer)
+        utils.SaveFunctionData('Blocks-Create Design Option', [__version__, designOptionName])
+        return True
+    except:
+        print "Failed to create design option"
+        utils.SaveFunctionData('Blocks-Create Design Option', [__version__, '', 'Failed'])
+        return None
+
 
 if __name__ == "__main__":
     func = rs.GetInteger("", 0, 0, 100)
@@ -233,7 +299,7 @@ if __name__ == "__main__":
         if result is not None:
             utils.SaveToAnalytics('blocks-Super Explode')
     elif func == 3:
-        result = RenameBlockCmd()
+        result = RenameBlockButton()
         if result is not None:
             utils.SaveToAnalytics('blocks-Rename Block')
     elif func == 4:
@@ -244,5 +310,9 @@ if __name__ == "__main__":
         result = ExportAndLinkBlock()
         if result:
             utils.SaveToAnalytics('blocks-Export and Link Block')
+    elif func == 6:
+        result = CreateDesignOption()
+        if result:
+            utils.SaveToAnalytics('blocks-Create Design Option')
     else:
         print "No function found"

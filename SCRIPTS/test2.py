@@ -1,5 +1,5 @@
 __version__ = '2.0'
 
-def PrintVersion():
-    print __version__
-    print __name__
+from libs.anytree.iterators import *
+
+

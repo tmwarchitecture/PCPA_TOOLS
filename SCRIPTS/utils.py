@@ -2,6 +2,7 @@ import rhinoscriptsyntax as rs
 import Rhino as rc
 import scriptcontext as sc
 
+from string import ascii_letters as letters
 import datetime
 import os
 from libs import csv
@@ -11,7 +12,7 @@ import config
 import random
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 #############################################################################
 #DATE/LOCATION
@@ -51,7 +52,7 @@ def IsSavedInProjectFolder():
 
 #############################################################################
 #ANALYTICS
-def SaveToAnalytics(funcName):
+def SaveToAnalyticsOLD(funcName):
     """SaveToAnalytics(funcName)
     Inputs:
         funcName(str): The functions name
@@ -108,6 +109,77 @@ def SaveToAnalytics(funcName):
     except:
         print "Analytics failed"
 
+def SaveToAnalytics(funcName):
+    """SaveToAnalytics(funcName)
+    Inputs:
+        funcName(str): The functions name
+    returns:
+        None
+    """
+    try:
+        now=datetime.datetime.now()
+        monthString=('%02d%02d'%(now.year, now.month))[2:]
+        
+        fileLocations = config.GetDict()
+        filepath = fileLocations['Data Folder']
+
+        fileName = monthString + '_Analytics.csv'
+        fullName = os.path.join(filepath, fileName)
+
+        dateString='%02d-%02d-%02d'%(now.year, now.month, now.day)
+        if not os.path.isfile(fullName):
+            data = [[funcName , 'Last Updated']]
+            myFile = open(fullName, 'wb')
+            with myFile:
+                csvwriter = csv.writer(myFile)
+                csvwriter.writerows(data)
+            myFile.close()
+
+        with open(fullName, 'rb') as File:
+            reader = csv.reader(File)
+            data = list(reader)
+            File.close()
+        #Update date
+        data[0][1] = 'Last Updated: ' + GetDatePrefix()
+
+        #Username
+        userName = encrypt.encrypt(getpass.getuser())
+
+        #Update Column
+        colPos = None
+        if len(data)>1: #If there is a second row:
+            for i,item in enumerate(data[1]):
+                if item == funcName:
+                    colPos = i
+            if colPos is None:
+                colPos = len(data[1])
+                data[1].append(funcName)
+        else: #If there is not a second row
+            colPos = 1
+            data.append(['User', funcName])
+
+        rowPos = None
+        for i,item in enumerate(data):
+            if item[0] == userName:
+                rowPos = i
+        if rowPos is None:
+            rowPos = len(data)
+            data.append([userName])
+
+        newCells = (colPos+1) - len(data[rowPos])
+        for i in range(newCells):
+            data[rowPos].append('')
+
+        try:
+            data[rowPos][colPos] = int(data[rowPos][colPos]) + 1
+        except:
+            data[rowPos][colPos] = 1
+        with open(fullName, 'wb') as myFile:
+            csvwriter = csv.writer(myFile)
+            csvwriter.writerows(data)
+    except:
+        print "Analytics failed"
+
 def SaveFunctionData(funcName, funcData):
     """
     SaveFunctionData(funcName, funcData)
@@ -117,19 +189,20 @@ def SaveFunctionData(funcName, funcData):
     try:
         now=datetime.datetime.now()
         monthString=('%02d%02d'%(now.year, now.month))[2:]
+        
         fileLocations = config.GetDict()
         filepath = fileLocations['Data Folder']
 
         fileName = monthString + '_' + funcName + '.csv'
-
         fullName = os.path.join(filepath, fileName)
 
         userName = encrypt.encrypt(getpass.getuser())
         now=datetime.datetime.now()
-        timeString=('%02d-%02d-%02d_%02d:%02d:%02d.%d'%(now.year, now.month, now.day, now.hour, now.minute,now.second,now.microsecond))[:-4]
-
+        dateString='%02d-%02d-%02d'%(now.year, now.month, now.day)
+        timeString= '%02d:%02d:%02d'%(now.hour, now.minute,now.second)
+        
         if not os.path.isfile(fullName):
-            data = [[funcName],['Date', 'User', 'Version']]
+            data = [[funcName],['Date', 'Time', 'User', 'Version']]
             myFile = open(fullName, 'wb')
             with myFile:
                 csvwriter = csv.writer(myFile)
@@ -138,7 +211,7 @@ def SaveFunctionData(funcName, funcData):
         with open(fullName, 'rb') as File:
             reader = csv.reader(File)
             data = list(reader)
-        row = [timeString] + [userName] + funcData
+        row = [dateString, timeString, userName] + funcData
         data.append(row)
 
         myFile = open(fullName, 'wb')
@@ -449,10 +522,18 @@ def StringPlusOne(word):
       word(str): String thats been iterated
     """
     try:
+        if word[-2] == ' ' or word[-2] == '-' or word[-2] == '_' or word[-2].isdigit():
+            if word[-1] in letters:
+                s = word[-1]
+                word = word[:-1]
+                s=letters[(letters.index(s)+1)%len(letters)]
+                word += s
+                return word
+        
         suffixNumber = ''
         splitIndex = 0
         for i, l in enumerate(word[::-1]):
-            try:
+            try: #check if suffix is number
                 int(l)
                 suffixNumber += l
             except:
@@ -464,6 +545,10 @@ def StringPlusOne(word):
         newNum = int(suffixNumber)+1
         finalNum = (len(suffixNumber)-len(str(newNum)))*'0' + str(newNum)
         return word[:len(word)-splitIndex] + finalNum
+        
+        s='a'
+        if s in letters:
+            s=letters[(letters.index(s)+1)%len(letters)]
     except:
         print "StringPlusOne Error"
         return None
@@ -480,8 +565,58 @@ def UpdateString(word):
     except:
         return StringPlusOne(word)
 
+#############################################################################
+#COLOR
+def GetRandomColor():
+    """
+    Returns tuple in format (r,g,b) with range 100-230
+    """
+    r = random.randint(100,230)
+    g = random.randint(100,230)
+    b = random.randint(100,230)
+    return (r, g, b)
+
+def StepColor(prevColor):
+    maxStepSize = 40
+    minStepSize = 30
+    
+    rF = random.randint(minStepSize, maxStepSize)
+    gF = random.randint(minStepSize, maxStepSize)
+    bF = random.randint(minStepSize, maxStepSize)
+    
+    if random.randint(0,1):
+        rF *= -1
+    if random.randint(0,1):
+        gF *= -1
+    if random.randint(0,1):
+        bF *= -1
+    
+    newR = prevColor.R + rF
+    if newR <100:
+        newR = 100 + abs(rF)
+    if newR >255:
+        newR = 255 - (abs(rF))
+    
+    newG = prevColor.G + gF
+    if newG <100:
+        newG = 100 + abs(gF)
+    if newG >255:
+        newG = 255 - (abs(gF))
+    
+    newB = prevColor.B + bF
+    if newB <100:
+        newB = 100 + abs(bF)
+    if newB >255:
+        newB = 255 - (abs(bF))
+    
+    newColor = [newR, newG, newB]
+    return newColor
+
 if __name__ == "__main__":
-    print IsSavedInProjectFolder()
+    #print IsSavedInProjectFolder()
+    test = '181008_option_01-A'
+    print test
+    print StringPlusOne(test)
     #obj = rs.GetObject()
     #print GetUphillVectorFromPlane(obj)
     pass

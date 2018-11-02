@@ -22,16 +22,16 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 401,Stair,0,255-164-210,INTERIOR_Floor_Generic,,0-0-0,,,180716
 402,Ramp,0,224-119-146,INTERIOR_Floor_Generic,,0-0-0,,,180716
 ,,,,,,,,,
-901,_Lines,0,1-1-1,,,0-0-0,,,180824
+901,_Lines,0,1/1/2001,,,0-0-0,,,180824
 902,_Hidden,0,230-230-230,,,0-0-0,-1,,180608
 903,Grid,0,105-105-105,,PCPA_DashDot,105-105-105,,,180827
 ,,,,,,,,,
 1000,1_SITE,,234-153-153,,,0-0-0,,,
-1001,Context Buildings_Generic,1000,255-255-255,SITE_Context Buildings_Generic,,255-255-255,,,
-1002,Ground_Curb Lines,1000,230-230-230,SITE_Ground_Curb Lines,,230-230-230,,,
+1001,Context Buildings_Generic,1000,255-255-255,SITE_Context Buildings_Generic,,0-0-0,,,
+1002,Ground_Curb Lines,1000,230-230-230,SITE_Ground_Curb Lines,,105-105-105,,,181031
 1003,Ground_Natural,1000,170-190-120,SITE_Ground_Natural,,170-190-120,,,
-1004,Ground_Sidewalk,1000,230-230-230,SITE_Ground_Sidewalk,,230-230-230,,,
-1005,Ground_Soil,1000,180-130-100,SITE_Ground_Soil,,180-130-100,,,
+1004,Ground_Sidewalk,1000,230-230-230,SITE_Ground_Sidewalk,,105-105-105,,,
+1005,Ground_Soil,1000,180-130-100,SITE_Ground_Soil,,180-130-100,,,181031
 1006,Ground_Street,1000,105-105-105,SITE_Ground_Street,,105-105-105,,,
 1007,Water_Generic,1000,240-249-254,SITE_Water_Generic,,240-249-254,,,
 ,,,,,,,,,
@@ -41,16 +41,13 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 2901,_Hidden,2000,230-230-230,,,0-0-0,-1,,180608
 2100,Furniture,2000,247-165-59,INTERIOR_Furniture_Generic,,,,,180807
 2200,People,2000,113-197-255,,,,,,180702
-2300,Vegetation,2000,105-255-146,,,,,,180702
+2300,Vegetation,2000,105-255-146,PCPA PROGRAM_Vegetation,,,,,181024
 2400,Vehicles,2000,176-93-255,,,,,,180702
 ,,,,,,,,,
 ,,,,,,,,,
 3000,3_DESIGN OPTIONS,,204-0-0,,,,,,
 ,,,,,,,,,
 4000,4_BLOCKS,,217-234-211,,,,,,
-4101,Window_3'X8',4000,,,,,,,
-4102,Window_4'X8',4000,,,,,,,
-4103,Door_3'X8',4000,,,,,,,
 4901,_Hidden,4000,230-230-230,,,0-0-0,-1,,180608
 ,,,,,,,,,
 5000,5_ZONING,,182-215-168,,,,,,
@@ -86,8 +83,9 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 7023,Service_Medium,7000,215-214-207,PCPA PROGRAM_Service_Medium,,215-214-207,,,
 7024,Soil,7000,99-99-99,PCPA PROGRAM_Soil,,99-99-99,,,
 7025,Terrace,7000,250-250-245,PCPA PROGRAM_Terrace,,250-250-245,,,
-7026,Trees,7000,168-191-121,PCPA PROGRAM_Trees,,168-191-121,,,
+7026,Natural,7000,168-191-121,SITE_Ground_Natural,,168-191-121,,,181024
 7027,Water,7000,240-249-254,PCPA PROGRAM_Water,,240-249-254,,,
+7028,Generic Mass,7000,241-240-236,PCPA PROGRAM_Generic Mass,,241-240-236,,,181024
 ,,,,,,,,,
 8000,8_DRAWING,,109-158-235,,,,,,
 8101,Dimensions,8000,109-21-137,,,0-0-0,,,180716
@@ -106,6 +104,8 @@ Layer Number,Name,Parent Layer,Display Color,Material,Linetype,Print Color,Print
 8207,PCP-07,8000,255-0-0,,,0-0-0,0.0508,,180608
 8208,PCP-08,8000,128-128-128,,,0-0-0,0.0508,,180827
 8209,PCP-09,8000,192-192-192,,,0-0-0,0.0508,,180827
+8210,PCP-Orange,8000,191-92-0,,,191-92-0,,,181024
+8211,PCP-Grey,8000,55-58-54,,,55-58-54,,,181024
 ,,,,,,,,,
 8901,_Hidden,8000,230-230-230,,,0-0-0,-1,,180611
 8903,_Dash,8000,105-105-105,,PCPA_DashedSmall,0-0-0,,,180914
