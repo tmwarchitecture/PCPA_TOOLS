@@ -9,7 +9,7 @@ import utils
 import standards
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 def AddCoordinateTag(obj):
     dots = []
@@ -138,7 +138,7 @@ def AreaTag(obj, decPlaces):
         #Change layers
         hostLayer = layers.AddLayerByNumber(8103, False)
         rs.ObjectLayer(areaTag, layers.GetLayerNameByNumber(8103))
-        return [area, True]
+        return [area, True, areaTag]
     except:
         return [0, False]
 
@@ -157,14 +157,62 @@ def AddAreaTag():
     total = 0
     for obj in objs:
         try:
-            currentArea,result = AreaTag(obj, decPlaces)
+            currentArea,result, tag = AreaTag(obj, decPlaces)
             utils.SaveFunctionData('Drawing-Add Area Tag', [rs.DocumentName(), rs.ObjectLayer(obj), rs.ObjectDescription(obj), rs.CurrentDimStyle(), currentArea, decPlaces, result])
             total += currentArea
+            rs.SetUserText(tag, 'hostGUID', str(obj))
         except:
             pass
     print 'Cumulative Area = ' + str(total)
-
+    
+    
+    
     rs.EnableRedraw(True)
+
+def UpdateAreaTag():
+    objs = rs.GetObjects('Select area tags to update', preselect = True)
+    if objs is None: return
+    
+    successfulObjsRun = 0
+    failedObjsRun = 0
+    for obj in objs:
+        try:
+            host = rs.GetUserText(obj, 'hostGUID')
+            if host is None: 
+                print "Could not find associated geometry"
+                return None
+            
+            #Get number of dec places
+            text = rs.TextObjectText(obj)
+            splitText = text.Split(" ")
+            
+            numberString = splitText[0]
+            units = splitText[-1]
+            
+            try:
+                decPlaces = len(numberString.Split(".")[1])
+            except:
+                decPlaces = 0
+            
+            #Get area
+            if rs.UnitSystem() == 8:
+                area = rs.Area(rs.coerceguid(host))*0.0069444444444444
+                areaText = utils.RoundNumber(area, decPlaces) + " " + units
+            else:
+                print "WARNING: Your units are not in inches"
+                area = rs.Area(rs.coerceguid(host))
+                areaText = area + ' ' + rs.UnitSystemName(False, True, True)
+            
+            rs.TextObjectText(obj, areaText)
+            
+            successfulObjsRun += 1
+        except:
+            failedObjsRun += 1
+            print "Tag failed"
+    
+    utils.SaveFunctionData('Drawing-Update Area Tag', [__version__, successfulObjsRun, failedObjsRun])
+    
+    return successfulObjsRun
 
 ###############################################################################
 def dimensionPline(pline, offsetDist):
@@ -253,3 +301,6 @@ if __name__=="__main__":
     elif func == 2:
         AddCoordinateTag_Button()
         utils.SaveToAnalytics('Drawing-Add Coordinate Tag')
+    elif func == 3:
+        UpdateAreaTag()
+        utils.SaveToAnalytics('Drawing-Update Area Tag')

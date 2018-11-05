@@ -13,6 +13,7 @@ __version__ = "2.1.0"
 def PreloadCheck():
     if rs.ExeVersion() < 6:
         print "***Reload standards only works for Rhino 6***"
+        rs.MessageBox('Reload standards only works for Rhino 6', 0, 'Reload Standards')
         return None
 
 def SetTemplateFolder(filepath):
@@ -353,7 +354,6 @@ if __name__ == "__main__":
     fileLocations = config.GetDict()
     if standardsRequested == 0:
         LoadPCPAMaterials(fileLocations['Material File'])
-        #LoadPCPAMaterials2(fileLocations['Material Folder'])
     elif standardsRequested == 1:
         SetTemplateFolder(fileLocations['Template Folder'])
         SetTemplateFile(fileLocations['Template File'])
