@@ -325,7 +325,8 @@ def exportToRenderSKP():
     except:
         result = False
     try:
-        utils.SaveFunctionData('IO-Export to Render[SKP]', [fileName, baseName, os.path.getsize(fileName),len(objs), result])
+        pass
+        #utils.SaveFunctionData('IO-Export to Render[SKP]', [fileName, baseName, os.path.getsize(fileName),len(objs), result])
     except:
         print "Failed to save function data"
     return result
@@ -469,7 +470,8 @@ def SafeCapture(filePath, width, height, transparent = True):
 
 def SafeCaptureButton():
     #Save file name
-    path = rs.SaveFileName('Save view location', "PNG (*.png; *.png)|")
+    defaultFilename = utils.GetDatePrefix() + '_FILENAME.png'
+    path = rs.SaveFileName('Save view location', "PNG (*.png; *.png)|", filename = defaultFilename, extension = '.png')
     if path is None: return
     
     splitPath = path.Split(".")
