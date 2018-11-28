@@ -3,6 +3,44 @@ import Rhino as rc
 import scriptcontext as sc
 import math
 
+def RetractCorners(pline, dist1, dist2):
+    segments = pline.DuplicateSegments()
+    #####
+    for i in range(len(segments)-1):
+        seg1Length = segments[i].GetLength()
+        param1 = segments[i].LengthParameter(seg1Length-dist1)
+        pt1 = segments[i].PointAt(param1[1])
+        
+        interval1 = rc.Geometry.Interval(0, param1[1])
+        trimmed1 = segments[i].Trim(interval1)
+        segments[i] = trimmed1
+        
+        param2 = segments[i+1].LengthParameter(dist2)
+        pt2 = segments[i+1].PointAt(param2[1])
+        
+        interval2 = rc.Geometry.Interval(param2[1], 1)
+        segments[i+1] = segments[i+1].Trim(interval2)
+    
+    #####
+    if pline.IsClosed:
+        seg1Length = segments[-1].GetLength()
+        param1 = segments[-1].LengthParameter(seg1Length-dist1)
+        pt1 = segments[-1].PointAt(param1[1])
+        
+        interval1 = rc.Geometry.Interval(0, param1[1])
+        trimmed1 = segments[-1].Trim(interval1)
+        segments[-1] = trimmed1
+        
+        param2 = segments[0].LengthParameter(dist2)
+        pt2 = segments[0].PointAt(param2[1])
+        
+        endParam = segments[0].Domain[1]
+        interval2 = rc.Geometry.Interval(param2[1], endParam)
+        segments[0] = segments[0].Trim(interval2)
+    
+    return segments
+
+################################################################################
 def ChamferCorners(segments, closed):
     chamfers = []
     
@@ -83,44 +121,8 @@ def NotchCorners(segments, closed, angle1, angle2):
     
     return pline
 
-def RetractCorners(pline, dist1, dist2):
-    segments = pline.DuplicateSegments()
-    #####
-    for i in range(len(segments)-1):
-        seg1Length = segments[i].GetLength()
-        param1 = segments[i].LengthParameter(seg1Length-dist1)
-        pt1 = segments[i].PointAt(param1[1])
-        
-        interval1 = rc.Geometry.Interval(0, param1[1])
-        trimmed1 = segments[i].Trim(interval1)
-        segments[i] = trimmed1
-        
-        param2 = segments[i+1].LengthParameter(dist2)
-        pt2 = segments[i+1].PointAt(param2[1])
-        
-        interval2 = rc.Geometry.Interval(param2[1], 1)
-        segments[i+1] = segments[i+1].Trim(interval2)
-    
-    #####
-    if pline.IsClosed:
-        seg1Length = segments[-1].GetLength()
-        param1 = segments[-1].LengthParameter(seg1Length-dist1)
-        pt1 = segments[-1].PointAt(param1[1])
-        
-        interval1 = rc.Geometry.Interval(0, param1[1])
-        trimmed1 = segments[-1].Trim(interval1)
-        segments[-1] = trimmed1
-        
-        param2 = segments[0].LengthParameter(dist2)
-        pt2 = segments[0].PointAt(param2[1])
-        
-        endParam = segments[0].Domain[1]
-        interval2 = rc.Geometry.Interval(param2[1], endParam)
-        segments[0] = segments[0].Trim(interval2)
-    
-    return segments
-
-def ChamferEdges(rhobj, dist1, dist2):
+################################################################################
+def ChamferCurve(rhobj, dist1, dist2):
     segments = RetractCorners(rhobj, dist1, dist2)
     newPlines = ChamferCorners(segments, rhobj.IsClosed)
     
@@ -141,6 +143,7 @@ def NotchCurve(rhobj, dist1, angle1, dist2, angle2):
     
     return finalSegments
 
+################################################################################
 def ChamferButton():
     objs = rs.GetObjects("Select curves to chamfer", preselect = True)
     if objs is None: return
@@ -153,7 +156,7 @@ def ChamferButton():
     finalCurves = []
     for obj in objs:
         rhobj = rs.coercecurve(obj)
-        finalCurves.append(ChamferEdges(rhobj, dist1, dist2))
+        finalCurves.append(ChamferCurve(rhobj, dist1, dist2))
         rs.DeleteObject(obj)
     
     return finalCurves
@@ -179,6 +182,7 @@ def NotchButton():
     
     return finalCurves
 
+################################################################################
 def main():
     func = rs.GetInteger("Select Function")
     if func is None: return
