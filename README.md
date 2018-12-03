@@ -2,12 +2,12 @@
 # PCPA Tools
 
 ### INSTALLATION
-Updating
+## Updating
 1.	Close any open Rhino sessions.
 2.	Open Rhino.
 3.	If the dropdown says Version 2.1, then you’re finished, otherwise follow the steps below.
 
-Updating Part 2 (If above didn’t work)
+## Updating Part 2 (If above didn’t work)
 1.	Ensure only one session of Rhino is running.
 2.	Type “Toolbar” into the command line.
 3.	Select “PCPA_Toolbar”.
@@ -16,7 +16,7 @@ Updating Part 2 (If above didn’t work)
 6.	Click OK in the bottom right.
 7.	Follow “First Time Installation” steps below.
 
-First Time Installation
+## First Time Installation
 1.	Ensure only one session of Rhino is running.
 1.	Drag and drop PCPA_Toolbar.rui (here) onto Rhino from this folder.
 2.	From the PCPA Dropdown, choose Standards > Set template
