@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
 from utils import GetDatePrefix
@@ -217,6 +220,22 @@ def ResetBlockScale():
     except:
         return False
 
+##############################################################################
+#Design History
+def DesignHistory():
+    print "Design Option History"
+    block = rs.GetObject("Select Design Option Block", rs.filter.instance, preselect = True)
+    history = rs.GetUserText(block, 'Design Option History')
+    names = history.split("<--")
+    message = ''
+    for i in range(len(names)):
+        message+=names[i]
+        if i != len(names)-1:
+            message+= '\n' + ('\t'*(i+1)) + '|——'
+    
+    print message
+    #rs.MessageBox(message, 0, 'Design History')
+
 ###############################################################################
 def ExportAndLinkBlock():
     try:
@@ -314,5 +333,9 @@ if __name__ == "__main__":
         result = CreateDesignOption()
         if result:
             utils.SaveToAnalytics('blocks-Create Design Option')
+    elif func == 7:
+        result = DesignHistory()
+        if result:
+            utils.SaveToAnalytics('blocks-Design History')
     else:
         print "No function found"

@@ -9,7 +9,7 @@ import config
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 def Congregate(pts, spacing, loops):
     scaleFactOrig = .1
@@ -24,13 +24,13 @@ def Congregate(pts, spacing, loops):
                 if distance > spacing*4: continue
                 if closest is None or distance<closest[0]:
                     closest = distance, comparePt
-            
+
             if closest is None: continue
-            
+
             vec = rs.VectorCreate(closest[1], pt)
             if closest[0] < spacing:
                 vec = rs.VectorReverse(vec)
-            
+
             vec = rs.VectorScale(vec, scaleF)
             pts[i] = pt.Add(pt, vec)
     return pts
@@ -72,10 +72,10 @@ def TryLoadBlock(type, name):
     elif type == '2D People':
         typeFolder = 'People 2D Folder'
     elif type == '2D Trees':
-        typeFolder = 'Vegetation 2D Folder'    
+        typeFolder = 'Vegetation 2D Folder'
     elif type == '3D Trees':
-        typeFolder = 'Vegetation 3D Folder'    
-    
+        typeFolder = 'Vegetation 3D Folder'
+
     if rs.IsBlock(name):
         return True
     else:
@@ -100,10 +100,10 @@ def GetBlockNames(type):
     elif type == '2D People':
         typeFolder = 'People 2D Folder'
     elif type == '2D Trees':
-        typeFolder = 'Vegetation 2D Folder'    
+        typeFolder = 'Vegetation 2D Folder'
     elif type == '3D Trees':
-        typeFolder = 'Vegetation 3D Folder'    
-    
+        typeFolder = 'Vegetation 3D Folder'
+
     blocks = []
     files = os.listdir(fileLocations[typeFolder])
     for file in files:
@@ -182,7 +182,7 @@ def AlignAngles(pts, angles, srf, spacing):
     plane = boundary.TryGetPlane()[1]
     for i, pt in enumerate(pts):
         currentAngleVec = AngleToVec(angles[i])
-        
+
         #PTS TO COMPARE AGAINST
         closest = None
         for j, comparePt in enumerate(pts):
@@ -192,13 +192,13 @@ def AlignAngles(pts, angles, srf, spacing):
                 closest = distance, comparePt, j
         if closest is None:
             continue
-        
+
         neighborAngleVec = rc.Geometry.Vector3d(math.cos(math.radians(angles[closest[2]])), math.sin(math.radians(angles[closest[2]])), 0)
-        
-        
-        
+
+
+
         newVec = (currentAngleVec+currentAngleVec+neighborAngleVec )/3
-        
+
         angles[i] = VecToAngle(newVec)
     return angles
 
@@ -212,11 +212,11 @@ def Populate_Button():
     try:
         ###########################################################################
         #GET FUNCTIONS
-        
+
         #GET INPUT SURFACE
         srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
         if srf is None: return
-        
+
         #GET NUMBER OF OBJECTS
         if 'populate-numObjects' in sc.sticky:
             numObjectsDefault = sc.sticky['populate-numObjects']
@@ -225,7 +225,7 @@ def Populate_Button():
         numObjects = rs.GetInteger('Number of objects to populate', numObjectsDefault, 1, 5000)
         if numObjects is None: return
         sc.sticky['populate-numObjects'] = numObjects
-        
+
         #GET POPULATION TYPE
         if 'populate-type' in sc.sticky:
             typeDefault = sc.sticky['populate-type']
@@ -235,14 +235,14 @@ def Populate_Button():
         type = rs.ListBox(types, "Select block type to populate", "Population Type", typeDefault)
         if type is None: return
         sc.sticky['populate-type'] = type
-        
+
         #GET BLOCK NAMES
         if type == 'Custom Block':
             blockNames = GetCustomBlockNames()
         else:
             blockNames = GetBlockNames(type)
         if blockNames is None: return
-        
+
         ###########################################################################
         if type == '2D People' or type == '3D People':
             spacing = 42
@@ -255,34 +255,34 @@ def Populate_Button():
         ###########################################################################
         #DRAW FUNCTIONS
         rs.EnableRedraw(False)
-        
+
         #RANDOM PTS ON SURFACE
         pts = RandomPtsOnSrf(srf, numObjects)
-        
+
         #RANDOM ANGLES
         angles = RandomAngles(numObjects)
-        
+
         #ORIENT ANGLES AWAY FROM EDGES
         if type == '2D People' or type == '3D People':
             angles = OrientAwayFromEdges(pts, angles, srf, spacing)
-        
+
         for i in range(0, 5):
             #CONGREGATE THE POINTS
             pts = Congregate(pts, spacing, 3)
-            
+
             #MOVE AWAY FROM SURFACE EDGES
             pts = MoveAwayFromEdges(pts, srf, spacing)
-        
+
         #ORIENT ANGLES TOGETHER
         if type == '2D People' or type == '3D People':
             angles = AlignAngles(pts, angles, srf, spacing)
-        
+
         for i, pt in enumerate(pts):
             #Choose random angle
             angle = angles[i]
-            
+
             blockName = blockNames[random.randint(0, len(blockNames)-1)]
-            
+
             if TryLoadBlock(type, blockName):
                 eachBlock = rs.InsertBlock(blockName, pt, angle_degrees = angle)
                 try:
@@ -300,12 +300,12 @@ def Populate_Button():
                     rs.ScaleObject(eachBlock, pt, (xyScale,xyScale, zScale))
                 except:
                     pass
-    
+
         rs.EnableRedraw(True)
         result = True
     except:
         result = False
-    
+
     utils.SaveFunctionData('Blocks-Populate', [__version__, numObjects, type, result])
 
 if __name__ == "__main__":
