@@ -12,7 +12,7 @@ import utils
 import standards
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 
 ################################################################################
 #Utils
@@ -456,7 +456,15 @@ def SafeCapture(filePath, width, height, transparent = True):
         mainCapture = rc.Display.ViewCapture()
         mainCapture.DrawAxes = False
         mainCapture.DrawGridAxes = False
-        mainCapture.TransparentBackground = transparent
+        
+        splitPath = filePath.Split(".")
+        if splitPath[-1] == "png":
+            #its a png
+            mainCapture.TransparentBackground = True
+        else:
+            #not a png
+            mainCapture.TransparentBackground = False
+        #mainCapture.ScaleScreenItems = False
         mainCapture.Width = width
         mainCapture.Height = height
         capture = mainCapture.CaptureToBitmap(view)
@@ -466,17 +474,14 @@ def SafeCapture(filePath, width, height, transparent = True):
         view.Size = origSize
         return True
     except:
+        print "ERROR while running this function"
         return None
 
 def SafeCaptureButton():
     #Save file name
-    defaultFilename = utils.GetDatePrefix() + '_FILENAME.png'
-    path = rs.SaveFileName('Save view location', "PNG (*.png; *.png)|", filename = defaultFilename, extension = '.png')
+    defaultFilename = utils.GetDatePrefix() + '_FILENAME'
+    path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPG (*.jpg)|*.jpg||", filename = defaultFilename)
     if path is None: return
-    
-    splitPath = path.Split(".")
-    if len(splitPath)<2:
-        path += ".png"
     
     #Check if in stick
     if 'safeCapture-width' in sc.sticky:
