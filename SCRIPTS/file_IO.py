@@ -480,7 +480,8 @@ def SafeCapture(filePath, width, height, transparent = True):
 def SafeCaptureButton():
     #Save file name
     defaultFilename = utils.GetDatePrefix() + '_FILENAME'
-    path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPG (*.jpg)|*.jpg||", filename = defaultFilename)
+    path = rs.SaveFileName('Save view location', "PNG (*.png)||", filename = defaultFilename, extension = ".png")
+    #path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg||", filename = defaultFilename)
     if path is None: return
     
     #Check if in stick
