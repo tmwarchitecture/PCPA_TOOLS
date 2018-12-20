@@ -1,5 +1,8 @@
-import test2
+import os
+import config
 
-__version__ = '2.1'
 
-test2.PrintVersion()
+fileLocations = config.GetDict()
+csvPath = fileLocations['licenses']
+
+print os.environ['COMPUTERNAME']

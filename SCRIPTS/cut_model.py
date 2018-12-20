@@ -197,7 +197,7 @@ def CutModel_Button():
     if rs.IsSurfacePlanar(srf) == False:
         print "Cutting surface must be planar"
         return None
-
+    
     rs.EnableRedraw(False)
     result = CutModel(objs, srf)
     if result:

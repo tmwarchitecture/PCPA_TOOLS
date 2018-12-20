@@ -1,7 +1,7 @@
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 def GetDict():
     fileLocationsPCPNY = {
@@ -30,7 +30,8 @@ def GetDict():
     'PCPA Logo' : r'X:\05_RHINO STANDARDS\01 PCPA TOOLS\TOOLBAR\DEV\ICONS\PCPA_LOGO.png',
     'PS Swatch File' : r'X:\08_ADOBE + OTHER SOFTWARE\01_PHOTOSHOP\PCPA Swatch Library\PCPA.aco',
     'PS Directory' : r'C:\Program Files\Adobe\Adobe Photoshop CS6 (64 Bit)\Presets\Color Swatches',
-    '3d Blocks' : r'X:\13_3D MODELS LIBRARY'
+    '3d Blocks' : r'X:\13_3D MODELS LIBRARY',
+    'licenses' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\SCRIPTS\test\licenses.txt'
     }
 
     fileLocationsPCPNH = {

@@ -150,6 +150,7 @@ def unfilletObj(obj):
         segments = rhobj.DuplicateSegments()
         newSegments = []
         for i, segment, in enumerate(segments):
+            print
             if rs.IsArc(segment):
                 stPt = segment.PointAtStart
                 endPt = segment.PointAtEnd
@@ -169,7 +170,7 @@ def unfilletObj(obj):
                 endPt = segment.PointAtEnd
                 lineSeg = rc.Geometry.Line(stPt, endPt)
                 newSegments.append(sc.doc.Objects.AddLine(lineSeg))
-
+            print
         joinedSegs = rs.JoinCurves(newSegments, True)
         rs.SimplifyCurve(joinedSegs)
         rs.MatchObjectAttributes(joinedSegs, obj)
