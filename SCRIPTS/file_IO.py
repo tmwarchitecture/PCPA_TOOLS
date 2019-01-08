@@ -437,10 +437,11 @@ def CaptureDisplayModesToFile():
 
 ################################################################################
 #Safe Capture
-def SafeCapture(filePath, width, height, transparent = True):
+def SafeCapture_PNG(filePath, width, height, transparent = True):
     """
     Saves the active viewport to png
     """
+    #print "Safe Capture PNG"
     try:
         #Get the view
         view = sc.doc.Views.ActiveView
@@ -477,11 +478,37 @@ def SafeCapture(filePath, width, height, transparent = True):
         print "ERROR while running this function"
         return None
 
+def SafeCapture_JPG(filePath, width, height, transparent = True):
+    """
+    Saves the active viewport to png
+    """
+    #print "Safe Capture JPG"
+    try:
+        #Get the view
+        view = sc.doc.Views.ActiveView
+        
+        #Get sizes
+        size = System.Drawing.Size(width,height)
+        origSize = view.ActiveViewport.Size
+        
+        #Change viewport size
+        view.Size = size
+        
+        rs.Command('-_ViewCaptureToFile u p _Width=' + str(width) + ' _Height=' + str(height) + ' _Scale=1 _LockAspectRatio=No _DrawGrid=No _DrawWorldAxes=No _TransparentBackground=No "' + filePath + '" _Enter', False)
+        
+        #Restore viewport size
+        view.Size = origSize
+        return True
+    except:
+        print "ERROR while running this function"
+        return None
+
 def SafeCaptureButton():
     #Save file name
     defaultFilename = utils.GetDatePrefix() + '_FILENAME'
-    path = rs.SaveFileName('Save view location', "PNG (*.png)||", filename = defaultFilename, extension = ".png")
-    #path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg||", filename = defaultFilename)
+    #path = rs.SaveFileName('Save view location', "PNG (*.png)||", filename = defaultFilename, extension = ".png")
+    #path = rs.SaveFileName('Save view location', "JPEG (*.jpg)||", filename = defaultFilename, extension = ".jpg")
+    path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg||", filename = defaultFilename, extension = ".png")
     if path is None: return
     
     #Check if in stick
@@ -504,7 +531,12 @@ def SafeCaptureButton():
     if height is None: return
     sc.sticky['safeCapture-height'] = height
     
-    result = SafeCapture(path, width, height)
+    splitPath = path.Split(".")
+    if splitPath[-1] == "png":
+        result = SafeCapture_PNG(path, width, height)
+    else:
+        result = SafeCapture_JPG(path, width, height)
+    
     if result:
         print "Image saved as {}".format(path)
         return True
@@ -535,8 +567,9 @@ def BatchCapture():
                 chosenViews.append(val[0])
         if len(chosenViews) < 1: return
         
-        date = utils.GetDatePrefix()
-        path = rs.SaveFileName('Batch Capture', "PNG (*.png)|*.png||", filename = date+'_FILENAME')
+        defaultFilename = utils.GetDatePrefix() + '_FILENAME'
+        #path = rs.SaveFileName('Batch Capture', "PNG (*.png)|*.png||", filename = date+'_FILENAME')
+        path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg||", filename = defaultFilename, extension = ".png")
         if path is None: return
         
         #Check if in stick
@@ -564,9 +597,14 @@ def BatchCapture():
         baseName = os.path.splitext(path)[0]
         for eachView in chosenViews:
             rs.RestoreNamedView(eachView)
-            filePath = baseName + "_" + eachView + ".png"
             
-            SafeCapture(filePath, width, height)
+            splitPath = path.Split(".")
+            if splitPath[-1] == "png":
+                filePath = baseName + "_" + eachView + ".png"
+                result = SafeCapture_PNG(filePath, width, height)
+            else:
+                filePath = baseName + "_" + eachView + ".jpg"
+                result = SafeCapture_JPG(filePath, width, height)
         
         #return to original view
         rs.RestoreNamedView("temp")
