@@ -80,7 +80,7 @@ def IntersectGeo(obj, level):
                 if each is not None:
                     finalCurves.append(each)
             rs.DeleteObject(xformedObj)
-            
+
             #MESHES IN BLOCK <---This code might not be necessary
             result = IntersectMeshPlane(xformedObj, plane)
             if result is None: continue
@@ -113,9 +113,9 @@ def IntersectGeoAtPt():
         while True:
             pt = rs.GetPoint("Select point to contour at")
             if pt is None: break
-    
+
             rs.EnableRedraw(False)
-            
+
             for obj in objs:
                 if rs.IsBlockInstance(obj):
                     blocksObjects = utils.GetAllBlockObjectsInPosition(obj)
@@ -186,11 +186,11 @@ def unfillet():
         #Will remove entire pline when angle > 180 degrees
         objs = rs.GetObjects("Select curves to unfillet", rs.filter.curve, True, True)
         if objs is None: return
-        
+
         successList = []
         for obj in objs:
             unfilletResult = unfilletObj(obj)
-            if unfilletResult is None: 
+            if unfilletResult is None:
                 successList.append(False)
             else: successList.append(True)
         result = True
@@ -199,7 +199,7 @@ def unfillet():
     utils.SaveFunctionData('Geometry-Unfillet', [__version__, len(objs), str(successList), result])
     return result
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     func = rs.GetInteger("func num")
     if func == 0:
         result = IntersectGeoAtPt()

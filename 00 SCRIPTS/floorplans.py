@@ -202,5 +202,5 @@ def main():
     #rs.ShowObjects(make2Dlines)
     rs.EnableRedraw(True)
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     main()

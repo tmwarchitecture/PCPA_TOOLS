@@ -190,5 +190,5 @@ def Rectify_AngleFirst_Button():
         if result:
             rs.DeleteObject(obj)
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     Rectify_AngleFirst_Button()

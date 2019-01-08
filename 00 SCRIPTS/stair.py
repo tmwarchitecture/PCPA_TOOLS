@@ -388,5 +388,5 @@ def main():
 
     utils.SaveToAnalytics('Architecture-Stair')
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     main()

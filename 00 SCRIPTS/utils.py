@@ -10,9 +10,53 @@ from libs import encrypt
 import getpass
 import config
 import random
+import hashlib
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
+
+#############################################################################
+#AUTHORIZATION
+def Authorize():
+    root = os.path.join(os.environ['appdata'], "PCPA")
+    authFile = os.path.join(root, 'authorize.pcpa')
+    file = open(authFile,'w')
+    file.write("True")
+    file.close()
+    print "Computer Authorized"
+    return True
+
+def GetAuthorization():
+    root = os.path.join(os.environ['appdata'], "PCPA")
+    if not os.path.isdir(root):
+        os.makedirs(root)
+    while True:
+        password = rs.GetString("Enter PCPA Rhino Toolbar license key")
+        if password is None: return False
+        hash = hashlib.sha224(password).hexdigest()
+        key = '7bce017b9e1c5f1a3a73d8edfb7e47505a39375cb0f83e89c48f9c55'
+
+        if hash == key:
+            Authorize()
+        else:
+            print "Incorrect password"
+
+def IsAuthorized():
+    authFile = os.path.join(os.environ['appdata'], "PCPA", 'authorize.pcpa')
+    if os.path.isfile(authFile):
+        file = open(authFile,'rb')
+        if file.readline() == "True":
+            file.close()
+            return True
+        file.close()
+        return False
+    else:
+        location = GetNetworkLocation()
+        if location == 0 or location == 1:
+            return Authorize()
+        if location == 2:
+            return GetAuthorization()
+
 
 #############################################################################
 #DATE/LOCATION
@@ -26,10 +70,10 @@ def GetDatePrefix():
     return str(year) + str(md)
 
 def GetNetworkLocation():
-    """Checks the network to see if X: or H: exist. If X:, then returns 0 (for New York). If H: then returns 1 (for New Haven)
+    """Checks the network to see if X: or H: exist. If X:, then returns 0 (for New York). If H: then returns 1 (for New Haven), 2 for Unknown
     """
-    NYPath = r'X:'
-    NHPath = r'H:'
+    NYPath = r'X:\22_REACH'
+    NHPath = r'D:\PCPA_TOOLS'
 
 
     if os.path.isdir(NYPath):
@@ -40,7 +84,7 @@ def GetNetworkLocation():
         return 1
     else:
         print "Could not find NY or NH network"
-        return
+        return 2
     return "You are connected to the {} network.".format(location)
 
 def IsSavedInProjectFolder():
@@ -119,7 +163,7 @@ def SaveToAnalytics(funcName):
     try:
         now=datetime.datetime.now()
         monthString=('%02d%02d'%(now.year, now.month))[2:]
-        
+
         fileLocations = config.GetDict()
         filepath = fileLocations['Data Folder']
 
@@ -189,7 +233,7 @@ def SaveFunctionData(funcName, funcData):
     try:
         now=datetime.datetime.now()
         monthString=('%02d%02d'%(now.year, now.month))[2:]
-        
+
         fileLocations = config.GetDict()
         filepath = fileLocations['Data Folder']
 
@@ -200,7 +244,7 @@ def SaveFunctionData(funcName, funcData):
         now=datetime.datetime.now()
         dateString='%02d-%02d-%02d'%(now.year, now.month, now.day)
         timeString= '%02d:%02d:%02d'%(now.hour, now.minute,now.second)
-        
+
         if not os.path.isfile(fullName):
             data = [[funcName],['Date', 'Time', 'User', 'Version']]
             myFile = open(fullName, 'wb')
@@ -529,7 +573,7 @@ def StringPlusOne(word):
                 s=letters[(letters.index(s)+1)%len(letters)]
                 word += s
                 return word
-        
+
         suffixNumber = ''
         splitIndex = 0
         for i, l in enumerate(word[::-1]):
@@ -545,7 +589,7 @@ def StringPlusOne(word):
         newNum = int(suffixNumber)+1
         finalNum = (len(suffixNumber)-len(str(newNum)))*'0' + str(newNum)
         return word[:len(word)-splitIndex] + finalNum
-        
+
         s='a'
         if s in letters:
             s=letters[(letters.index(s)+1)%len(letters)]
@@ -579,36 +623,36 @@ def GetRandomColor():
 def StepColor(prevColor):
     maxStepSize = 40
     minStepSize = 30
-    
+
     rF = random.randint(minStepSize, maxStepSize)
     gF = random.randint(minStepSize, maxStepSize)
     bF = random.randint(minStepSize, maxStepSize)
-    
+
     if random.randint(0,1):
         rF *= -1
     if random.randint(0,1):
         gF *= -1
     if random.randint(0,1):
         bF *= -1
-    
+
     newR = prevColor.R + rF
     if newR <100:
         newR = 100 + abs(rF)
     if newR >255:
         newR = 255 - (abs(rF))
-    
+
     newG = prevColor.G + gF
     if newG <100:
         newG = 100 + abs(gF)
     if newG >255:
         newG = 255 - (abs(gF))
-    
+
     newB = prevColor.B + bF
     if newB <100:
         newB = 100 + abs(bF)
     if newB >255:
         newB = 255 - (abs(bF))
-    
+
     newColor = [newR, newG, newB]
     return newColor
 

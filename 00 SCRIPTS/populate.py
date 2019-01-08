@@ -308,7 +308,7 @@ def Populate_Button():
 
     utils.SaveFunctionData('Blocks-Populate', [__version__, numObjects, type, result])
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     fileLocations = config.GetDict()
     result = Populate_Button()
     if result:

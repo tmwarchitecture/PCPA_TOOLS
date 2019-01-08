@@ -25,8 +25,7 @@ def GetDict():
     'Vegetation 3D Folder' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\02 SUPPORT FILES\02 BLOCKS\VEGETATION\3D',
     'Vegetation 2D Folder' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\02 SUPPORT FILES\02 BLOCKS\VEGETATION\2D',
     'Help File' : r'X:\22_REACH\03 TOOLS\PCPA_RHINO_TOOLBAR\02 SUPPORT FILES\00 MANUAL\PCPA Rhino Tools Manual.pdf',
-    '3d Blocks' : r'X:\13_3D MODELS LIBRARY',
-    'licenses' : r'https://raw.githubusercontent.com/tmwarchitecture/PCPA_TOOLS/master/SCRIPTS/test/licenses.txt'
+    '3d Blocks' : r'X:\13_3D MODELS LIBRARY'
     }
 
     fileLocationsPCPNH = {

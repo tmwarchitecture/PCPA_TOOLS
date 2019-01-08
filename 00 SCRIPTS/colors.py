@@ -145,7 +145,7 @@ def ObjectColorToMaterial():
     except:
         return False
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     func = rs.GetInteger("Input func number")
     if func == 0:
         result = ColorObjsWithGradient2Pt()

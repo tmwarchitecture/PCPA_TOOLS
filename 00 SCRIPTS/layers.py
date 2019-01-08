@@ -347,7 +347,7 @@ def GetAllLayerNames():
         allLayerNames.append(GetLayerNameByNumber(each))
     return allLayerNames
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     setupVariables()
     layerNumRequested = rs.GetInteger("Enter layer number to add to the document", number = 10000, minimum = 0, maximum = 10000)
     AddLayerByNumber(layerNumRequested)

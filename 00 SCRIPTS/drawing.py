@@ -164,36 +164,36 @@ def AddAreaTag():
         except:
             pass
     print 'Cumulative Area = ' + str(total)
-    
-    
-    
+
+
+
     rs.EnableRedraw(True)
 
 def UpdateAreaTag():
     objs = rs.GetObjects('Select area tags to update', preselect = True)
     if objs is None: return
-    
+
     successfulObjsRun = 0
     failedObjsRun = 0
     for obj in objs:
         try:
             host = rs.GetUserText(obj, 'hostGUID')
-            if host is None: 
+            if host is None:
                 print "Could not find associated geometry"
                 return None
-            
+
             #Get number of dec places
             text = rs.TextObjectText(obj)
             splitText = text.Split(" ")
-            
+
             numberString = splitText[0]
             units = splitText[-1]
-            
+
             try:
                 decPlaces = len(numberString.Split(".")[1])
             except:
                 decPlaces = 0
-            
+
             #Get area
             if rs.UnitSystem() == 8:
                 area = rs.Area(rs.coerceguid(host))*0.0069444444444444
@@ -202,16 +202,16 @@ def UpdateAreaTag():
                 print "WARNING: Your units are not in inches"
                 area = rs.Area(rs.coerceguid(host))
                 areaText = area + ' ' + rs.UnitSystemName(False, True, True)
-            
+
             rs.TextObjectText(obj, areaText)
-            
+
             successfulObjsRun += 1
         except:
             failedObjsRun += 1
             print "Tag failed"
-    
+
     utils.SaveFunctionData('Drawing-Update Area Tag', [__version__, successfulObjsRun, failedObjsRun])
-    
+
     return successfulObjsRun
 
 ###############################################################################
@@ -290,7 +290,7 @@ def dimensionPline_Button():
             print "Not a polyline"
     rs.EnableRedraw(True)
 
-if __name__=="__main__":
+if __name__=="__main__" and utils.IsAuthorized():
     func = rs.GetInteger("Func num")
     if func == 0:
         AddAreaTag()

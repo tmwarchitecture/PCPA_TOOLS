@@ -404,5 +404,5 @@ def main():
 
     utils.SaveToAnalytics('architecture-ramp')
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     main()

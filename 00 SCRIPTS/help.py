@@ -15,6 +15,6 @@ def launchHelp():
     except:
         return False
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     if launchHelp():
         utils.SaveToAnalytics('Help')

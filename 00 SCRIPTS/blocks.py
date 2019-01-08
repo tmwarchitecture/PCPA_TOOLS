@@ -303,8 +303,9 @@ def CreateDesignOption():
         return None
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     func = rs.GetInteger("", 0, 0, 100)
+    
     if func == 0:
         result = Iterate()
         if result:

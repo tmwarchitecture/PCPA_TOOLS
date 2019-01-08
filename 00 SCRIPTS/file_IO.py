@@ -51,7 +51,7 @@ def importCAD(filePath, scaleDWG = False):
     #Shorten cad file name
     fileNameExt = os.path.basename(filePath)
     fileName = os.path.splitext(fileNameExt)[0]
-    
+
     #create layer name
     time = utils.GetDatePrefix()
     iter = "01"
@@ -72,7 +72,7 @@ def importCAD(filePath, scaleDWG = False):
 
     #get intial list of all layers in the file
     currentLayers = rs.LayerNames()
-    
+
     rs.Command('_-Import "' + filePath + '" _IgnoreThickness=Yes _ModelUnits=Inches _Enter', False)
 
     #get new layers added
@@ -129,7 +129,7 @@ def importCAD_Button():
         #Import CAD
         filePath = rs.OpenFileName("Select CAD to Import", "Autocad (*.dwg)|*.dwg||")
         if filePath is None: return None
-    
+
         rs.EnableRedraw(False)
         group = rs.AddGroup('Import CAD Group')
         allImportedObjects = importCAD(filePath)
@@ -268,7 +268,7 @@ def exportToRenderSKP():
             if os.path.isdir(referenceFolder):
                 print "Reference folder exists"
                 defaultFolder = referenceFolder
-            else: 
+            else:
                 print "Reference folder not found"
                 defaultFolder = rs.DocumentPath()
         else:
@@ -347,11 +347,11 @@ def CaptureDisplayModesToFile():
         displayModeNames = []
         displayModeBool = []
         displayModesChecked = []
-        
+
         ########
         #Get current display mode
         originalDisplayMode = rc.RhinoDoc.ActiveDoc.Views.ActiveView.ActiveViewport.DisplayMode.LocalName
-        
+
         ########
         #Get default display mode selection
         if 'CaptureDisplayModes-DisplayModes' in sc.sticky:
@@ -366,21 +366,21 @@ def CaptureDisplayModesToFile():
             for each in rc.Display.DisplayModeDescription.GetDisplayModes():
                 displayModeNames.append(each.EnglishName)
                 displayModeBool.append(False)
-        
+
         results = rs.CheckListBox(zip(displayModeNames, displayModeBool), 'Select Display Modes', 'Capture Display Modes To File')
         if results is None: return
-        
+
         ########
         #Save display modes to sticky
         resultDict = {}
         for each in results:
             resultDict[each[0]] = each[1]
         sc.sticky['CaptureDisplayModes-DisplayModes'] = resultDict
-        
+
         for each in results:
             if each[1]:
                 displayModesChecked.append(each[0])
-        
+
         ########
         #Get default filename
         date = utils.GetDatePrefix()
@@ -388,7 +388,7 @@ def CaptureDisplayModesToFile():
         if activeView is None: activeView = 'VIEW'
         path = rs.SaveFileName('Export All Display Modes', "PNG (*.png)|*.png||", filename = date+'_'+activeView)
         if path is None: return
-        
+
         ########
         #Get sizes from sticky
         if 'catpureDisplays-width' in sc.sticky:
@@ -427,7 +427,7 @@ def CaptureDisplayModesToFile():
     #Restore original display mode
     if originalDisplayMode is not None:
         rs.ViewDisplayMode(mode = originalDisplayMode)
-    
+
     ########
     #Save analytics
     try:
@@ -445,19 +445,19 @@ def SafeCapture_PNG(filePath, width, height, transparent = True):
     try:
         #Get the view
         view = sc.doc.Views.ActiveView
-        
+
         #Get sizes
         size = System.Drawing.Size(width,height)
         origSize = view.ActiveViewport.Size
-        
+
         #Change viewport size
         view.Size = size
-        
+
         #Create the capture
         mainCapture = rc.Display.ViewCapture()
         mainCapture.DrawAxes = False
         mainCapture.DrawGridAxes = False
-        
+
         splitPath = filePath.Split(".")
         if splitPath[-1] == "png":
             #its a png
@@ -470,7 +470,7 @@ def SafeCapture_PNG(filePath, width, height, transparent = True):
         mainCapture.Height = height
         capture = mainCapture.CaptureToBitmap(view)
         capture.Save(filePath)
-        
+
         #Restore viewport size
         view.Size = origSize
         return True
@@ -486,16 +486,16 @@ def SafeCapture_JPG(filePath, width, height, transparent = True):
     try:
         #Get the view
         view = sc.doc.Views.ActiveView
-        
+
         #Get sizes
         size = System.Drawing.Size(width,height)
         origSize = view.ActiveViewport.Size
-        
+
         #Change viewport size
         view.Size = size
-        
+
         rs.Command('-_ViewCaptureToFile u p _Width=' + str(width) + ' _Height=' + str(height) + ' _Scale=1 _LockAspectRatio=No _DrawGrid=No _DrawWorldAxes=No _TransparentBackground=No "' + filePath + '" _Enter', False)
-        
+
         #Restore viewport size
         view.Size = origSize
         return True
@@ -510,7 +510,7 @@ def SafeCaptureButton():
     #path = rs.SaveFileName('Save view location', "JPEG (*.jpg)||", filename = defaultFilename, extension = ".jpg")
     path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPEG (*jpg; *.jpeg)|*.jpg; *.jpeg||", filename = defaultFilename, extension = ".png")
     if path is None: return
-    
+
     #Check if in stick
     if 'safeCapture-width' in sc.sticky:
         defaultWidth = sc.sticky['safeCapture-width']
@@ -520,23 +520,23 @@ def SafeCaptureButton():
         defaultHeight = sc.sticky['safeCapture-height']
     else:
         defaultHeight = 3300
-    
+
     #Get output width
     width =  rs.GetInteger('Width', defaultWidth, 200, 10000 )
     if width is None: return
     sc.sticky['safeCapture-width'] = width
-    
+
     #Get output height
     height = rs.GetInteger('Height', defaultHeight, 200, 10000 )
     if height is None: return
     sc.sticky['safeCapture-height'] = height
-    
+
     splitPath = path.Split(".")
     if splitPath[-1] == "png":
         result = SafeCapture_PNG(path, width, height)
     else:
         result = SafeCapture_JPG(path, width, height)
-    
+
     if result:
         print "Image saved as {}".format(path)
         return True
@@ -548,30 +548,30 @@ def SafeCaptureButton():
 def BatchCapture():
     try:
         namedViews = rs.NamedViews()
-        if len(namedViews) < 1: 
+        if len(namedViews) < 1:
             print "There are no Named Views in this file."
             return None
-        
+
         #Prepare checklis
         items = []
         for view in namedViews:
             items.append([view, False])
-        
+
         #Checklist
         returnedVals = rs.CheckListBox(items, "Select Views to Export", "Batch Capture")
         if returnedVals is None: return
-        
+
         chosenViews = []
         for val in returnedVals:
             if val[1]:
                 chosenViews.append(val[0])
         if len(chosenViews) < 1: return
-        
+
         defaultFilename = utils.GetDatePrefix() + '_FILENAME'
         #path = rs.SaveFileName('Batch Capture', "PNG (*.png)|*.png||", filename = date+'_FILENAME')
         path = rs.SaveFileName('Save view location', "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg||", filename = defaultFilename, extension = ".png")
         if path is None: return
-        
+
         #Check if in stick
         if 'batchCapture-width' in sc.sticky:
             defaultWidth = sc.sticky['batchCapture-width']
@@ -581,23 +581,23 @@ def BatchCapture():
             defaultHeight = sc.sticky['batchCapture-height']
         else:
             defaultHeight = 3300
-        
+
         #Get output width
         width =  rs.GetInteger('Width', defaultWidth, 200, 10000 )
         if width is None: return
         sc.sticky['batchCapture-width'] = width
-        
+
         #Get output height
         height = rs.GetInteger('Height', defaultHeight, 200, 10000 )
         if height is None: return
         sc.sticky['batchCapture-height'] = height
-        
+
         rs.AddNamedView("temp")
-        
+
         baseName = os.path.splitext(path)[0]
         for eachView in chosenViews:
             rs.RestoreNamedView(eachView)
-            
+
             splitPath = path.Split(".")
             if splitPath[-1] == "png":
                 filePath = baseName + "_" + eachView + ".png"
@@ -605,19 +605,19 @@ def BatchCapture():
             else:
                 filePath = baseName + "_" + eachView + ".jpg"
                 result = SafeCapture_JPG(filePath, width, height)
-        
+
         #return to original view
         rs.RestoreNamedView("temp")
         rs.DeleteNamedView("temp")
-        
-        
+
+
         result = True
     except:
         result = False
     utils.SaveFunctionData('IO-BatchCapture', [__version__] + chosenViews)
     return result
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     func = rs.GetInteger("Function to run", number = 0)
     if func == 0:
         result = importCAD_Button()

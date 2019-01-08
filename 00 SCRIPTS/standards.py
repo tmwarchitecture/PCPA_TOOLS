@@ -129,110 +129,110 @@ def ApplyPCPAAliases(scriptFolder):
     try:
         ############################################################################
         #ARCHITECTURE
-        
+
         #STAIR
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\stair.py) '
         rs.AddAlias('pcpStair', str)
-        
+
         #RAMP
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\ramp.py) '
         rs.AddAlias('pcpRamp', str)
-    
+
         ############################################################################
         #BLOCKS
-        
+
         #ITERATE DESIGN OPTION
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 0 '
         rs.AddAlias('pcpIterDesignOpt', str)
-        
+
         #MAKE BLOCK UNIQUE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 1 '
         rs.AddAlias('pcpMakeUnique', str)
-        
+
         #SUPER EXPLODE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 2 '
         rs.AddAlias('pcpSuperExplode', str)
-        
+
         #POPULATE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\populate.py) '
         rs.AddAlias('pcpPopulate', str)
-        
+
         #RESET BLOCK SCALE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 4 '
         rs.AddAlias('pcpResetBlockScale', str)
-        
+
         #EXPORT AND LINK
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\blocks.py) 5 '
         rs.AddAlias('pcpExportAndLink', str)
-    
+
         ############################################################################
         #DRAWINGS
-        
+
         #AREA TAG
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\drawing.py) 0 '
         rs.AddAlias('pcpAreaTag', str)
-        
+
         #DIM PLINE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\drawing.py) 1 '
         rs.AddAlias('pcpDimPline', str)
-        
+
         #ADD LAYOUT
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\layout.py) 0 '
         rs.AddAlias('pcpLayout', str)
-        
+
         #CUT MODEL
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\cut_model.py)  '
         rs.AddAlias('pcpCutModel', str)
-    
+
         ############################################################################
         #GEOMETRY
-        
+
         #CONTOUR AT POINT
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\geometry.py) 0 ) '
         rs.AddAlias('pcpContourPt', str)
-    
+
         #UNFILLET
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\geometry.py) 1 '
         rs.AddAlias('pcpUnfillet', str)
-    
+
         #RECTIFY
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\rectify.py) '
         rs.AddAlias('pcpRectify', str)
-    
+
         ############################################################################
         #COLOR
-        
+
         #COLOR RANDOM RANGE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 1 '
         rs.AddAlias('pcpColorRandRange', str)
-    
+
         #COLOR GRADIENT
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 0 '
         rs.AddAlias('pcpColorGradient', str)
-    
+
         #COLOR BY SIZE
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 3 '
         rs.AddAlias('pcpColorBySize', str)
-    
+
         #COLOR TO MATERIAL
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\colors.py) 2 '
         rs.AddAlias('pcpColorToMaterial', str)
-    
+
         ############################################################################
         #I/O
-        
+
         #CAPTURE DISPLAY MODES
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 3 '
         rs.AddAlias('pcpCaptureDisplayModes', str)
-        
+
         #EXPORT TO RENDER DWG
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 1 '
         rs.AddAlias('pcpExportToRenderDWG', str)
-        
+
         #EXPORT TO RENDER SKP
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 2 '
         rs.AddAlias('pcpExportToRenderSKP', str)
-        
+
         #IMPORT CAD
         str = r'_NoEcho -_RunPythonScript ('+ scriptFolder +'\\file_IO.py) 0 '
         rs.AddAlias('pcpImportCAD', str)
@@ -250,7 +250,7 @@ def UpdateFolders(sourceMain, targetRoot):
     #Get new folder names
     PCPAroot = os.path.basename(os.path.normpath(sourceMain))
     targetMain = os.path.join(targetRoot, PCPAroot)
-    
+
     #Remove Previous Version
     oldPath = os.path.join(targetRoot, r'00_PCPA Standard Set')
     if os.path.isdir(oldPath):
@@ -319,7 +319,7 @@ def LoadGHDependencies(fileLocations):
     """
     sourceFolderLibraries = fileLocations['GH Dependencies_Libraries']
     sourceFolderUserObjects = fileLocations['GH Dependencies_User Objects']
-    
+
     if os.path.isdir(sourceFolderLibraries) is False:
         print "FAIL-----'GH Dependecies Libraries' folder not found"
         result = False
@@ -347,9 +347,9 @@ def LoadGHDependencies(fileLocations):
 
     utils.SaveFunctionData('Standards-PCPA GH Dependencies', [numberOfLibraryObjects, numberOfUserObjects, result])
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     PreloadCheck()
-    
+
     standardsRequested = rs.GetInteger("Standards to import", number = 0, minimum = 0, maximum = 10000)
     fileLocations = config.GetDict()
     if standardsRequested == 0:

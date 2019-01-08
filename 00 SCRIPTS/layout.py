@@ -129,7 +129,7 @@ def AddTitleBlock(size):
     pcpText = rs.AddText(pcp, txtBase5, txtSizeM, justification = 4)
     if rs.IsDimStyle('PCPA_10'):
         dimstyleID = sc.doc.DimStyles.FindName('PCPA_14')
-    
+
     ##############
     #Just trying to change the dim style here
     #pcpRhobj = rs.coercerhinoobject(pcpText)
@@ -263,5 +263,5 @@ def main():
     #elif func == 90:
     #    BatchPrintLayouts()
 
-if __name__ == "__main__":
+if __name__ == "__main__" and utils.IsAuthorized():
     main()
