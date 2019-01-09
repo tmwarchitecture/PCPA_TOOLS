@@ -25,7 +25,7 @@
 4.	Close Rhino to apply the changes.
 
 ### INSTALLATION FROM EXE
-## Updating
+## Install
 1.	Close any open Rhino sessions.
 2.	Run .EXE file
 3.	A folder will open showing "PCPA_Toolbar.rui".
