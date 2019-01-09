@@ -4,10 +4,10 @@ import Rhino
 import os.path
 import layers
 import config
-from utils import GetDatePrefix
+import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 def AddTitleBlock(size):
     filelocations = config.GetDict()
@@ -216,7 +216,7 @@ def BatchPrintLayouts():
 
         defaultPath = rs.DocumentPath()
 
-        defaultName = GetDatePrefix() + "_Rhino"
+        defaultName = utils.GetDatePrefix() + "_Rhino"
 
         filename = rs.SaveFileName("Save", "PDF (*.pdf)|*.pdf||", folder = defaultPath, filename = defaultName)
         if filename is None: return

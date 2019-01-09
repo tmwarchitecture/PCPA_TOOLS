@@ -19,6 +19,8 @@ __version__ = "2.2.0"
 #AUTHORIZATION
 def Authorize():
     root = os.path.join(os.environ['appdata'], "PCPA")
+    if not os.path.isdir(root):
+        os.makedirs(root)
     authFile = os.path.join(root, 'authorize.pcpa')
     file = open(authFile,'w')
     file.write("True")
@@ -69,12 +71,17 @@ def GetDatePrefix():
     md = datetime.datetime.today().strftime('%m%d')
     return str(year) + str(md)
 
+def IsScriptLocal():
+    drive, path_and_file = os.path.splitdrive(os.path.realpath(__file__))
+    if drive == r'C:':
+        return True
+    else: return False
+
 def GetNetworkLocation():
     """Checks the network to see if X: or H: exist. If X:, then returns 0 (for New York). If H: then returns 1 (for New Haven), 2 for Unknown
     """
     NYPath = r'X:\22_REACH'
     NHPath = r'D:\PCPA_TOOLS'
-
 
     if os.path.isdir(NYPath):
         location = "New York"
@@ -83,9 +90,7 @@ def GetNetworkLocation():
         location = "New Haven"
         return 1
     else:
-        print "Could not find NY or NH network"
         return 2
-    return "You are connected to the {} network.".format(location)
 
 def IsSavedInProjectFolder():
     """Checks if Rhino file is saved in a project folder
