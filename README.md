@@ -24,6 +24,14 @@
 *	If an error pops up, Uninstall IronPython by clicking the windows start menu, then search for “Add or remove programs”. Scroll down the list until you see IronPython 2.7.3, then click it and choose uninstall. Close and reopen Rhino, and return to step 3.
 4.	Close Rhino to apply the changes.
 
+### INSTALLATION FROM EXE
+## Updating
+1.	Close any open Rhino sessions.
+2.	Run .EXE file
+3.	A folder will open showing "PCPA_Toolbar.rui".
+4.  Open Rhino
+5.  Drag and Drop the "PCPA_Toolbar.rui" file onto the open Rhino session.
+6.  Close Rhino to apply the changes
 
 ## Authors
 * **Tim Williams**
