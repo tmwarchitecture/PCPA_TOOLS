@@ -561,6 +561,30 @@ def GetAllBlockObjectsInPosition(obj):
             objList.append(transformedObj)
     return objList
 
+def SafeMatchObjectAttributes(target, source_id):
+    """SafeMatchObjectAttributes(target, source_id)
+    target (guid)
+    source_id (guid)
+    returns: None
+    """
+    source = rs.coercerhinoobject(source_id, True, True)
+    newAttr = rc.DocObjects.ObjectAttributes()
+    newAttr.LayerIndex = source.Attributes.LayerIndex
+    newAttr.ObjectColor = source.Attributes.ObjectColor
+    newAttr.ColorSource = source.Attributes.ColorSource
+    newAttr.MaterialSource = source.Attributes.MaterialSource
+    newAttr.MaterialIndex = source.Attributes.MaterialIndex
+    newAttr.LinetypeSource = source.Attributes.LinetypeSource
+    newAttr.LinetypeIndex = source.Attributes.LinetypeIndex
+    newAttr.PlotWeight = source.Attributes.PlotWeight
+    newAttr.PlotWeightSource = source.Attributes.PlotWeightSource
+    newAttr.PlotColor = source.Attributes.PlotColor
+    newAttr.PlotColorSource = source.Attributes.PlotColorSource
+    
+    sc.doc.Objects.ModifyAttributes(target, newAttr, True)
+    sc.doc.Views.Redraw()
+
+
 #############################################################################
 #STRINGS
 def StringPlusOne(word):

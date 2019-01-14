@@ -5,7 +5,7 @@ import scriptcontext as sc
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 ###############################################################################
 #This function not used
@@ -128,64 +128,68 @@ def CutObjectWithPlane(obj, plane):
 ###############################################################################
 #MAIN
 def CutModel(objs, srf):
-    #try:
-    if rs.ObjectType(srf) == 1073741824:
-        extrusionSurface = rs.coercesurface(srf)
-        rhSrf = extrusionSurface.ToBrep().Faces[0]
-    else:
-        rhSrf = rs.coercesurface(srf)
-    plane = rhSrf.TryGetPlane()[1]
-    if rhSrf.OrientationIsReversed:
-        plane.Flip()
-    groupMain = rs.AddGroup('MainObjects')
-    groupCut = rs.AddGroup('SectionSurfaces')
-    groupVisible = rs.AddGroup('VisibleObjects')
-
-    rs.HideObject(objs)
-
-    for obj in objs:
-        #BLOCKS
-        if rs.IsBlockInstance(obj):
-            blockObjs = utils.GetAllBlockObjectsInPosition(obj)
-            for eachBlockObj in blockObjs:
-                rhobj = rs.coercegeometry(eachBlockObj)
+    try:
+        if rs.ObjectType(srf) == 1073741824:
+            extrusionSurface = rs.coercesurface(srf)
+            rhSrf = extrusionSurface.ToBrep().Faces[0]
+        else:
+            rhSrf = rs.coercesurface(srf)
+        plane = rhSrf.TryGetPlane()[1]
+        if rhSrf.OrientationIsReversed:
+            plane.Flip()
+        groupMain = rs.AddGroup('MainObjects')
+        groupCut = rs.AddGroup('SectionSurfaces')
+        groupVisible = rs.AddGroup('VisibleObjects')
+    
+        rs.HideObject(objs)
+    
+        for obj in objs:
+            #BLOCKS
+            if rs.IsBlockInstance(obj):
+                blockObjs = utils.GetAllBlockObjectsInPosition(obj)
+                for eachBlockObj in blockObjs:
+                    rhobj = rs.coercegeometry(eachBlockObj)
+                    splitResults = CutObjectWithPlane(rhobj, plane)
+                    if splitResults[0] is not None:
+                        for eachObj in splitResults[0]:
+                            utils.SafeMatchObjectAttributes(eachObj, eachBlockObj)
+                            #rs.MatchObjectAttributes(eachObj, eachBlockObj)
+                            rs.ShowObject(eachObj)
+                            rs.AddObjectToGroup(eachObj, groupMain)
+                        for eachObj in splitResults[1]:
+                            utils.SafeMatchObjectAttributes(eachObj, eachBlockObj)
+                            #rs.MatchObjectAttributes(eachObj, eachBlockObj)
+                            rs.ShowObject(eachObj)
+                            rs.AddObjectToGroup(eachObj, groupMain)
+                        for eachObj in splitResults[3]:
+                            rs.ObjectColor(eachObj, (255,0,0))
+                            rs.ObjectName(eachObj, 'Section Cut Surface')
+                            rs.AddObjectToGroup(eachObj, groupCut)
+                    rs.DeleteObject(eachBlockObj)
+    
+            #GEOMETRY
+            else:
+                rhobj = rs.coercegeometry(obj)
                 splitResults = CutObjectWithPlane(rhobj, plane)
                 if splitResults[0] is not None:
                     for eachObj in splitResults[0]:
-                        rs.MatchObjectAttributes(eachObj, eachBlockObj)
+                        utils.SafeMatchObjectAttributes(eachObj, eachBlockObj)
+                        #rs.MatchObjectAttributes(eachObj, obj)
                         rs.ShowObject(eachObj)
                         rs.AddObjectToGroup(eachObj, groupMain)
                     for eachObj in splitResults[1]:
-                        rs.MatchObjectAttributes(eachObj, eachBlockObj)
+                        utils.SafeMatchObjectAttributes(eachObj, eachBlockObj)
+                        #rs.MatchObjectAttributes(eachObj, obj)
                         rs.ShowObject(eachObj)
                         rs.AddObjectToGroup(eachObj, groupMain)
                     for eachObj in splitResults[3]:
                         rs.ObjectColor(eachObj, (255,0,0))
                         rs.ObjectName(eachObj, 'Section Cut Surface')
                         rs.AddObjectToGroup(eachObj, groupCut)
-                rs.DeleteObject(eachBlockObj)
-
-        #GEOMETRY
-        else:
-            rhobj = rs.coercegeometry(obj)
-            splitResults = CutObjectWithPlane(rhobj, plane)
-            if splitResults[0] is not None:
-                for eachObj in splitResults[0]:
-                    rs.MatchObjectAttributes(eachObj, obj)
-                    rs.ShowObject(eachObj)
-                    rs.AddObjectToGroup(eachObj, groupMain)
-                for eachObj in splitResults[1]:
-                    rs.MatchObjectAttributes(eachObj, obj)
-                    rs.ShowObject(eachObj)
-                    rs.AddObjectToGroup(eachObj, groupMain)
-                for eachObj in splitResults[3]:
-                    rs.ObjectColor(eachObj, (255,0,0))
-                    rs.ObjectName(eachObj, 'Section Cut Surface')
-                    rs.AddObjectToGroup(eachObj, groupCut)
-    return True
-    #except:
-    print "Cut Model failed"
-    return False
+        return True
+    except:
+        print "Cut Model failed"
+        return False
 
 #RHINO INTERFACE
 def CutModel_Button():

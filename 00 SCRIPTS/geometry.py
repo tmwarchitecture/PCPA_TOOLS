@@ -5,7 +5,7 @@ import math
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 ################################################################################
 #INTERSECT AT POINT
@@ -15,23 +15,23 @@ def IntersectBrepPlane(obj, plane):
     brep = rs.coercebrep(obj)
     intersectionCrvs = []
     if brep is None: return None
-
+    
     x = rc.Geometry.Intersect.Intersection.BrepPlane(brep, plane, tolerance)
     if x is None: return
-
+    
     xCurves = x[1]
     if xCurves is None: return None
-
+    
     try:
         newCurves = rc.Geometry.Curve.JoinCurves(xCurves)
     except:
         newCurves = xCurves
-
+    
     finalCurves = []
-
+    
     for curve in newCurves:
         finalCurve = sc.doc.Objects.AddCurve(curve)
-        rs.MatchObjectAttributes(finalCurve, obj)
+        utils.SafeMatchObjectAttributes(finalCurve, obj)
         finalCurves.append(finalCurve)
 
     return finalCurves
@@ -66,13 +66,13 @@ def IntersectGeo(obj, level):
         for eachBlockObj in blockObjs:
             newCopy = rs.CopyObject(eachBlockObj)
             xformedObj = rs.TransformObject(newCopy, matrix)
-
+            
             #EXTRUSIONS
             if isinstance(xformedObj, rc.Geometry.Extrusion):
                 temp = sc.doc.Objects.AddBrep(xformedObj.ToBrep(False))
                 xformedObj = rs.coercebrep(temp)
                 rs.DeleteObject(temp)
-
+            
             #BREPS IN BLOCK
             result = IntersectBrepPlane(xformedObj, plane)
             if result is None: continue
@@ -80,7 +80,7 @@ def IntersectGeo(obj, level):
                 if each is not None:
                     finalCurves.append(each)
             rs.DeleteObject(xformedObj)
-
+            
             #MESHES IN BLOCK <---This code might not be necessary
             result = IntersectMeshPlane(xformedObj, plane)
             if result is None: continue
@@ -88,6 +88,7 @@ def IntersectGeo(obj, level):
                 if each is not None:
                     finalCurves.append(each)
             rs.DeleteObject(xformedObj)
+    
     #BREPS
     elif rs.IsBrep(obj):
         result = IntersectBrepPlane(obj, plane)
@@ -95,6 +96,7 @@ def IntersectGeo(obj, level):
         for each in result:
             if each is not None:
                 finalCurves.append(each)
+    
     #MESHES
     elif rs.IsMesh(obj):
         result = IntersectMeshPlane(obj, plane)
@@ -121,7 +123,9 @@ def IntersectGeoAtPt():
                     blocksObjects = utils.GetAllBlockObjectsInPosition(obj)
                     for eachBlocksObject in blocksObjects:
                         result = IntersectGeo(eachBlocksObject, pt.Z)
-                        if result is None: continue
+                        if result is None: 
+                            rs.DeleteObject(eachBlocksObject)
+                            continue
                         for each in result:
                             if each is not None:
                                 geos.append(each)
@@ -133,7 +137,6 @@ def IntersectGeoAtPt():
                         if each is not None:
                             geos.append(each)
             rs.EnableRedraw(True)
-
         rs.SelectObjects(geos)
         result = True
     except:
