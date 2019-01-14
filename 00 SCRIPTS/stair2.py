@@ -599,18 +599,21 @@ def JoinTopSrfs(riserSrfs, treadSrfs, leftSide, rightSide):
     print
 
 def TrimUnderSrfsWithSides(underSrfs, leftSide, rightSide, thickness):
+    finalUnderSrfs = []
     for eachUnderSrf in underSrfs:
         srf1 = eachUnderSrf.Trim(rightSide , rs.UnitAbsoluteTolerance())[0]
         srf2 = srf1.Trim(leftSide , rs.UnitAbsoluteTolerance())
         finalSrf = srf2[0]
-        
         finalSrf.Translate(rc.Geometry.Vector3d(0,0,-thickness))
-        
-        sc.doc.Objects.Add(finalSrf)
+        finalUnderSrfs.append(finalSrf)
+    return finalUnderSrfs
 
+def TrimSidesWithUnderSrf(underSrf, leftSide, rightSid):
+    underSrf.Trim(leftSide, rs.UnitAbsoluteTolerance())
+    sc.doc.Objects.Add(leftSide)
+    #sc.doc.Objects.Add(underSrf)
     
-    print
-
+    print "HI"
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -672,12 +675,13 @@ def MakeStair(obj, width, height):
     
     #Create Underwedge
     wedges = CreateUnderWedge(landings, landingsLeft, landingsRight, landingSrfs, landingHeights, riserHeight, treadLengths, structThickness)
-
+    print
     ####05
     #JOIN TOP SRFS
     JoinTopSrfs(riserSrfs, treadSrfs, leftSide, rightSide)
-    TrimUnderSrfsWithSides(underSrfs, leftSide, rightSide, structThickness)
-    
+    print
+    x = TrimUnderSrfsWithSides(underSrfs, leftSide, rightSide, structThickness)
+    TrimSidesWithUnderSrf(x[0], leftSide, rightSide)
 ###############################################################################
 #RHINO BUTTON INTERFACE
 def MakeStair_Button():
