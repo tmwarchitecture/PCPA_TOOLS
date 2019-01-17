@@ -291,6 +291,15 @@ def RemapList(values, newMin, newMax):
         newValues.append((((value - origMin  ) * NewRange) / OldRange) + newMin)
     return newValues
 
+def Remap(value, origMin, origMax, newMin, newMax):
+    """Remap(value, origMin, origMax, newMin, newMax)
+    """
+    OldRange = (origMax - origMin)
+    NewRange = (newMax - newMin)
+    newValues = []
+    newValue = (((value - origMin  ) * NewRange) / OldRange) + newMin
+    return newValue
+
 #############################################################################
 #GEOMETRY
 def FindMostDistantPointInCurve(obj, resolution = 20):
@@ -580,7 +589,7 @@ def SafeMatchObjectAttributes(target, source_id):
     newAttr.PlotWeightSource = source.Attributes.PlotWeightSource
     newAttr.PlotColor = source.Attributes.PlotColor
     newAttr.PlotColorSource = source.Attributes.PlotColorSource
-    
+
     sc.doc.Objects.ModifyAttributes(target, newAttr, True)
     sc.doc.Views.Redraw()
 

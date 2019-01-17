@@ -9,7 +9,7 @@ import config
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 def Congregate(pts, spacing, loops):
     scaleFactOrig = .1
@@ -75,6 +75,8 @@ def TryLoadBlock(type, name):
         typeFolder = 'Vegetation 2D Folder'
     elif type == '3D Trees':
         typeFolder = 'Vegetation 3D Folder'
+    elif type == '3D Vehicles':
+        typeFolder = 'Vehicle 3D Folder'
 
     if rs.IsBlock(name):
         return True
@@ -103,6 +105,8 @@ def GetBlockNames(type):
         typeFolder = 'Vegetation 2D Folder'
     elif type == '3D Trees':
         typeFolder = 'Vegetation 3D Folder'
+    elif type == '3D Vehicles':
+        typeFolder = 'Vehicle 3D Folder'
 
     blocks = []
     files = os.listdir(fileLocations[typeFolder])
@@ -208,6 +212,115 @@ def RandomAngles(numObjects):
         angles.append(random.uniform(0,360))
     return angles
 
+def GetPopulationType():
+    if 'populate-type' in sc.sticky:
+        typeDefault = sc.sticky['populate-type']
+    else:
+        typeDefault = '3D People'
+    types = ['3D People', '2D People', '3D Trees', '2D Trees', '3D Vehicles', 'Custom Block']
+    type = rs.ListBox(types, "Select block type to populate", "Population Type", typeDefault)
+    if type is None: return None
+    sc.sticky['populate-type'] = type
+    return type
+
+#################################################################
+def PopulatePath():
+    crv = rs.GetObject("Select curve to populate", rs.filter.curve, True)
+    if crv is None: return None
+    crvObj = rs.coercecurve(crv)
+    
+    #GET NUMBER OF OBJECTS
+    if 'populatePath-numObjects' in sc.sticky:
+        numObjectsDefault = sc.sticky['populatePath-numObjects']
+    else:
+        numObjectsDefault = 30
+    numObjects = rs.GetInteger('Number of objects to populate', numObjectsDefault, 1, 5000)
+    if numObjects is None: return
+    sc.sticky['populatePath-numObjects'] = numObjects
+    
+    #GET POPULATION TYPE
+    type = GetPopulationType()
+    if type is None: return None
+    
+    rs.EnableRedraw(False)
+    
+    #GET BLOCK NAMES
+    if type == 'Custom Block':
+        blockNames = GetCustomBlockNames()
+    else:
+        blockNames = GetBlockNames(type)
+    if blockNames is None: return
+    
+    if type == '2D People' or type == '3D People':
+        spacing = 42
+    elif type == '2D Trees':
+        spacing = 100
+    elif type == '3D Trees':
+        spacing = 200
+    elif type == '3D Vehicles':
+        spacing = 240
+    else:
+        spacing = 50
+    
+    #GET PTS
+    pts = []
+    angles = []
+    lengths = []
+    downVec = rc.Geometry.Vector3d(0,-1,0)
+    upVec = rc.Geometry.Vector3d(0,0,1)
+    curveLength = crvObj.GetLength()
+    counter = 0
+    while len(pts) < numObjects:
+        t = random.uniform(0,1)
+        t = utils.Remap(t, 0, 1, 0, curveLength)
+        
+        posOkay = True
+        if len(lengths)>0:
+            counter+=1
+            for eachPrevPos in lengths:
+                if abs(eachPrevPos-t) < spacing:
+                    posOkay = False
+        
+        if posOkay:
+            lengths.append(t)
+            testPt = crvObj.PointAtLength(t)
+            pts.append(testPt)
+            param = crvObj.LengthParameter(t)[1]
+            tan = crvObj.TangentAt(param)
+            angles.append(rc.Geometry.Vector3d.VectorAngle(downVec, tan, upVec))
+        
+        if counter > int(curveLength/numObjects):
+            print "Could only fit {} of the requested {} objects".format(len(pts), numObjects)
+            break
+        
+    for i, pt in enumerate(pts):
+        blockName = blockNames[random.randint(0, len(blockNames)-1)]
+        if TryLoadBlock(type, blockName):
+            eachBlock = rs.InsertBlock(blockName, pt, angle_degrees= math.degrees(angles[i]))
+            try:
+                if type == '2D People' or type == '3D People':
+                    layerName = '2_ENTOURAGE::' + 'People'
+                elif type == '2D Trees':
+                    layerName = '2_ENTOURAGE::' + 'Vegetation'
+                elif type == '3D Trees':
+                    layerName = '2_ENTOURAGE::' + 'Vegetation'
+                elif type == '3D Vehicles':
+                    layerName = '2_ENTOURAGE::' + 'Vehicles'
+                else:
+                    layerName = '2_ENTOURAGE'
+                rs.ObjectLayer(eachBlock, layerName)
+                
+                if type != '3D Vehicles':
+                    xyScale = random.uniform(.9,1.3)
+                    zScale = random.uniform(.9,1.1)
+                else:
+                    xyScale = 1
+                    zScale = 1
+                rs.ScaleObject(eachBlock, pt, (xyScale,xyScale, zScale))
+            except:
+                pass
+    rs.EnableRedraw(True)
+#################################################################
 def Populate_Button():
     try:
         ###########################################################################
@@ -227,15 +340,9 @@ def Populate_Button():
         sc.sticky['populate-numObjects'] = numObjects
 
         #GET POPULATION TYPE
-        if 'populate-type' in sc.sticky:
-            typeDefault = sc.sticky['populate-type']
-        else:
-            typeDefault = '3D People'
-        types = ['3D People', '2D People', '3D Trees', '2D Trees', 'Custom Block']
-        type = rs.ListBox(types, "Select block type to populate", "Population Type", typeDefault)
-        if type is None: return
-        sc.sticky['populate-type'] = type
-
+        type = GetPopulationType()
+        if type is None: return None
+        
         #GET BLOCK NAMES
         if type == 'Custom Block':
             blockNames = GetCustomBlockNames()
@@ -292,6 +399,8 @@ def Populate_Button():
                         layerName = '2_ENTOURAGE::' + 'Vegetation'
                     elif type == '3D Trees':
                         layerName = '2_ENTOURAGE::' + 'Vegetation'
+                    elif type == '3D Vehicles':
+                        layerName = '2_ENTOURAGE::' + 'Vehicles'
                     else:
                         layerName = '2_ENTOURAGE'
                     rs.ObjectLayer(eachBlock, layerName)
@@ -309,7 +418,14 @@ def Populate_Button():
     utils.SaveFunctionData('Blocks-Populate', [__version__, numObjects, type, result])
 
 if __name__ == "__main__" and utils.IsAuthorized():
-    fileLocations = config.GetDict()
-    result = Populate_Button()
-    if result:
-        utils.SaveToAnalytics('Blocks-Populate')
+    func = rs.GetInteger("func num")
+    if func == 0:
+        fileLocations = config.GetDict()
+        result = Populate_Button()
+        if result:
+            utils.SaveToAnalytics('Blocks-Populate')
+    elif func == 1:
+        fileLocations = config.GetDict()
+        result = PopulatePath()
+        if result:
+            utils.SaveToAnalytics('Blocks-Populate Path')
