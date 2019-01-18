@@ -4,6 +4,7 @@ import random
 import Rhino as rc
 import os
 import math
+import layers
 
 import config
 import utils
@@ -126,7 +127,7 @@ def GetCustomBlockNames():
     for obj in objs:
         if rs.BlockInstanceName(obj) not in blockNames:
             blockNames.append(rs.BlockInstanceName(obj))
-    return blockNames
+    return blockNames, objs
 
 def MoveAwayFromEdges(pts, srf, spacing):
     spacing = spacing*.75
@@ -212,31 +213,45 @@ def RandomAngles(numObjects):
         angles.append(random.uniform(0,360))
     return angles
 
-def GetPopulationType():
+def GetNumObjects():
+    if 'populate-numObjects' in sc.sticky:
+        numObjectsDefault = sc.sticky['populate-numObjects']
+    else:
+        numObjectsDefault = 30
+    numObjects = rs.GetInteger('Number of objects to populate', numObjectsDefault, 1, 5000)
+    if numObjects is None: return
+    sc.sticky['populate-numObjects'] = numObjects
+    return numObjects
+
+def GetPopulationType(vehicles = True):
     if 'populate-type' in sc.sticky:
         typeDefault = sc.sticky['populate-type']
     else:
         typeDefault = '3D People'
-    types = ['3D People', '2D People', '3D Trees', '2D Trees', '3D Vehicles', 'Custom Block']
+    types = ['3D People', '2D People', '3D Trees', '2D Trees', 'Custom Block']
+    if vehicles:
+        types.insert(-1, '3D Vehicles')
     type = rs.ListBox(types, "Select block type to populate", "Population Type", typeDefault)
     if type is None: return None
     sc.sticky['populate-type'] = type
     return type
 
+def GetCustomSpacing(blockName):
+    guids = rs.BlockObjects(blockName)
+    pts = rs.BoundingBox(guids)
+    return rs.Distance(pts[0], pts[2])
+
 #################################################################
 def PopulatePath():
-    crv = rs.GetObject("Select curve to populate", rs.filter.curve, True)
-    if crv is None: return None
-    crvObj = rs.coercecurve(crv)
+    crvs = rs.GetObjects("Select curves to populate", rs.filter.curve, True)
+    if crvs is None: return None
+    crvObjs = []
+    for crv in crvs:
+        crvObjs.append(rs.coercecurve(crv))
     
     #GET NUMBER OF OBJECTS
-    if 'populatePath-numObjects' in sc.sticky:
-        numObjectsDefault = sc.sticky['populatePath-numObjects']
-    else:
-        numObjectsDefault = 30
-    numObjects = rs.GetInteger('Number of objects to populate', numObjectsDefault, 1, 5000)
-    if numObjects is None: return
-    sc.sticky['populatePath-numObjects'] = numObjects
+    numObjects = GetNumObjects()
+    if numObjects is None: return None
     
     #GET POPULATION TYPE
     type = GetPopulationType()
@@ -246,7 +261,7 @@ def PopulatePath():
     
     #GET BLOCK NAMES
     if type == 'Custom Block':
-        blockNames = GetCustomBlockNames()
+        blockNames, instances = GetCustomBlockNames()
     else:
         blockNames = GetBlockNames(type)
     if blockNames is None: return
@@ -260,96 +275,99 @@ def PopulatePath():
     elif type == '3D Vehicles':
         spacing = 240
     else:
-        spacing = 50
+        spacing = GetCustomSpacing(blockNames[0]) #currently just selects the first block
     
     #GET PTS
-    pts = []
-    angles = []
-    lengths = []
-    downVec = rc.Geometry.Vector3d(0,-1,0)
     upVec = rc.Geometry.Vector3d(0,0,1)
-    curveLength = crvObj.GetLength()
-    counter = 0
-    while len(pts) < numObjects:
-        t = random.uniform(0,1)
-        t = utils.Remap(t, 0, 1, 0, curveLength)
+    plane0 = rc.Geometry.Plane(rc.Geometry.Point3d(0,0,0),  upVec)
+    plane0.Rotate(math.pi/2, upVec)
+    crvData = []
+    for i, crvObj in enumerate(crvObjs):
+        lengths = []
+        frames = []
+        curveLength = crvObj.GetLength()
+        counter = 0
         
-        posOkay = True
-        if len(lengths)>0:
-            counter+=1
-            for eachPrevPos in lengths:
-                if abs(eachPrevPos-t) < spacing:
-                    posOkay = False
-        
-        if posOkay:
-            lengths.append(t)
-            testPt = crvObj.PointAtLength(t)
-            pts.append(testPt)
-            param = crvObj.LengthParameter(t)[1]
-            tan = crvObj.TangentAt(param)
-            angles.append(rc.Geometry.Vector3d.VectorAngle(downVec, tan, upVec))
-        
-        if counter > int(curveLength/numObjects):
-            print "Could only fit {} of the requested {} objects".format(len(pts), numObjects)
-            break
-        
-    for i, pt in enumerate(pts):
-        blockName = blockNames[random.randint(0, len(blockNames)-1)]
-        if TryLoadBlock(type, blockName):
-            eachBlock = rs.InsertBlock(blockName, pt, angle_degrees= math.degrees(angles[i]))
-            try:
-                if type == '2D People' or type == '3D People':
-                    layerName = '2_ENTOURAGE::' + 'People'
-                elif type == '2D Trees':
-                    layerName = '2_ENTOURAGE::' + 'Vegetation'
-                elif type == '3D Trees':
-                    layerName = '2_ENTOURAGE::' + 'Vegetation'
-                elif type == '3D Vehicles':
-                    layerName = '2_ENTOURAGE::' + 'Vehicles'
-                else:
-                    layerName = '2_ENTOURAGE'
-                rs.ObjectLayer(eachBlock, layerName)
-                
-                if type != '3D Vehicles':
-                    xyScale = random.uniform(.9,1.3)
-                    zScale = random.uniform(.9,1.1)
-                else:
-                    xyScale = 1
-                    zScale = 1
-                rs.ScaleObject(eachBlock, pt, (xyScale,xyScale, zScale))
-            except:
-                pass
+        while len(frames) < numObjects:
+            t = utils.Remap(random.uniform(0,1), 0, 1, 0, curveLength)
+            
+            posOkay = True
+            if len(lengths)>0:
+                counter+=1
+                for eachPrevPos in lengths:
+                    if abs(eachPrevPos-t) < spacing:
+                        posOkay = False
+            
+            if posOkay:
+                lengths.append(t)
+                pt = crvObj.PointAtLength(t)
+                param = crvObj.LengthParameter(t)[1]
+                tan = crvObj.TangentAt(param)
+                xAxis = rc.Geometry.Vector3d.CrossProduct(tan, upVec)
+                xAxis.Reverse()
+                frames.append(rc.Geometry.Plane(pt, tan, xAxis))
+            
+            if counter > int(curveLength/numObjects):
+                print "Curve {}: Could only fit {} of the requested {} objects".format(i, len(frames), numObjects)
+                break
+        crvData.append(frames)
+    
+    scaleVariation = .1
+    #PLACE THE BLOCKS
+    for i, crvObj in enumerate(crvObjs):
+        for i, frame in enumerate(crvData[i]):
+            blockName = blockNames[random.randint(0, len(blockNames)-1)]
+            if TryLoadBlock(type, blockName):
+                xform = rc.Geometry.Transform.PlaneToPlane(plane0, frame)
+                eachBlock = rs.InsertBlock2(blockName, xform)
+                try:
+                    if type == '2D People' or type == '3D People':
+                        layerName = layers.GetLayerNameByNumber(2200)
+                    elif type == '2D Trees' or type == '3D Trees':
+                        layerName = layers.GetLayerNameByNumber(2300)
+                    elif type == '3D Vehicles':
+                        layerName = layers.GetLayerNameByNumber(2400)
+                    else:
+                        layers.AddLayerByNumber(2000)
+                        layerName = layers.GetLayerNameByNumber(2000)
+                    rs.ObjectLayer(eachBlock, layerName)
+                    
+                    if type != '3D Vehicles':
+                        xyScale = random.uniform(1-scaleVariation,1+scaleVariation)
+                        zScale = random.uniform(1-scaleVariation,1+scaleVariation)
+                    else:
+                        xyScale = 1
+                        zScale = 1
+                    rs.ScaleObject(eachBlock, frame, (xyScale,xyScale, zScale))
+                except:
+                    pass
     rs.EnableRedraw(True)
+
 #################################################################
 def Populate_Button():
     try:
         ###########################################################################
         #GET FUNCTIONS
-
+        
         #GET INPUT SURFACE
         srf = rs.GetObject('Select surface to populate', rs.filter.surface, True)
         if srf is None: return
-
+        
         #GET NUMBER OF OBJECTS
-        if 'populate-numObjects' in sc.sticky:
-            numObjectsDefault = sc.sticky['populate-numObjects']
-        else:
-            numObjectsDefault = 30
-        numObjects = rs.GetInteger('Number of objects to populate', numObjectsDefault, 1, 5000)
-        if numObjects is None: return
-        sc.sticky['populate-numObjects'] = numObjects
-
+        numObjects = GetNumObjects()
+        if numObjects is None: return None
+        
         #GET POPULATION TYPE
-        type = GetPopulationType()
+        type = GetPopulationType(False)
         if type is None: return None
         
         #GET BLOCK NAMES
         if type == 'Custom Block':
-            blockNames = GetCustomBlockNames()
+            blockNames, instances = GetCustomBlockNames()
         else:
             blockNames = GetBlockNames(type)
         if blockNames is None: return
-
+    
         ###########################################################################
         if type == '2D People' or type == '3D People':
             spacing = 42
@@ -358,32 +376,34 @@ def Populate_Button():
         elif type == '3D Trees':
             spacing = 200
         else:
-            spacing = 50
+            spacing = GetCustomSpacing(blockNames[0])
         ###########################################################################
         #DRAW FUNCTIONS
         rs.EnableRedraw(False)
-
+        
         #RANDOM PTS ON SURFACE
         pts = RandomPtsOnSrf(srf, numObjects)
-
+        
         #RANDOM ANGLES
         angles = RandomAngles(numObjects)
-
+    
         #ORIENT ANGLES AWAY FROM EDGES
         if type == '2D People' or type == '3D People':
             angles = OrientAwayFromEdges(pts, angles, srf, spacing)
-
+    
         for i in range(0, 5):
             #CONGREGATE THE POINTS
             pts = Congregate(pts, spacing, 3)
-
+    
             #MOVE AWAY FROM SURFACE EDGES
             pts = MoveAwayFromEdges(pts, srf, spacing)
-
+    
         #ORIENT ANGLES TOGETHER
         if type == '2D People' or type == '3D People':
             angles = AlignAngles(pts, angles, srf, spacing)
-
+        
+        upVec = rc.Geometry.Vector3d(0,0,1)
+        scaleVariation = .1
         for i, pt in enumerate(pts):
             #Choose random angle
             angle = angles[i]
@@ -404,12 +424,12 @@ def Populate_Button():
                     else:
                         layerName = '2_ENTOURAGE'
                     rs.ObjectLayer(eachBlock, layerName)
-                    xyScale = random.uniform(.9,1.3)
-                    zScale = random.uniform(.9,1.1)
+                    xyScale = random.uniform(1-scaleVariation,1+scaleVariation)
+                    zScale = random.uniform(1-scaleVariation,1+scaleVariation)
                     rs.ScaleObject(eachBlock, pt, (xyScale,xyScale, zScale))
                 except:
                     pass
-
+        
         rs.EnableRedraw(True)
         result = True
     except:
