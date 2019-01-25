@@ -37,11 +37,13 @@ def GetAuthorization():
         if password is None: return False
         hash = hashlib.sha224(password).hexdigest()
         key = '7bce017b9e1c5f1a3a73d8edfb7e47505a39375cb0f83e89c48f9c55'
-
+        
         if hash == key:
             Authorize()
+            return True
         else:
             print "Incorrect password"
+    return False
 
 def IsAuthorized():
     authFile = os.path.join(os.environ['appdata'], "PCPA", 'authorize.pcpa')
@@ -227,7 +229,8 @@ def SaveToAnalytics(funcName):
             csvwriter = csv.writer(myFile)
             csvwriter.writerows(data)
     except:
-        print "Analytics failed"
+        pass
+        #print "Analytics failed"
 
 def SaveFunctionData(funcName, funcData):
     """
