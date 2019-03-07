@@ -49,6 +49,7 @@ def RandomPtOnSrf(srf):
     if srf is None:
         print "Not a surface"
         return
+    
     dom_u = rs.SurfaceDomain(srf, 0)
     dom_v = rs.SurfaceDomain(srf, 1)
 
@@ -57,12 +58,15 @@ def RandomPtOnSrf(srf):
         pt_u = random.uniform(dom_u[0], dom_u[1])
         pt_v = random.uniform(dom_v[0], dom_v[1])
         pt = rs.EvaluateSurface(srf, pt_u, pt_v)
-        if rs.ObjectType(srf) == 1073741824: #If extrusion objects
+        
+        if type(srf) == rc.DocObjects.ObjectType.Extrusion: #If extrusion objects
             temp = rs.coercesurface(srf)
             testSrf = temp.ToBrep()
         else:
             testSrf = srf
-        if rs.IsPointOnSurface(testSrf, pt):
+        testPt = testSrf.ClosestPoint(pt)
+        d = rs.Distance(testPt, pt)
+        if d > rs.UnitAbsoluteTolerance():
             return pt
         else:
             counter+=1
@@ -130,8 +134,8 @@ def GetCustomBlockNames():
 
 def MoveAwayFromEdges(pts, srf, spacing):
     spacing = spacing*.75
-    rhsrf = rs.coercebrep(srf)
-    edges = rhsrf.DuplicateNakedEdgeCurves(True, False)
+    test = srf.ToBrep()
+    edges = test.DuplicateNakedEdgeCurves(True, False)
     boundary = rc.Geometry.Curve.JoinCurves(edges)[0]
     tol = rs.UnitAbsoluteTolerance()
     plane = boundary.TryGetPlane()[1]
@@ -149,8 +153,9 @@ def MoveAwayFromEdges(pts, srf, spacing):
 
 def OrientAwayFromEdges(pts, angles, srf, spacing):
     spacing = spacing
-    rhsrf = rs.coercebrep(srf)
-    edges = rhsrf.DuplicateNakedEdgeCurves(True, False)
+    #rhsrf = rs.coercebrep(srf)
+    test = srf.ToBrep()
+    edges = test.DuplicateNakedEdgeCurves(True, False) #<----------
     boundary = rc.Geometry.Curve.JoinCurves(edges)[0]
     tol = rs.UnitAbsoluteTolerance()
     plane = boundary.TryGetPlane()[1]
@@ -179,8 +184,9 @@ def VecToAngle(vec):
 
 def AlignAngles(pts, angles, srf, spacing):
     spacing = spacing*2
-    rhsrf = rs.coercebrep(srf)
-    edges = rhsrf.DuplicateNakedEdgeCurves(True, False)
+    #rhsrf = rs.coercebrep(srf)
+    test = srf.ToBrep()
+    edges = test.DuplicateNakedEdgeCurves(True, False)
     boundary = rc.Geometry.Curve.JoinCurves(edges)[0]
     tol = rs.UnitAbsoluteTolerance()
     plane = boundary.TryGetPlane()[1]
@@ -242,6 +248,8 @@ def GetCustomSpacing(blockName):
 
 #################################################################
 def PopulatePath():
+    numObjects = 0
+    type = None
     try:
         crvs = rs.GetObjects("Select curves to populate", rs.filter.curve, True)
         if crvs is None: return None
@@ -348,118 +356,133 @@ def PopulatePath():
     utils.SaveFunctionData('Blocks-Populate Path', [__version__, numObjects, type, result])
 
 #################################################################
-def Populate_Button():
-    try:
-        ###########################################################################
-        #GET FUNCTIONS
-        
-        #GET INPUT SURFACE
-        srfs = rs.GetObjects('Select surface to populate', rs.filter.surface, True, True)
-        if srfs is None: return
-        
-        #GET POPULATION TYPE
-        type = GetPopulationType(False)
-        if type is None: return None
-        
-        #GET BLOCK NAMES
-        if type == 'Custom Block':
-            blockNames, blockIDs = GetCustomBlockNames()
-        else:
-            blockNames = GetBlockNames(type)
-        if blockNames is None: return
-        
-        #GET NUMBER OF OBJECTS
-        numObjects = GetNumObjects()
-        if numObjects is None: return None
-        
-        ###########################################################################
-        #Spacing
-        if type == '2D People' or type == '3D People':
-            spacing = 42
-        elif type == '2D Trees':
-            spacing = 100
-        elif type == '3D Trees':
-            spacing = 200
-        else:
-            spacing = GetCustomSpacing(blockNames[0])
-        ###########################################################################
-        
-        #DRAW FUNCTIONS
-        rs.EnableRedraw(False)
-        
-        #RANDOM PTS ON SURFACE
-        pts = []
-        for srf in srfs:
-            pts.append(RandomPtsOnSrf(srf, numObjects))
-        
-        #RANDOM ANGLES
-        angles = []
-        for srf in srfs:
-            angles.append(RandomAngles(numObjects))
-        
-        #ORIENT ANGLES AWAY FROM EDGES
-        if type == '2D People' or type == '3D People':
-            for i, srf in enumerate(srfs):
-                angles[i] = OrientAwayFromEdges(pts[i], angles[i], srf, spacing)
-        
-        for i in range(0, 5):
-            #CONGREGATE THE POINTS
-            for j, srf in enumerate(srfs):
-                pts[j] = Congregate(pts[j], spacing, 3)
-                
-                #MOVE AWAY FROM SURFACE EDGES
-                pts[j] = MoveAwayFromEdges(pts[j], srf, spacing)
-        
-        #ORIENT ANGLES TOGETHER
-        if type == '2D People' or type == '3D People':
-            for i, srf in enumerate(srfs):
-                angles[i] = AlignAngles(pts[i], angles[i], srf, spacing)
-        
-        upVec = rc.Geometry.Vector3d(0,0,1)
-        scaleVariation = .1
-        
-        for i, srf in enumerate(srfs):
-            for j, pt in enumerate(pts[i]):
-                #Choose random angle
-                angle = angles[i][j]
-                
-                thisIndex = random.randint(0, len(blockNames)-1)
-                thisBlockName = blockNames[thisIndex]
-                
-                if TryLoadBlock(type, thisBlockName):
-                    #xform = rs.BlockInstanceXform(blockIDs[thisIndex])
-                    eachBlock = rs.InsertBlock(thisBlockName, pt, angle_degrees = angle)
-                    #eachBlock = rs.InsertBlock2(thisBlockName, newXform)
-                    try:
-                        if type == '2D People' or type == '3D People':
-                            layerName = '2_ENTOURAGE::' + 'People'
-                        elif type == '2D Trees':
-                            layerName = '2_ENTOURAGE::' + 'Vegetation'
-                        elif type == '3D Trees':
-                            layerName = '2_ENTOURAGE::' + 'Vegetation'
-                        elif type == '3D Vehicles':
-                            layerName = '2_ENTOURAGE::' + 'Vehicles'
-                        else:
-                            layerName = '2_ENTOURAGE'
-                        rs.ObjectLayer(eachBlock, layerName)
-                        xyScale = random.uniform(1-scaleVariation,1+scaleVariation)
-                        zScale = random.uniform(1-scaleVariation,1+scaleVariation)
-                        rs.ScaleObject(eachBlock, pt, (xyScale,xyScale, zScale))
-                    except:
-                        pass
-        
-        rs.EnableRedraw(True)
-        result = True
-    except:
-        result = False
+def Populate_Surfaces():
+    #try:
+    ###########################################################################
+    #GET FUNCTIONS
     
-    utils.SaveFunctionData('Blocks-Populate', [__version__, numObjects, type, result])
+    #GET INPUT SURFACE
+    #srfs = rs.GetObjects('Select surface to populate', rs.filter.surface, True, True)
+    #if srfs is None: return
+    
+    msg="Select a surface or Brep face to populate"
+    srf_filter= rc.DocObjects.ObjectType.Surface
+    res,srfObjs=rc.Input.RhinoGet.GetMultipleObjects(msg,False,srf_filter)
+    if res!=rc.Commands.Result.Success: return        
+    
+    #Cleanup obj ref
+    srfs = []
+    for srf in srfObjs:
+        if srf.GeometryComponentIndex < 0:
+            face=srf.Surface()
+        else:
+            face=srf.Face()
+        subSrf=face.ToNurbsSurface()
+        srfs.append(subSrf)
+    
+    #GET POPULATION TYPE
+    type = GetPopulationType(False)
+    if type is None: return None
+    
+    #GET BLOCK NAMES
+    if type == 'Custom Block':
+        blockNames, blockIDs = GetCustomBlockNames()
+    else:
+        blockNames = GetBlockNames(type)
+    if blockNames is None: return
+    
+    #GET NUMBER OF OBJECTS
+    numObjects = GetNumObjects()
+    if numObjects is None: return None
+    
+    ###########################################################################
+    #Spacing
+    if type == '2D People' or type == '3D People':
+        spacing = 42
+    elif type == '2D Trees':
+        spacing = 100
+    elif type == '3D Trees':
+        spacing = 200
+    else:
+        spacing = GetCustomSpacing(blockNames[0])
+    ###########################################################################
+    
+    #DRAW FUNCTIONS
+    rs.EnableRedraw(False)
+    
+    #RANDOM PTS ON SURFACE
+    pts = []
+    for srf in srfs:
+        pts.append(RandomPtsOnSrf(srf, numObjects))
+    
+    #RANDOM ANGLES
+    angles = []
+    for srf in srfs:
+        angles.append(RandomAngles(numObjects))
+    
+    #ORIENT ANGLES AWAY FROM EDGES
+    if type == '2D People' or type == '3D People':
+        for i, srf in enumerate(srfs):
+            angles[i] = OrientAwayFromEdges(pts[i], angles[i], srf, spacing)
+    
+    for i in range(0, 5):
+        #CONGREGATE THE POINTS
+        for j, srf in enumerate(srfs):
+            pts[j] = Congregate(pts[j], spacing, 3)
+            
+            #MOVE AWAY FROM SURFACE EDGES
+            pts[j] = MoveAwayFromEdges(pts[j], srf, spacing)
+    
+    #ORIENT ANGLES TOGETHER
+    if type == '2D People' or type == '3D People':
+        for i, srf in enumerate(srfs):
+            angles[i] = AlignAngles(pts[i], angles[i], srf, spacing)
+    
+    upVec = rc.Geometry.Vector3d(0,0,1)
+    scaleVariation = .1
+    
+    for i, srf in enumerate(srfs):
+        for j, pt in enumerate(pts[i]):
+            #Choose random angle
+            angle = angles[i][j]
+            
+            thisIndex = random.randint(0, len(blockNames)-1)
+            thisBlockName = blockNames[thisIndex]
+            
+            if TryLoadBlock(type, thisBlockName):
+                #xform = rs.BlockInstanceXform(blockIDs[thisIndex])
+                eachBlock = rs.InsertBlock(thisBlockName, pt, angle_degrees = angle)
+                #eachBlock = rs.InsertBlock2(thisBlockName, newXform)
+                try:
+                    if type == '2D People' or type == '3D People':
+                        layerName = '2_ENTOURAGE::' + 'People'
+                    elif type == '2D Trees':
+                        layerName = '2_ENTOURAGE::' + 'Vegetation'
+                    elif type == '3D Trees':
+                        layerName = '2_ENTOURAGE::' + 'Vegetation'
+                    elif type == '3D Vehicles':
+                        layerName = '2_ENTOURAGE::' + 'Vehicles'
+                    else:
+                        layerName = '2_ENTOURAGE'
+                    rs.ObjectLayer(eachBlock, layerName)
+                    xyScale = random.uniform(1-scaleVariation,1+scaleVariation)
+                    zScale = random.uniform(1-scaleVariation,1+scaleVariation)
+                    rs.ScaleObject(eachBlock, pt, (xyScale,xyScale, zScale))
+                except:
+                    pass
+    
+    rs.EnableRedraw(True)
+    #    result = True
+    #except:
+    #    result = False
+    
+    #utils.SaveFunctionData('Blocks-Populate', [__version__, numObjects, type, result])
 
 if __name__ == "__main__" and utils.IsAuthorized():
     func = rs.GetInteger("func num")
     if func == 0:
         fileLocations = config.GetDict()
-        result = Populate_Button()
+        result = Populate_Surfaces()
         if result:
             utils.SaveToAnalytics('Blocks-Populate')
     elif func == 1:
