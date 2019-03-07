@@ -12,7 +12,7 @@ import utils
 import standards
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.1"
+__version__ = "2.2.0"
 
 ################################################################################
 #Utils
@@ -252,78 +252,88 @@ def exportToRenderDWG():
         return False
 
 def exportToRenderSKP():
-    try:
-        objs = rs.GetObjects("Select objects to export", preselect = True)
-        if objs is None: return
-
-        seperator = ' > '
-
+    #try:
+    #Get Objects
+    objs = rs.GetObjects("Select objects to export", preselect = True)
+    if objs is None: return
+    
+    #Default Name
+    if 'exportToRenderSKP-prevName' in sc.sticky:
+        prevName = sc.sticky['exportToRenderSKP-prevName']
+        defaultFilename = utils.UpdateString(prevName)
+    else:
         defaultFilename = utils.GetDatePrefix() + '_OPTION_01'
-        if utils.IsSavedInProjectFolder():
-            origPath = rs.DocumentPath()
-            path = os.path.normpath(origPath)
-            pathParts = path.split(os.sep)
-            projectFolder = os.path.join(pathParts[0],'\\' ,pathParts[1])
-            referenceFolder = os.path.join(projectFolder, r'03 DRAWINGS\02 RENDERING\0_copy 3d  folder structure\Reference')
-            if os.path.isdir(referenceFolder):
-                print "Reference folder exists"
-                defaultFolder = referenceFolder
-            else:
-                print "Reference folder not found"
-                defaultFolder = rs.DocumentPath()
+    
+    #Default Folder
+    if 'exportToRenderSKP-path' in sc.sticky:
+        defaultFolder = sc.sticky['exportToRenderSKP-path']
+    elif utils.IsSavedInProjectFolder():
+        origPath = rs.DocumentPath()
+        path = os.path.normpath(origPath)
+        pathParts = path.split(os.sep)
+        projectFolder = os.path.join(pathParts[0],'\\' ,pathParts[1])
+        referenceFolder = os.path.join(projectFolder, r'03 DRAWINGS\02 RENDERING\0_copy 3d  folder structure\Reference')
+        if os.path.isdir(referenceFolder):
+            print "Reference folder exists"
+            defaultFolder = referenceFolder
         else:
+            print "Reference folder not found"
             defaultFolder = rs.DocumentPath()
-        fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", folder = defaultFolder, filename = defaultFilename)
-        if fileName is None: return
+    else:
+        defaultFolder = rs.DocumentPath()
+    fileName = rs.SaveFileName("Export to render", "Sketchup 2015 (*.skp)|*.skp||", folder = defaultFolder, filename = defaultFilename)
+    if fileName is None: return
+    sc.sticky['exportToRenderSKP-prevName'] = os.path.splitext(fileName)[0]
+    sc.sticky['exportToRenderSKP-path'] = os.path.dirname(fileName)
+    
+    tempLayers = []
+    copiedObjs = []
+    seperator = ' > '
+    baseName = os.path.splitext(os.path.basename(fileName))[0]
 
-        tempLayers = []
-        copiedObjs = []
+    #Copy all objects to export
+    rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
+    for i, obj in enumerate(objs):
+        tempCopy = rs.CopyObject(obj)
+        if rs.IsBlockInstance(tempCopy):
+            explodedObjs = list(rs.ExplodeBlockInstance(obj, True))
+            copiedObjs += explodedObjs
+        else:
+            copiedObjs.append(tempCopy)
+        rs.StatusBarProgressMeterUpdate(i)
 
-        baseName = os.path.splitext(os.path.basename(fileName))[0]
+    #Move all copies to a different layer
+    for i, obj in enumerate(copiedObjs):
+        layerFullName = rs.ObjectLayer(obj)
+        shortName = layerFullName.replace('::', seperator)
+        layerName = baseName + seperator + shortName
+        if rs.IsLayer(layerName):
+            rs.ObjectLayer(obj, layerName)
+        else:
+            matIndex = rs.LayerMaterialIndex(rs.ObjectLayer(obj))
+            newLayer = rs.AddLayer(layerName, rs.LayerColor(rs.ObjectLayer(obj)))
+            rs.LayerMaterialIndex(newLayer, matIndex)
+            tempLayers.append(newLayer)
+            rs.ObjectLayer(obj, newLayer)
+    rs.StatusBarProgressMeterHide()
 
-        #Copy all objects to export
-        rs.StatusBarProgressMeterShow('Exporting to SKP', 0, len(objs))
-        for i, obj in enumerate(objs):
-            tempCopy = rs.CopyObject(obj)
-            if rs.IsBlockInstance(tempCopy):
-                explodedObjs = list(rs.ExplodeBlockInstance(obj, True))
-                copiedObjs += explodedObjs
-            else:
-                copiedObjs.append(tempCopy)
-            rs.StatusBarProgressMeterUpdate(i)
+    try:
+        rs.SelectObjects(copiedObjs)
+        rs.Command('-_Export ' + '"' + fileName + '"' + ' s SketchUp2015 Enter ', False)
 
-        #Move all copies to a different layer
-        for i, obj in enumerate(copiedObjs):
-            layerFullName = rs.ObjectLayer(obj)
-            shortName = layerFullName.replace('::', seperator)
-            layerName = baseName + seperator + shortName
-            if rs.IsLayer(layerName):
-                rs.ObjectLayer(obj, layerName)
-            else:
-                matIndex = rs.LayerMaterialIndex(rs.ObjectLayer(obj))
-                newLayer = rs.AddLayer(layerName, rs.LayerColor(rs.ObjectLayer(obj)))
-                rs.LayerMaterialIndex(newLayer, matIndex)
-                tempLayers.append(newLayer)
-                rs.ObjectLayer(obj, newLayer)
-        rs.StatusBarProgressMeterHide()
-
+        #CLEANUP
+        rs.UnselectAllObjects()
         try:
-            rs.SelectObjects(copiedObjs)
-            rs.Command('-_Export ' + '"' + fileName + '"' + ' s SketchUp2015 Enter ', False)
-
-            #CLEANUP
-            rs.UnselectAllObjects()
-            try:
-                rs.DeleteObjects(copiedObjs)
-            except:
-                rs.DeleteObject(copiedObjs)
-            for layer in tempLayers:
-                rs.DeleteLayer(layer)
+            rs.DeleteObjects(copiedObjs)
         except:
-            print "export failed"
-        result = True
+            rs.DeleteObject(copiedObjs)
+        for layer in tempLayers:
+            rs.DeleteLayer(layer)
     except:
-        result = False
+        print "export failed"
+    result = True
+    #except:
+    #    result = False
     try:
         pass
         #utils.SaveFunctionData('IO-Export to Render[SKP]', [fileName, baseName, os.path.getsize(fileName),len(objs), result])
