@@ -98,6 +98,9 @@ def IsSavedInProjectFolder():
     """Checks if Rhino file is saved in a project folder
     """
     fileLocations = config.GetDict()
+    x = rs.DocumentPath()
+    if x is None: return False
+    print
     if rs.DocumentPath()[:2] == fileLocations['Project Folders'][:2]: return True
     else: return False
 
