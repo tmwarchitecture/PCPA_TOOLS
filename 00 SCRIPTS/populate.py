@@ -334,6 +334,8 @@ def PopulatePath():
                             layerName = layers.GetLayerNameByNumber(2300)
                         elif type == '3D Vehicles':
                             layerName = layers.GetLayerNameByNumber(2400)
+                        elif type == 'Custom Block':
+                            layerName = rs.ObjectLayer(instances[0])
                         else:
                             layers.AddLayerByNumber(2000)
                             layerName = layers.GetLayerNameByNumber(2000)
@@ -365,7 +367,7 @@ def Populate_Surfaces():
     #srfs = rs.GetObjects('Select surface to populate', rs.filter.surface, True, True)
     #if srfs is None: return
     
-    msg="Select a surface or Brep face to populate"
+    msg="Select a surface or polysurface face to populate"
     srf_filter= rc.DocObjects.ObjectType.Surface
     res,srfObjs=rc.Input.RhinoGet.GetMultipleObjects(msg,False,srf_filter)
     if res!=rc.Commands.Result.Success: return        
@@ -462,6 +464,8 @@ def Populate_Surfaces():
                         layerName = '2_ENTOURAGE::' + 'Vegetation'
                     elif type == '3D Vehicles':
                         layerName = '2_ENTOURAGE::' + 'Vehicles'
+                    elif type == 'Custom Block':
+                        layerName = rs.ObjectLayer(blockIDs[0])
                     else:
                         layerName = '2_ENTOURAGE'
                     rs.ObjectLayer(eachBlock, layerName)
