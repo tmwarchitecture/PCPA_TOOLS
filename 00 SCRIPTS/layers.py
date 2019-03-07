@@ -44,9 +44,11 @@ def MaterialToLayer(layer, matName):
     def loadMatFromPath(path):
         if os.path.isfile(path):
             rdk = rs.GetPlugInObject("Renderer Development Kit")
-            rc = rdk.ContentLoadFromFile(path)
-            return rc
-        else: return None
+            result = rdk.ContentLoadFromFile(path)
+            return result
+        else: 
+            print "Cannot find the material file"
+            return None
 
     def ApplyMaterialToLayer(material, layer):
         matName = '"' + str(material) + '"'
@@ -73,7 +75,7 @@ def MaterialToLayer(layer, matName):
             if name == materialName:
                 return True
         return False
-
+    
     def ForceMaterialToLayer(materialName, mylayer):
         """
         Applies material by name to layer. If no layer found, it is imported.
@@ -92,7 +94,7 @@ def MaterialToLayer(layer, matName):
                 print "Material {} not found".format(materialName)
             else:
                 ApplyMaterialToLayer(materialName, mylayer)
-
+    
     if len(matName) < 1:
         return
     ForceMaterialToLayer(matName, layer)
