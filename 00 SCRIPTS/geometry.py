@@ -42,15 +42,16 @@ def IntersectMeshPlane(obj, plane):
     mesh = rs.coercemesh(obj)
     intersectionCrvs = []
     if mesh is None: return None
-
+    
     x = rc.Geometry.Intersect.Intersection.MeshPlane(mesh, plane)
     if x is None: return
-
+    
     #Match attributes
     finalCurves = []
     for curve in x:
         finalCurve = sc.doc.Objects.AddPolyline(curve)
-        rs.MatchObjectAttributes(finalCurve, obj)
+        utils.SafeMatchObjectAttributes(finalCurve, obj)
+        #rs.MatchObjectAttributes(finalCurve, obj) BROKEN
         finalCurves.append(finalCurve)
 
     return finalCurves
@@ -146,50 +147,63 @@ def IntersectGeoAtPt():
 
 ################################################################################
 #UNFILLET
+def ArcToPlineCurve(segment):
+    pline = segment
+    if type(segment) == rc.Geometry.ArcCurve:
+        if segment.AngleDegrees < 180:
+            ptA1 = segment.PointAtStart + segment.TangentAtStart
+            ptB1 = segment.PointAtEnd + segment.TangentAtEnd
+            lineA = rc.Geometry.Line(segment.PointAtStart, ptA1)
+            lineB = rc.Geometry.Line(segment.PointAtEnd, ptB1)
+            result, paramA, paramB = rc.Geometry.Intersect.Intersection.LineLine(lineA, lineB)
+            if result:
+                ptC = lineA.PointAt(paramA)
+                pline = rc.Geometry.PolylineCurve([segment.PointAtStart, ptC, segment.PointAtEnd])
+    elif type(segment) == rc.Geometry.NurbsCurve:
+        if segment.IsArc(rs.UnitAbsoluteTolerance()):
+            result, arc = segment.TryGetArc(rs.UnitAbsoluteTolerance())
+            if result:
+                if arc.AngleDegrees < 180:
+                    ptA0 = arc.StartPoint
+                    ptB0 = arc.EndPoint
+                    paramA0 = arc.ClosestParameter(ptA0)
+                    paramB0 = arc.ClosestParameter(ptB0)
+                    ptA1 = ptA0 + arc.TangentAt(paramA0)
+                    ptB1 = ptB0 + arc.TangentAt(paramB0)
+                    lineA = rc.Geometry.Line(ptA0, ptA1)
+                    lineB = rc.Geometry.Line(ptB0, ptB1)
+                    result, paramA, paramB = rc.Geometry.Intersect.Intersection.LineLine(lineA, lineB)
+                    if result:
+                        ptC = lineA.PointAt(paramA)
+                        pline = rc.Geometry.PolylineCurve([ptA0, ptC, ptB0])
+    return pline
+
 def unfilletObj(obj):
     try:
         rhobj = rs.coercecurve(obj)
-
         segments = rhobj.DuplicateSegments()
         newSegments = []
+        polycurve = rc.Geometry.PolyCurve()
         for i, segment, in enumerate(segments):
-            print
-            if rs.IsArc(segment):
-                stPt = segment.PointAtStart
-                endPt = segment.PointAtEnd
-                tanSt = segment.TangentAtStart
-                angle = segment.AngleRadians/2
-                if segment.AngleRadians >= math.pi:
-                    newSegments.append(sc.doc.Objects.AddArc(segment.Arc))
-                else:
-                    dist = (math.tan(angle)) * segment.Radius
-                    newVec = rc.Geometry.Vector3d.Multiply(tanSt,dist)
-                    elbowPt = rc.Geometry.Point3d.Add(stPt, newVec)
-                    plinePts = [stPt, elbowPt, endPt]
-                    pline = rc.Geometry.Polyline(plinePts)
-                    newSegments.append(sc.doc.Objects.AddPolyline(pline))
-            elif rs.IsLine(segment):
-                stPt = segment.PointAtStart
-                endPt = segment.PointAtEnd
-                lineSeg = rc.Geometry.Line(stPt, endPt)
-                newSegments.append(sc.doc.Objects.AddLine(lineSeg))
-            print
-        joinedSegs = rs.JoinCurves(newSegments, True)
-        rs.SimplifyCurve(joinedSegs)
-        rs.MatchObjectAttributes(joinedSegs, obj)
+            polycurve.AppendSegment(ArcToPlineCurve(segment))
+        crvObj = sc.doc.Objects.AddCurve(polycurve)
+        rs.SimplifyCurve(crvObj)
+        utils.SafeMatchObjectAttributes(crvObj, obj)
+        #rs.MatchObjectAttributes(crvObj, obj) #BROKEN
         rs.DeleteObject(obj)
-        sc.doc.Views.Redraw()
-        return joinedSegs
+        return crvObj
     except:
         print "Unfillet Failed"
         return None
 
-def unfillet():
+def Unfillet_Button():
+    objs = []
+    successList = []
     try:
         #Will remove entire pline when angle > 180 degrees
         objs = rs.GetObjects("Select curves to unfillet", rs.filter.curve, True, True)
         if objs is None: return
-
+        
         successList = []
         for obj in objs:
             unfilletResult = unfilletObj(obj)
@@ -209,6 +223,6 @@ if __name__ == "__main__" and utils.IsAuthorized():
         if result:
             utils.SaveToAnalytics('Geometry-Contour At Pt')
     if func == 1:
-        result = unfillet()
+        result = Unfillet_Button()
         if result:
             utils.SaveToAnalytics('Geometry-Unfillet')
