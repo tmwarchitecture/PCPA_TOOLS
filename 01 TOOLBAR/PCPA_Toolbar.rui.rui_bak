@@ -12,11 +12,11 @@
       <text>
         <locale_1033>PCPA</locale_1033>
       </text>
-      <menu_item guid="3f374fa0-e5e8-4788-a4e1-8aa5ca1783c6">
+      <menu_item guid="bee2b8bf-fbc0-470c-9807-68fe73d6cac6">
         <text>
-          <locale_1033>Add All Layers (version 1.0)</locale_1033>
+          <locale_1033>Add All Layers</locale_1033>
         </text>
-        <macro_id>4f6124ea-720e-4326-8906-74936e80e023</macro_id>
+        <macro_id>527f2c21-f9f5-4cc4-8c7e-4408b2374869</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
       </menu_item>
       <menu_item guid="e4c2f5dc-4a5f-418a-918a-c7ac1cfa2c60" item_type="separator" />
@@ -253,7 +253,7 @@
       </menu_item>
       <menu_item guid="8d5ec18e-a880-41df-a2d2-1349ad7fe166">
         <text>
-          <locale_1033>Version 2.1</locale_1033>
+          <locale_1033>Version 2.1.1</locale_1033>
         </text>
         <macro_id>275e643f-1239-4c8c-bb35-dc902a839bd6</macro_id>
         <macro_lib_id>a71c1003-b860-4634-a395-3e89a8704d33</macro_lib_id>
@@ -261,7 +261,7 @@
     </menu>
   </menus>
   <tool_bar_groups>
-    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="dcf8515a-c8b5-43f4-a1f2-eeb70405a9b5" active_tool_bar_group="dd4e4aa9-ae86-450c-acdb-26b168107d00" single_file="False" hide_single_tab="False" point_floating="514,285">
+    <tool_bar_group guid="e1114a4f-1872-4032-8453-dde06d437087" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="c5711a34-dfb4-4349-bc75-4385451d0093" active_tool_bar_group="f0f26756-2380-41b7-b8d4-b6a767010dc1" single_file="False" hide_single_tab="False" point_floating="514,285">
       <text>
         <locale_1033>PCPA Toolbar</locale_1033>
       </text>
@@ -301,7 +301,7 @@
         </text>
         <tool_bar_id>5235a2f1-3245-4103-83ce-5a441d3feaf5</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59475" mru_width="868" point_pos="0,209" float_point="514,285" rect_mru_dock_pos="0,209,1600,270" dock_location_u="59419" dock_location="top" float_size="363,118" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="False" mru_float_style="8192" bar_id="59475" mru_width="868" point_pos="0,153" float_point="514,285" rect_mru_dock_pos="0,153,1600,214" dock_location_u="59419" dock_location="top" float_size="363,118" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars>
