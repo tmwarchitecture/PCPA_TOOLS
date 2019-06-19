@@ -1,0 +1,92 @@
+Blocks-Iterate
+Date,Time,User,Version
+2019-05-02,17:26:55,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 1,STAIR 2,True
+2019-05-02,18:15:26,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 2,STAIR 3,True
+2019-05-03,11:23:04,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 3,,False
+2019-05-03,11:23:10,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 3,STAIR 4,True
+2019-05-03,13:03:33,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 4,STAIR 5,True
+2019-05-03,14:06:45,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 4,STAIR 6,True
+2019-05-03,16:18:02,dfjtjsnxdfrwcacgqgpk,2.1.0,STAIR 5,STAIR 7,True
+2019-05-06,10:22:37,sfnrpvjmkxfjhnbekxfj,2.1.0,MIXED-USE,MIXED-USE RING,True
+2019-05-06,11:00:12,sfnrpvjmkxfjhnbekxfj,2.1.0,MIXED-USE,MIXED-USE RING,True
+2019-05-06,14:28:48,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 1,PODIUM OPT 2,True
+2019-05-06,18:40:05,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 2,PODIUM OPT 3,True
+2019-05-06,18:59:26,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 3,PODIUM OPT 4,True
+2019-05-07,09:51:51,nfniggtyhexwjbjeccpu,2.1.0,190503_3+1 Towers,190507_2+1 Towers,True
+2019-05-07,14:15:30,pgmkdevbzsbsywpizfdw,2.1.0,190507_PODIUM AS,190507_PODIUM MC,True
+2019-05-07,14:52:12,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 5,PODIUM OPT 6,True
+2019-05-07,15:14:16,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 4,,False
+2019-05-08,11:49:28,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 6,PODIUM OPT 7,True
+2019-05-08,13:32:09,dfjtjsnxdfrwcacgqgpk,2.1.0,190508_OPTION_01,,False
+2019-05-08,13:32:22,dfjtjsnxdfrwcacgqgpk,2.1.0,190508_OPTION_01,190508_OPTION_03,True
+2019-05-09,15:34:27,nfniggtyhexwjbjeccpu,2.1.0,190507_OPTION_09,190509_OPTION_03,True
+2019-05-10,09:54:57,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 8,PODIUM OPT 9,True
+2019-05-10,12:31:03,dfjtjsnxdfrwcacgqgpk,2.1.0,PODIUM OPT 9,PODIUM OPT 10,True
+2019-05-12,15:56:02,dfjtjsnxdfrwcacgqgpk,2.1.0,190511_OPTION_02,,False
+2019-05-12,15:56:18,dfjtjsnxdfrwcacgqgpk,2.1.0,190511_OPTION_02,190512_OPTION_03,True
+2019-05-12,23:49:20,pgmkdevbzsbsywpizfdw,2.1.0,190512 _ STAIR WITH CONCRETE BENCH,190512 _ STAIR WITHOUT CONCRETE BENCH,True
+2019-05-13,12:39:56,pgmkdevbzsbsywpizfdw,2.1.0,RECEPTION LIGHTS 1,RECEPTION LIGHTS 2,True
+2019-05-13,12:42:40,pgmkdevbzsbsywpizfdw,2.1.0,RECEPTION LIGHTS 2,,False
+2019-05-13,12:43:10,pgmkdevbzsbsywpizfdw,2.1.0,RECEPTION LIGHTS 2,LEVEL 01 BAR LIGHTS 2,True
+2019-05-13,14:31:52,pgmkdevbzsbsywpizfdw,2.1.0,LOBBY BENCH,LOBBY BENCH NEW,True
+2019-05-13,15:11:33,pgmkdevbzsbsywpizfdw,2.1.0,LOBBY BENCH NEW,LOBBY BENCH NEW 2,True
+2019-05-15,13:46:55,pgmkdevbzsbsywpizfdw,2.1.0,EVENT TERRACE _ SOFA,,False
+2019-05-15,13:47:09,pgmkdevbzsbsywpizfdw,2.1.0,SUNKEN TERRACE SEATING 1,SUNKEN TERRACE SEATING 2,True
+2019-05-22,09:53:48,dfjtjsnxdfrwcacgqgpk,2.1.0,ENTRY STUDY 1,ENTRY STUDY 2,True
+2019-05-22,10:25:48,dfjtjsnxdfrwcacgqgpk,2.1.0,ENTRY STUDY 2,ENTRY STUDY 3,True
+2019-05-22,16:16:46,dfjtjsnxdfrwcacgqgpk,2.1.0,54th ST_ENTRY STUDY 1,54th ST_ENTRY STUDY 2,True
+2019-05-23,11:47:50,dfjtjsnxdfrwcacgqgpk,2.1.0,54th ST_ENTRY STUDY 2,54th ST_ENTRY STUDY 3,True
+2019-05-28,09:47:46,dfjtjsnxdfrwcacgqgpk,2.1.0,54th ST_ENTRY STUDY 3,54th ST_ENTRY STUDY 4,True
+2019-05-29,10:35:01,nfniggtyhexwjbjeccpu,2.1.0,190529_OPTION_01,190529_OPTION_02,True
+2019-05-29,11:16:33,nfniggtyhexwjbjeccpu,2.1.0,190529_OPTION_01,190529_OPTION_03,True
+2019-05-29,15:19:00,nfniggtyhexwjbjeccpu,2.1.0,190529_OPTION_03,190529_OPTION_04,True
+2019-05-29,18:03:18,nfniggtyhexwjbjeccpu,2.1.0,190529_OPTION_02,190529_OPTION_05,True
+2019-05-30,14:11:06,nfniggtyhexwjbjeccpu,2.1.0,190529_OPTION_05,190530_OPTION_06,True
+2019-05-30,15:56:49,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_01,190530_Towers_02,True
+2019-05-30,16:07:26,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING 2,True
+2019-05-30,17:24:15,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING 3,True
+2019-05-30,17:25:20,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING 3,True
+2019-05-30,17:48:12,dfjtjsnxdfrwcacgqgpk,2.1.0,190529_OPTION_04,,False
+2019-05-30,17:48:26,dfjtjsnxdfrwcacgqgpk,2.1.0,190529_OPTION_04,190530_OPTION_04,True
+2019-05-30,17:54:52,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_02,190530_Towers_03,True
+2019-05-30,17:55:56,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_02,190530_Towers_03,True
+2019-05-30,17:58:18,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 3,TOWER MASSING 4,True
+2019-05-30,18:04:32,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_03,,False
+2019-05-30,18:04:37,nfniggtyhexwjbjeccpu,2.1.0,190530_OPTION_06,190530_OPTION_07,True
+2019-05-31,10:24:43,nfniggtyhexwjbjeccpu,2.1.0,190529_OPTION_05,190531_OPTION_08,True
+2019-05-31,10:29:30,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING 5,True
+2019-05-31,10:54:24,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING 6,True
+2019-05-31,10:54:44,dfjtjsnxdfrwcacgqgpk,2.1.0,190530_OPTION_04,,False
+2019-05-31,10:55:05,dfjtjsnxdfrwcacgqgpk,2.1.0,190529_OPTION_04,190531_OPTION_04,True
+2019-05-31,11:17:06,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_01,190531_Towers_04,True
+2019-05-31,11:18:43,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING 7,True
+2019-05-31,11:34:06,nfniggtyhexwjbjeccpu,2.1.0,190531_Towers_04,190531_Towers_05,True
+2019-05-31,12:23:29,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_01,190531_Towers_06,True
+2019-05-31,13:19:43,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_08,190531_OPTION_09,True
+2019-05-31,13:27:54,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_09,190531_OPTION_10,True
+2019-05-31,13:38:22,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 1,True
+2019-05-31,13:48:41,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 2,True
+2019-05-31,13:55:15,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING CORNER 2,TOWER MASSING CORNER 3,True
+2019-05-31,13:58:38,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 4,True
+2019-05-31,14:00:40,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 5,True
+2019-05-31,14:04:51,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_10,190531_OPTION_11,True
+2019-05-31,14:04:57,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 6,True
+2019-05-31,14:16:13,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_08,190531_OPTION_12_Multi Step 2,True
+2019-05-31,14:17:28,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 7,True
+2019-05-31,14:22:12,nfniggtyhexwjbjeccpu,2.1.0,190531_Towers_06,190531_Towers_07_Void 2,True
+2019-05-31,14:43:28,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 8,True
+2019-05-31,14:49:04,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_10,190531_OPTION_12_Cantilever,True
+2019-05-31,15:12:44,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_12_Cantilever,190531_OPTION_14_Cantilever 2,True
+2019-05-31,15:13:36,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 9,True
+2019-05-31,15:18:14,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING CORNER 9,TOWER MASSING CORNER 10,True
+2019-05-31,15:28:29,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_10,190531_OPTION_15_Glass Box 2,True
+2019-05-31,16:00:01,nfniggtyhexwjbjeccpu,2.1.0,190531_Towers_04,190531_Towers_08_Multi Step 3,True
+2019-05-31,16:02:25,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 11,True
+2019-05-31,16:03:19,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_08,190531_OPTION_16_Multi Step 3,True
+2019-05-31,17:01:26,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 12,True
+2019-05-31,17:36:36,nfniggtyhexwjbjeccpu,2.1.0,190531_Towers_07_Void 2,190531_Towers_09_Void 3,True
+2019-05-31,17:38:08,nfniggtyhexwjbjeccpu,2.1.0,190531_OPTION_12_Cantilever,190531_OPTION_13a_Cantilever ALT,True
+2019-05-31,17:43:06,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 13,True
+2019-05-31,17:48:03,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING CORNER 13,TOWER MASSING CORNER 14,True
+2019-05-31,17:49:04,nfniggtyhexwjbjeccpu,2.1.0,190530_Towers_02,190531_Towers_10_Atrium 2,True
+2019-05-31,17:51:00,dfjtjsnxdfrwcacgqgpk,2.1.0,TOWER MASSING 1,TOWER MASSING CORNER 15,True

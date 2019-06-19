@@ -8,7 +8,7 @@ import layers
 import utils
 
 __author__ = 'Tim Williams'
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 def SuperExplodeBlock():
     try:
@@ -163,6 +163,7 @@ def Iterate():
         #Create new design option layer
         #newBlockLayer = rs.AddLayer(parentLayer + "::" + newBlockName, color = utils.StepColor(prevBlockLayerColor))
         newBlockLayer = rs.AddLayer(parentLayer + "::" + newBlockName, color = utils.GetRandomColor())
+        rs.LayerPrintColor(newBlockLayer, (0,0,0))
         rs.ObjectLayer(newBlock, newBlockLayer)
         
         #Save user text
